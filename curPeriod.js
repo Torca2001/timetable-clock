@@ -1,8 +1,10 @@
+function run(){
 var date = new Date();
-var day=0 //2 for Wednesday 5 for Early Finish
-var totalm=(date.getHours()*60*60)+(date.getMinutes()*60)+date.getSeconds()
-var out=0
-var xma=1
+var day=0; //2 for Wednesday 5 for Early Finish
+var totalm=(date.getHours()*60*60)+(date.getMinutes()*60)+date.getSeconds();
+var out=0;
+var time="";
+var xma=1;
 var a=[[8,15,8,15,"School Start",8,15],
 [8,45,8,25,"Form/House",8,45],
 [8,50,8,30,"Go to Period 1",8,50],
@@ -19,10 +21,14 @@ var a=[[8,15,8,15,"School Start",8,15],
 [14,20,14,20,"Period 5",13,45],
 [14,25,14,25,"Go to Period 6",13,50],
 [15,15,15,15,"Period 6",14,35],
-]
+];
 if (date.getDay()==3){day=2}
 for(count = 0; count < a.length; count++){
-	xma=((a[count][0+day]*60*60)+(a[count][1+day]*60))-totalm
-	if (xma>0){break}}
+	xma=((a[count][0+day]*60*60)+(a[count][1+day]*60))-totalm;
+	if (xma>0){break}else{xma=0}}
 if (count==a.length){out="End"}else{out=a[count][4]}
-console.log(out);
+document.getElementById("counter").innerHTML = out;
+time=Math.floor(xma/3600) +":"+Math.floor(xma/60)%60+":"+xma%60
+document.getElementById("counterout").innerHTML = time;
+}
+setInterval(run,1000);
