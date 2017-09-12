@@ -1,2 +1,4 @@
-C:\Users\116049\node_modules\.bin\electron .
+:a
+C:\Users\%username%\node_modules\.bin\electron .
 pause
+goto a
