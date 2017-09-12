@@ -1,9 +1,7 @@
 var date = new Date();
-var hours = date.getHours();
-var minutes= date.getMinutes();
-var seconds=date.getSeconds();
 var day=0
-var totalm=(hours*60*60)+(minutes*60)+seconds
+var totalm=(date.getHours()*60*60)+(date.getMinutes()*60)+date.getSeconds()
+var out=0
 var xma=1
 var a=[[8,15,8,15,"School Start",8,15],
 [8,45,8,25,"Form/House",8,45],
@@ -24,6 +22,6 @@ var a=[[8,15,8,15,"School Start",8,15],
 ]
 for(count = 0; count < a.length; count++){
 	xma=((a[count][0+day]*60*60)+(a[count][1+day]*60))-totalm
-	if (xma>0){break}
-}
-console.log(a[count][4]);
+	if (xma>0){break}}
+if (count==a.length){out="End"}else{out=a[count][4]}
+console.log(out);
