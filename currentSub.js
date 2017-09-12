@@ -1,6 +1,20 @@
 const UserInfo = require("os").userInfo().username;
 var util = require("util");
 var http = require("http");
+const UserInfo = require("os").userInfo().username;
+const util = require("util");
+const http = require("http");
+const fs = require("fs");
+const low = require("lowdb");
+const FileSync = require('lowdb/adapters/FileSync');
+const request = require("request");
+const adapter = new FileSync('db.json');
+const db = low(adapter);
+
+db.defaults({ 
+	subject: [],
+	room: [],
+}).write();
 
 
 
@@ -36,28 +50,19 @@ function currentSubject(week) {
 	var timetablePath = "/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/3";
 	console.log(timetableUrl);
 	
-	var options = {
-	  host: 'intranet.trinity.vic.edu.au',
-      port: 80,
-      path: timetablePath
-	};
 	
 	var content = "";
 	
-	var req = http.request(options, function(res) {
-	  console.log('STATUS: ' + res.statusCode);
-	  console.log('HEADERS: ' + JSON.stringify(res.headers));
-	  res.setEncoding('utf8');
-	  res.on('data', function (chunk) {
-        console.log('BODY: ' + chunk);
-		content += chunk;
-	  });
-	});
-
-	// write data to request body
-	req.write('data\n');
-	req.write('data\n');
-	req.end();
-
+	content = request(timetableUrl, function(error, response, html){
+	
+	  return html;
+	})
 	console.log(content);
+	var re = /\s\i\u=<h1>.*Timetable.*-(.*)-.*Term.*classname">(.*)<\/span.*classname">(.*)<\/span.*classname">(.*)<\/span.*classname">(.*)<\/span.*classname">(.*)<\/span.*/
+	var classes = re.exec(content);
+	
+	console.log('Classes: ' + classes)
+	/*db.get('subject')
+	.push({ id: 1, title: })
+	.write();*/
 }
