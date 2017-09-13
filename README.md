@@ -4,7 +4,7 @@
 
 This is basically a clock which downloads your school timetable, and displays what period is next, and how much time until the current period ends.
 
-## Current Installation Guide
+## Source Installation Guide
 If you wish for some reason to download a buggy version of the timetable clock, go ahead.
 
 ### Dependencies
