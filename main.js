@@ -1,13 +1,12 @@
-const {app, BrowserWindow} = require('electron')
-const electron = require('electron')
-const path = require('path')
-const url = require('url')
-const dialog = electron.dialog
-const globalShortcut = electron.globalShortcut
-const remote = electron.remote
-const Menu = electron.Menu
-const MenuItem = electron.MenuItem
-
+const {app, BrowserWindow} = require('electron');
+const electron = require('electron');
+const path = require('path');
+const url = require('url');
+const dialog = electron.dialog;
+const globalShortcut = electron.globalShortcut;
+const remote = electron.remote;
+const Menu = electron.Menu;
+const MenuItem = electron.MenuItem;
 
 let win
 let rightClickPosition = null
@@ -28,24 +27,25 @@ app.on('browser-window-created', function (event, win) {
 })
 
 function createWindow () {
-  win = new BrowserWindow({width: 800, height: 600, frame: false})
+  win = new BrowserWindow({width: 400, height: 300, frame: false});
   win.setAlwaysOnTop(true);
   globalShortcut.register('CommandOrControl+I', function () {
     dialog.showMessageBox({
       type: 'info',
       message: 'App Details',
-      detail: 'Version: 4.0.0\nAuthors: Joshua Harper & William Condick',
+      detail: 'Version: 4.0.0\nAuthors: Joshua Harper & William Condick\nGithub: https://github.com/Mrmeguyme/timetable-clock/',
       buttons: ['OK']
-    })
-  })
+    });
+  });
+  
   win.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
     slashes: true
-  }))
+  }));
   win.on('closed', () => {
     win = null
-  })
+  });
 }
 
 app.on('ready', createWindow)
