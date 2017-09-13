@@ -1,7 +1,9 @@
+var kl=0
 function run(){
-var date = new Date();
-var day=0; //2 for Wednesday 5 for Early Finish
-var totalm=(date.getHours()*60*60)+(date.getMinutes()*60)+date.getSeconds();
+var date = new Date(); //2 for Wednesday 5 for Early Finish
+var offset=-30;
+var day=0;
+var totalm=(date.getHours()*60*60)+(date.getMinutes()*60)+date.getSeconds()-offset;
 var out=0;
 var xma=1;
 var a=[[8,15,8,15,"School Start",8,15],
@@ -21,7 +23,7 @@ var a=[[8,15,8,15,"School Start",8,15],
 [14,25,14,25,"Go to Period 6",13,50],
 [15,15,15,15,"Period 6",14,35],
 ];
-if (date.getDay()==3){day=2}
+if (date.getDay()==3){day=2}else if(kl==1){day=5}
 for(count = 0; count < a.length; count++){
 	xma=((a[count][0+day]*60*60)+(a[count][1+day]*60))-totalm;
 	if (xma>0){break}else{xma=0}}
@@ -35,4 +37,5 @@ if (minutes<10){minutes="0"+minutes};
 if (seconds<10){seconds="0"+seconds};
 document.getElementById("counterout").innerHTML = hours +":"+minutes+":"+seconds;
 }
+function early(){kl=1-kl;}
 setInterval(run,1000);
