@@ -11,7 +11,7 @@ If you wish for some reason to download a buggy version of the timetable clock, 
 
 * [NodeJS](https://nodejs.org/en/)
 
-* [Electron](https://electron.atom.io/)
+* [Electron](https://electron.atom.io/) (instlled from npm)
 
 #### NPM Packages
 
@@ -22,6 +22,8 @@ To install npm packages, you simply need to type the following command in consol
 here are the list of package names:
 
 * download
+
+* electron
 
 And that's it so far.
 
