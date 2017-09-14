@@ -30,7 +30,12 @@ app.on('browser-window-created', function (event, win) {
 
 //This function is executed when the window starts up
 function createWindow () {
-  win = new BrowserWindow({width: 400, height: 300, frame: false});
+  win = new BrowserWindow({
+	  width: 210,
+	  height: 68,
+	  frame: false,
+	  transparent: true
+  });
   win.setAlwaysOnTop(true);
   //This is a keyboard shortcut (Ctrl + I) which shows the info about the app.
   globalShortcut.register('CommandOrControl+I', function () {

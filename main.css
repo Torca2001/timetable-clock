@@ -1,3 +1,6 @@
 body {
-	font: 15px Trebuchet MS, sans-serif;
+	font: 8px Trebuchet MS, sans-serif;
+	color: white;
+	background-image: url("res/background.png");
+	background-repeat: none;
 }
