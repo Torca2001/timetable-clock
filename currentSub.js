@@ -26,8 +26,8 @@ function checkSubjects(week) {
 	var timetablePath = "/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/3";
 	console.log(timetableUrl);
 	//The destination for the timetable html file.
-	var saveDestination = "res/" + UserInfo + currentYear + "/";	
-	var saveDestination2 = "res/" + UserInfo + currentYear + "/index.html";
+	var saveDestination = "resources/" + UserInfo + currentYear + "/";	
+	var saveDestination2 = "resources/" + UserInfo + currentYear + "/index.html";
 	
 	//Checking if the directory for the html file exists.
 	//If it doesn't, it creates it.

@@ -1,5 +1,8 @@
 {
-  "name"    : "Timetable",
-  "version" : "4.0",
-  "main"    : "main.js"
+  "name": "Timetable",
+  "version": "4.0",
+  "main": "main.js",
+  "dependencies": {
+    "windows-shortcuts": "^0.1.6"
+  }
 }
