@@ -8,8 +8,8 @@ const download = require("download");
 /*
 This is the main function which:
 * Downloads the timetable html file
-* reads from it (in development)
 * Finds the day in the school timetable
+* Calls the function to read from the timetable
 */
 function checkSubjects(week) {
 	//Current Time
@@ -18,6 +18,7 @@ function checkSubjects(week) {
 	var currentMinute = date.getMinutes();
 	var currentDay = date.getDay();
 	var currentYear = date.getFullYear();
+	
 	//School Day On Timetable
 	var SchoolDay = schoolDay(week);
 	
@@ -25,6 +26,7 @@ function checkSubjects(week) {
 	var timetableUrl = "http://intranet.trinity.vic.edu.au/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/3";
 	var timetablePath = "/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/3";
 	console.log(timetableUrl);
+	
 	//The destination for the timetable html file.
 	var saveDestination = "resources/" + UserInfo + currentYear + "/";	
 	var saveDestination2 = "resources/" + UserInfo + currentYear + "/index.html";
@@ -39,14 +41,15 @@ function checkSubjects(week) {
 	
 	//Downloads the timetable html file, and is supposed to save contents to variable. However, at the moment it doesn't do this.
 	var content = downloadTimetable(content, timetableUrl, saveDestination, saveDestination2);
-	//The location of the html file after it is saved.
-	var openDestination = saveDestination + "/index.html";
 	
-	console.log(content);
-	//Regular Expression finding the subject names from the html.
-	var re = /\siu=<h1>.*Timetable.*-(.*)-.*Term.*classname">(.*)<\/span.*classname">(.*)<\/span.*classname">(.*)<\/span.*classname">(.*)<\/span.*classname">(.*)<\/span.*/
-	var classes = re.exec(content);
-	console.log('Classes: ' + classes);
+	openDestination = saveDestination2;
+	var classes = [];
+	
+	classes = readTable(openDestination);
+	personName = readName(classes);
+	
+	console.log(classes);
+	console.log(personName);
 	return classes;
 }
 
@@ -69,8 +72,6 @@ function downloadTimetable (content, timetableUrl, saveDestination, saveDestinat
 	].map(x => download(x, saveDestination))).then(() => {
     console.log('files downloaded!');
 	});
-	//Should return the content of the file, however it doesn't do this.
-	return content;
 }
 
 //This function finds the current school day on the timetable (1-10)
@@ -104,4 +105,64 @@ function schoolDay (week) {
 		}
 	}
 	return day;
+}
+
+function readTable (openDestination) {
+	var newd = "";
+	var theList = [];
+	var incrementCounter = 0;
+
+	// First I want to read the file
+	var text = fs.readFileSync(openDestination,'utf8');
+	var classes = text.search('Timetable - ') + 12;
+	var classes2 = text.search(" - Term ");
+
+	theList[120] = gather(); //set item 120 in list to the name fetched from the page
+
+	while (incrementCounter < 120){ //Loop get all periods 60 periods in total + 60 for location
+		var tl = 0;
+		var data = "";
+
+		var classes = text.search('sname">')+7; //find the beginning of class name, add offset
+		var classes2 = text.search(" \n    \\("); //find end
+
+		if (classes + 20 < classes2){
+			classes2 = classes+7;
+			tl = 1;
+		} //check whether it accidentally went to the next period for things like Chapel
+		
+		theList[incrementCounter] = gather(); //save period name to list
+
+		if (tl == 1){
+			classes = classes2;   //Check to set location to Null in cases like Chapel
+		} else {
+			classes = classes2 + 7; //reuse previous search add offset due to length of search
+			var classes2 = text.search("\\)"); //find end of location
+		}
+		
+		theList[incrementCounter + 1] = gather(); //save location to list
+		incrementCounter += 2; //add 2 to list to move on
+		classes2 += 1; //Very makes sure to move past previous items
+		var newd = ""; //clear variable
+
+		while (classes2 < text.length){
+			newd += text[classes2];
+			classes2 += 1;
+		} //recreate string to remove already fetched item
+		text = newd; //save it to repeat
+	}
+	return theList;
+}
+
+function gather () {
+	var data = ""; //fetch all items between two points and return it
+	while (classes<classes2){
+	data += text[classes];
+	classes += 1;
+	}
+	return data
+}
+
+function readName(list) {
+		return list[120];
 }

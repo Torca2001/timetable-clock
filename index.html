@@ -1,12 +1,25 @@
 <html>
 <head>
  <script src="curPeriod.js"></script>
+ <script src="currentSub.js"></script>
  <link rel="stylesheet" href="main.css">
+ <script>
+	var ThisWeek = 1;
+	var classes = [];
+	function switchWeek (week) {
+	if (week == 1) {
+		week = 2;
+	} else {
+		week = 1;
+	}
+}
+ </script>
 </head>
-<body style="-webkit-app-region: drag;-ms-overflow-style: scrollbar;" onLoad="run();">
+<body style="-webkit-app-region: drag; -ms-overflow-style: scrollbar;" onLoad="classes = checkSubjects(); run();">
 <div>
 <h1 style="color:#000000;-webkit-app-region: no-drag;" onclick="early();" id="counter">head</h1>
-<h1 style="" id="counterout">head</h1>
+<h1 style="float: left;" id="counterout">head</h1>
+<button onclick="switchWeek(ThisWeek);">Switch Week</button><div>Current Week: </div><div content="ThisWeek"></div>
 </div>
 </body>
 </html>
