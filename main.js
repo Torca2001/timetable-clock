@@ -41,7 +41,7 @@ function checkSubjects() {
 		    fs.mkdirSync(saveDestination);
 		 }
 	});
-	
+	if (fs.existsSync("resources/config.txt")==false){fs.writeFile("resources/config.txt","070",'utf8');};
 	//Downloads the timetable html file, and is supposed to save contents to variable. However, at the moment it doesn't do this.
 	
 	checkInternet(function(isConnected) {

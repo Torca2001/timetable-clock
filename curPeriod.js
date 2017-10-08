@@ -3,9 +3,6 @@ var classes="";
 var classes2="";
 var datl="";
 const fs = require("fs");
-var kl=0
-var dayoff=0;
-var SchoolDay = schoolDay();
 var SchoolTerm=schoolTerm();
 var date = new Date();
 var currentYear = date.getFullYear();
@@ -41,7 +38,13 @@ if (tableout=="failed"){
 	a[14][4]="Go to Period 6";
 	a[15][4]="Period 6";
 }
+var confag = fs.readFileSync("resources/config.txt",'utf8');
+var dayoff=confag[1];
+var kl=confag[0];
 function run(){
+var confag = fs.readFileSync("resources/config.txt",'utf8');
+var dayoff=confag[1];
+var kl=confag[0];
 var offset=-30;
 var date = new Date();
 var day=0; //2 for Wednesday 5 for Early Finish
@@ -68,8 +71,16 @@ document.getElementById("counterout").innerHTML = hours +":"+minutes+":"+seconds
 document.getElementById("days").innerHTML = "Day:"+schoolDay(dayoff);
 document.getElementById('counter').style.color = color;
 }
-function early(){kl=1-kl;run();}
-function daychg() {dayoff=7-dayoff;run();}
+function early(){kl=1-kl;
+var confag = fs.readFileSync("resources/config.txt",'utf8');
+fs.writeFile("resources/config.txt",kl+confag[1]+confag[2],'utf8');
+run();
+}
+function daychg() {dayoff=7-dayoff;
+var confag = fs.readFileSync("resources/config.txt",'utf8');
+fs.writeFile("resources/config.txt",confag[0]+dayoff+confag[2],'utf8');
+run();
+}
 
 function srtboot() {//this runs on boot of the html
 
