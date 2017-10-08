@@ -2,16 +2,14 @@
 const UserInfo = require("os").userInfo().username;
 const util = require("util");
 const http = require("http");
-const fs = require("fs");
 const download = require("download");
-
 /*
 This is the main function which:
 * Downloads the timetable html file
 * reads from it (in development)
 * Finds the day in the school timetable
 */
-function checkSubjects(week) {
+function checkSubjects() {
 	//Current Time
 	var date = new Date();
 	var currentHour = date.getHours();
@@ -19,15 +17,17 @@ function checkSubjects(week) {
 	var currentDay = date.getDay();
 	var currentYear = date.getFullYear();
 	//School Day On Timetable
-	var SchoolDay = schoolDay(week);
+	var SchoolDay = schoolDay(0);
+	var SchoolTerm=schoolTerm();
+	var content="";
 	
 	//Getting Timetable
-	var timetableUrl = "http://intranet.trinity.vic.edu.au/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/3";
-	var timetablePath = "/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/3";
+	var timetableUrl = "http://intranet.trinity.vic.edu.au/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/" + SchoolTerm;
+	var timetablePath = "/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/" + SchoolTerm;
 	console.log(timetableUrl);
 	//The destination for the timetable html file.
-	var saveDestination = "resources/" + UserInfo + currentYear + "/";	
-	var saveDestination2 = "resources/" + UserInfo + currentYear + "/index.html";
+	var saveDestination = "resources/" + UserInfo + currentYear + SchoolTerm + "/";	
+	var saveDestination2 = "resources/" + UserInfo + currentYear + SchoolTerm + "/index.html";
 	
 	//Checking if the directory for the html file exists.
 	//If it doesn't, it creates it.
@@ -38,70 +38,64 @@ function checkSubjects(week) {
 	});
 	
 	//Downloads the timetable html file, and is supposed to save contents to variable. However, at the moment it doesn't do this.
-	var content = downloadTimetable(content, timetableUrl, saveDestination, saveDestination2);
+	
+	checkInternet(function(isConnected) {
+	if (isConnected){
+		downloadTimetable(content, timetableUrl, saveDestination, saveDestination2);
+	} else {console.log("Not Connected to Internet");}
+	});
 	//The location of the html file after it is saved.
 	var openDestination = saveDestination + "/index.html";
-	
-	console.log(content);
-	//Regular Expression finding the subject names from the html.
-	var re = /\siu=<h1>.*Timetable.*-(.*)-.*Term.*classname">(.*)<\/span.*classname">(.*)<\/span.*classname">(.*)<\/span.*classname">(.*)<\/span.*classname">(.*)<\/span.*/
-	var classes = re.exec(content);
-	console.log('Classes: ' + classes);
-	return classes;
+}
+
+function checkInternet(cb){
+	require('dns').lookup('google.com',function(err) {
+		if (err && err.code == "ENOTFOUND") {
+		cb(false);	
+		} else {
+		cb(true);
+		}
+	})
 }
 
 //This is the function which actually downloads the files
 function downloadTimetable (content, timetableUrl, saveDestination, saveDestination2) {
-	
-	download(timetableUrl, saveDestination).then(() => {
-      console.log('Downloaded File.');
-	});
-	
-	download(timetableUrl).then(data => {
-    fs.writeFileSync(saveDestination2, data);
-	content = data;
-	});
- 
-	download(timetableUrl).pipe(fs.createWriteStream(saveDestination2));
- 
+	download(timetableUrl).pipe(fs.createWriteStream(saveDestination+"cur.html"));
 	Promise.all([
     timetableUrl
 	].map(x => download(x, saveDestination))).then(() => {
     console.log('files downloaded!');
+	text=fs.readFileSync(saveDestination+"cur.html",'utf8');
+	if (text.length>30){
+		fs.rename(saveDestination+"cur.html",saveDestination+"index.html",function(err){if (err){console.log(err);}});
+	}
 	});
+	
+	//console.log(download(timetableUrl,saveDestination2));
+	
+	
 	//Should return the content of the file, however it doesn't do this.
-	return content;
 }
 
 //This function finds the current school day on the timetable (1-10)
-function schoolDay (week) {
+function schoolDay (off) {
 	//Current Time
 	var date = new Date();
-	var currentHour = date.getHours();
-	var currentMinute = date.getMinutes();
-	var currentDay = date.getDay();
-	var currentYear = date.getFullYear();
-	var day = 0;
-	//Getting Day on Timetable
-	if (week == 1) {
-		if (currentDay < 6) {
-			day = currentDay;
-		}
-		else {
-			console.log('Not a school day.');
-			//If it isn't a school day, set the day variable to 99.
-			day = 99;
-		}
-	}
-	else {
-		if (currentDay < 6) {
-			day = currentDay + 5;
-		}
-		else {
-			console.log('Not a school day.');
-			//If it isn't a school day, set the day variable to 99.
-			day = 99;
-		}
-	}
-	return day;
+	var reference = '2017-8-28'; //reference date of a day 1
+	var reference = new Date(reference);
+	reference.setHours(0); //set the reference time to be at hour 0 as by defualt its at midday
+	var reference=(Math.ceil((date.getTime()- reference.getTime())/86400000)-off)%14; //comparing two dates in milliseconds, then dividing the milliseconds into days then rounding up and modulo by 14
+	if (reference==6||reference==7||reference==13){reference=0;}
+	if (reference>7){reference=date.getDay()+5}
+	return reference;
+}
+function schoolTerm () {
+	var date = new Date();
+	var reference = '2017-7-02'; //reference date of a day 1
+	var reference = new Date(reference);
+	reference.setHours(0); //set the reference time to be at hour 0 as by defualt its at midday
+	var reference=(Math.ceil(date.getTime()- reference.getTime())); //comparing the two dates
+	if (reference>0){reference=3;}
+	else {reference=1;}
+	return reference;
 }
