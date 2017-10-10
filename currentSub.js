@@ -80,6 +80,8 @@ function downloadTimetable (content, timetableUrl, saveDestination, saveDestinat
 //This function finds the current school day on the timetable (1-10)
 function schoolDay (off) {
 	//Current Time
+	var off=Number(off);
+	if (off>-1){}else{var off=0;}
 	var date = new Date();
 	var reference = '2017-8-28'; //reference date of a day 1
 	var reference = new Date(reference);
@@ -91,7 +93,7 @@ function schoolDay (off) {
 }
 function schoolTerm () {
 	var date = new Date();
-	var reference = '2017-7-02'; //reference date of a day 1
+	var reference = date.getFullYear()+'-7-02'; //reference date of a day 1
 	var reference = new Date(reference);
 	reference.setHours(0); //set the reference time to be at hour 0 as by defualt its at midday
 	var reference=(Math.ceil(date.getTime()- reference.getTime())); //comparing the two dates
