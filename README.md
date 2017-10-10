@@ -25,6 +25,8 @@ here are the list of package names:
 
 * electron
 
+* electron-positioner
+
 And that's it so far.
 
 ### How to install everything
