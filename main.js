@@ -136,7 +136,8 @@ function createWindow () {
 	  height: 68,
 	  frame: false,
 	  transparent: true,
-	  resizable: false
+	  resizable: false,
+	  skipTaskbar: true
   });
   win.setAlwaysOnTop(true);
   //This is a keyboard shortcut (Ctrl + I) which shows the info about the app.
