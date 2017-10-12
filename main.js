@@ -145,7 +145,7 @@ function createWindow () {
     dialog.showMessageBox({
       type: 'info',
       message: 'App Details',
-      detail: 'Version: 4.0.0\nAuthors: Joshua Harper & William Condick\nGithub: https://github.com/Mrmeguyme/timetable-clock/',
+      detail: 'Version: 4.2.0\nAuthors: Joshua Harper & William Condick\nGithub: https://github.com/Mrmeguyme/timetable-clock/',
       buttons: ['OK']
     });
   });
