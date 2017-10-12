@@ -71,6 +71,7 @@ if (seconds<10){seconds="0"+seconds};
 document.getElementById("counterout").innerHTML = hours +":"+minutes+":"+seconds;
 document.getElementById("days").innerHTML = "Day:"+schoolDay(dayoff);
 document.getElementById('counter').style.color = color;
+
 if (count+1<a.length){km=period(a[count+1][4]);document.getElementById('counter').title = km[0]+" "+km[1] ;}
 else {document.getElementById('counter').title = "";}
 }
