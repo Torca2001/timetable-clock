@@ -12,8 +12,8 @@ This is basically a clock which downloads your school timetable, and displays wh
 | [4.1.0](https://github.com/Mrmeguyme/timetable-clock/releases/tag/4.1) | [download](https://github.com/Mrmeguyme/timetable-clock/releases/download/4.1/timetable.clock.exe)      |    [download](https://github.com/Mrmeguyme/timetable-clock/archive/4.1.zip) |
 | [4.0](https://github.com/Mrmeguyme/timetable-clock/releases/tag/4.0)      | none | [download](https://github.com/Mrmeguyme/timetable-clock/releases/download/4.0/timetable.zip) |
 
-## Current Installation Guide
-If you wish for some reason to download a buggy version of the timetable clock, go ahead.
+## Current Source Code Installation Guide
+This guide is ONLY if you wish to download the source code.
 
 ### Dependencies
 
