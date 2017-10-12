@@ -13,6 +13,8 @@ const util = require("util");
 const http = require("http");
 const download = require("download");
 const fs = require("fs");
+const Positioner = require("electron-positioner");
+
 checkSubjects();
 function checkSubjects() {
 	//Current Time
@@ -123,6 +125,8 @@ app.on('browser-window-created', function (event, win) {
   win.webContents.on('context-menu', function (e, params) {
     menu.popup(win, params.x, params.y)
   })
+  let positioner = new Positioner(win);
+  positioner.move("bottomRight");
 })
 
 //This function is executed when the window starts up
@@ -132,7 +136,8 @@ function createWindow () {
 	  height: 68,
 	  frame: false,
 	  transparent: true,
-	  resizable: false
+	  resizable: false,
+	  skipTaskbar: true
   });
   win.setAlwaysOnTop(true);
   //This is a keyboard shortcut (Ctrl + I) which shows the info about the app.
@@ -140,7 +145,7 @@ function createWindow () {
     dialog.showMessageBox({
       type: 'info',
       message: 'App Details',
-      detail: 'Version: 4.0.0\nAuthors: Joshua Harper & William Condick\nGithub: https://github.com/Mrmeguyme/timetable-clock/',
+      detail: 'Version: 4.2.0\nAuthors: Joshua Harper & William Condick\nGithub: https://github.com/Mrmeguyme/timetable-clock/',
       buttons: ['OK']
     });
   });
