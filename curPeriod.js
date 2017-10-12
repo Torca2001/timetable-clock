@@ -6,6 +6,7 @@ const fs = require("fs");
 var SchoolTerm=schoolTerm();
 var date = new Date();
 var currentYear = date.getFullYear();
+const main = require('electron').remote.require('./main')
 var tableout=table("resources/" + UserInfo + currentYear + SchoolTerm + "/index.html")
 var a=[[8,15,8,15,"School Start",8,15],
 [8,45,8,25,"Form/House",8,45],
@@ -52,7 +53,7 @@ var totalm=(date.getHours()*60*60)+(date.getMinutes()*60)+date.getSeconds()-offs
 var out=0;
 var xma=1;
 var color="#ffffff";
-if (date.getDay()==3){day=2}else if(kl==1){day=5;color="#0000ff";}
+if (date.getDay()==3){day=2}else if(kl==1){day=5;color="#00ffff";}
 for(count = 0; count < a.length; count++){
 	xma=((a[count][0+day]*60*60)+(a[count][1+day]*60))-totalm;
 	if (xma>0){break}else{xma=0}}
@@ -70,6 +71,9 @@ if (seconds<10){seconds="0"+seconds};
 document.getElementById("counterout").innerHTML = hours +":"+minutes+":"+seconds;
 document.getElementById("days").innerHTML = "Day:"+schoolDay(dayoff);
 document.getElementById('counter').style.color = color;
+
+if (count+1<a.length){km=period(a[count+1][4]);document.getElementById('counter').title = km[0]+" "+km[1] ;}
+else {document.getElementById('counter').title = "";}
 }
 function early(){kl=1-kl;
 var confag = fs.readFileSync("resources/config.txt",'utf8');
