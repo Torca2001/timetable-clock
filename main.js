@@ -15,6 +15,7 @@ const download = require("download");
 const fs = require("fs");
 const Positioner = require("electron-positioner");
 
+//Downloads subjects, and works out day of school and term.
 checkSubjects();
 function checkSubjects() {
 	//Current Time
