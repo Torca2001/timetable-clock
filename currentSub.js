@@ -2,34 +2,32 @@
 const UserInfo = require("os").userInfo().username;
 const util = require("util");
 const http = require("http");
-const fs = require("fs");
 const download = require("download");
-
 /*
 This is the main function which:
 * Downloads the timetable html file
+* reads from it (in development)
 * Finds the day in the school timetable
-* Calls the function to read from the timetable
 */
-function checkSubjects(week) {
+function checkSubjects() {
 	//Current Time
 	var date = new Date();
 	var currentHour = date.getHours();
 	var currentMinute = date.getMinutes();
 	var currentDay = date.getDay();
 	var currentYear = date.getFullYear();
-	
 	//School Day On Timetable
-	var SchoolDay = schoolDay(week);
+	var SchoolDay = schoolDay(0);
+	var SchoolTerm=schoolTerm();
+	var content="";
 	
 	//Getting Timetable
-	var timetableUrl = "http://intranet.trinity.vic.edu.au/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/3";
-	var timetablePath = "/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/3";
+	var timetableUrl = "http://intranet.trinity.vic.edu.au/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/" + SchoolTerm;
+	var timetablePath = "/intranet_aux_anon/timetable/student/" + UserInfo + "/" + currentYear + "/" + SchoolTerm;
 	console.log(timetableUrl);
-	
 	//The destination for the timetable html file.
-	var saveDestination = "resources/" + UserInfo + currentYear + "/";	
-	var saveDestination2 = "resources/" + UserInfo + currentYear + "/index.html";
+	var saveDestination = "resources/" + UserInfo + currentYear + SchoolTerm + "/";	
+	var saveDestination2 = "resources/" + UserInfo + currentYear + SchoolTerm + "/index.html";
 	
 	//Checking if the directory for the html file exists.
 	//If it doesn't, it creates it.
@@ -40,129 +38,66 @@ function checkSubjects(week) {
 	});
 	
 	//Downloads the timetable html file, and is supposed to save contents to variable. However, at the moment it doesn't do this.
-	var content = downloadTimetable(content, timetableUrl, saveDestination, saveDestination2);
 	
-	openDestination = saveDestination2;
-	var classes = [];
-	
-	classes = readTable(openDestination);
-	personName = readName(classes);
-	
-	console.log(classes);
-	console.log(personName);
-	return classes;
+	checkInternet(function(isConnected) {
+	if (isConnected){
+		downloadTimetable(content, timetableUrl, saveDestination, saveDestination2);
+	} else {console.log("Not Connected to Internet");}
+	});
+	//The location of the html file after it is saved.
+	var openDestination = saveDestination + "/index.html";
+}
+
+function checkInternet(cb){
+	require('dns').lookup('google.com',function(err) {
+		if (err && err.code == "ENOTFOUND") {
+		cb(false);	
+		} else {
+		cb(true);
+		}
+	})
 }
 
 //This is the function which actually downloads the files
 function downloadTimetable (content, timetableUrl, saveDestination, saveDestination2) {
-	
-	download(timetableUrl, saveDestination).then(() => {
-      console.log('Downloaded File.');
-	});
-	
-	download(timetableUrl).then(data => {
-    fs.writeFileSync(saveDestination2, data);
-	content = data;
-	});
- 
-	download(timetableUrl).pipe(fs.createWriteStream(saveDestination2));
- 
+	download(timetableUrl).pipe(fs.createWriteStream(saveDestination+"cur.html"));
 	Promise.all([
     timetableUrl
 	].map(x => download(x, saveDestination))).then(() => {
     console.log('files downloaded!');
+	text=fs.readFileSync(saveDestination+"cur.html",'utf8');
+	if (text.length>30){
+		fs.rename(saveDestination+"cur.html",saveDestination+"index.html",function(err){if (err){console.log(err);}});
+	}
 	});
+	
+	//console.log(download(timetableUrl,saveDestination2));
+	
+	
+	//Should return the content of the file, however it doesn't do this.
 }
 
 //This function finds the current school day on the timetable (1-10)
-function schoolDay (week) {
+function schoolDay (off) {
 	//Current Time
+	var off=Number(off);
+	if (off>-1){}else{var off=0;}
 	var date = new Date();
-	var currentHour = date.getHours();
-	var currentMinute = date.getMinutes();
-	var currentDay = date.getDay();
-	var currentYear = date.getFullYear();
-	var day = 0;
-	//Getting Day on Timetable
-	if (week == 1) {
-		if (currentDay < 6) {
-			day = currentDay;
-		}
-		else {
-			console.log('Not a school day.');
-			//If it isn't a school day, set the day variable to 99.
-			day = 99;
-		}
-	}
-	else {
-		if (currentDay < 6) {
-			day = currentDay + 5;
-		}
-		else {
-			console.log('Not a school day.');
-			//If it isn't a school day, set the day variable to 99.
-			day = 99;
-		}
-	}
-	return day;
+	var reference = '2017-8-28'; //reference date of a day 1
+	var reference = new Date(reference);
+	reference.setHours(0); //set the reference time to be at hour 0 as by defualt its at midday
+	var reference=(Math.ceil((date.getTime()- reference.getTime())/86400000)-off)%14; //comparing two dates in milliseconds, then dividing the milliseconds into days then rounding up and modulo by 14
+	if (reference==6||reference==7||reference==13){reference=0;}
+	if (reference>7){reference=date.getDay()+5}
+	return reference;
 }
-
-function readTable (openDestination) {
-	var newd = "";
-	var theList = [];
-	var incrementCounter = 0;
-
-	// First I want to read the file
-	var text = fs.readFileSync(openDestination,'utf8');
-	var classes = text.search('Timetable - ') + 12;
-	var classes2 = text.search(" - Term ");
-
-	theList[120] = gather(); //set item 120 in list to the name fetched from the page
-
-	while (incrementCounter < 120){ //Loop get all periods 60 periods in total + 60 for location
-		var tl = 0;
-		var data = "";
-
-		var classes = text.search('sname">')+7; //find the beginning of class name, add offset
-		var classes2 = text.search(" \n    \\("); //find end
-
-		if (classes + 20 < classes2){
-			classes2 = classes+7;
-			tl = 1;
-		} //check whether it accidentally went to the next period for things like Chapel
-		
-		theList[incrementCounter] = gather(); //save period name to list
-
-		if (tl == 1){
-			classes = classes2;   //Check to set location to Null in cases like Chapel
-		} else {
-			classes = classes2 + 7; //reuse previous search add offset due to length of search
-			var classes2 = text.search("\\)"); //find end of location
-		}
-		
-		theList[incrementCounter + 1] = gather(); //save location to list
-		incrementCounter += 2; //add 2 to list to move on
-		classes2 += 1; //Very makes sure to move past previous items
-		var newd = ""; //clear variable
-
-		while (classes2 < text.length){
-			newd += text[classes2];
-			classes2 += 1;
-		} //recreate string to remove already fetched item
-		text = newd; //save it to repeat
-	}
-	return theList;
-}
-
-function gather () {
-	var data = ""; //fetch all items between two points and return it
-	while (classes<classes2){
-	data += text[classes];
-	classes += 1;
-	}
-	return data
-}
-
-function readName(list) {
-		return list[120];
+function schoolTerm () {
+	var date = new Date();
+	var reference = date.getFullYear()+'-7-02'; //reference date of a day 1
+	var reference = new Date(reference);
+	reference.setHours(0); //set the reference time to be at hour 0 as by defualt its at midday
+	var reference=(Math.ceil(date.getTime()- reference.getTime())); //comparing the two dates
+	if (reference>0){reference=3;}
+	else {reference=1;}
+	return reference;
 }

@@ -1,25 +1,15 @@
 <html>
 <head>
- <script src="curPeriod.js"></script>
  <script src="currentSub.js"></script>
+ <script src="curPeriod.js"></script>
  <link rel="stylesheet" href="main.css">
- <script>
-	var ThisWeek = 1;
-	var classes = [];
-	function switchWeek (week) {
-	if (week == 1) {
-		week = 2;
-	} else {
-		week = 1;
-	}
-}
- </script>
 </head>
-<body style="-webkit-app-region: drag; -ms-overflow-style: scrollbar;" onLoad="classes = checkSubjects(); run();">
+<body style="-webkit-app-region: drag;-ms-overflow-style: scrollbar;" onLoad="run();srtboot();">
 <div>
-<h1 style="color:#000000;-webkit-app-region: no-drag;" onclick="early();" id="counter">head</h1>
-<h1 style="float: left;" id="counterout">head</h1>
-<button onclick="switchWeek(ThisWeek);">Switch Week</button><div>Current Week: </div><div content="ThisWeek"></div>
+<h1 style="color:#ffffff;-webkit-app-region: no-drag;display:inline-block; width:120px;margin-right:0px;" onclick="early();" id="counter">head</h1>
+<h1 style="width:50px;height:18.4px;float:right;text-align: right;margin-left:0px;margin-right:4px;" id="locate">LOC</h1>
+<h1 style="margin-bottom:0;margin-top:-10px;display:inline-block;" id="counterout">head</h1>
+<h1 style="margin-bottom:0;float:right;margin-top:-7;text-align: right;margin-left:2px;margin-right:4px;-webkit-app-region: no-drag;-ms-overflow-style: scrollbar;" onclick="daychg();" id="days">Da</h1>
 </div>
 </body>
 </html>
