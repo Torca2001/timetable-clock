@@ -130,7 +130,8 @@ app.on('browser-window-created', function (event, win) {
   positioner.move("bottomRight");
 })
 
-//This function is executed when the window starts up
+//This function is executed when the window starts up.
+//It creates the window from which the information is displayed
 function createWindow () {
   win = new BrowserWindow({
 	  width: 210,
@@ -138,6 +139,7 @@ function createWindow () {
 	  frame: false,
 	  transparent: true,
 	  resizable: false,
+	  //Stops the program from appearing on the taskbar.
 	  skipTaskbar: true
   });
   win.setAlwaysOnTop(true);
