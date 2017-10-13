@@ -1,0 +1,6 @@
+{
+  "name": "Timetable Clock Settings",
+  "version": "1.0",
+  "main": "settings.js",
+  "dependencies": {}
+}
