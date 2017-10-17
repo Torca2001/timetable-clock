@@ -120,14 +120,19 @@ const menuItem = new MenuItem({
     win.close()
   }
 })
-menu.append(menuItem)
+const menuItem2 = new MenuItem({
+  label: 'Settings',
+  click: () => {
+	createSettingsWindow()
+  }
+})
 
+menu.append(menuItem2);
+menu.append(menuItem);
 app.on('browser-window-created', function (event, win) {
   win.webContents.on('context-menu', function (e, params) {
     menu.popup(win, params.x, params.y)
   })
-  let positioner = new Positioner(win);
-  positioner.move("bottomRight");
 })
 
 //This function is executed when the window starts up.
@@ -162,6 +167,31 @@ function createWindow () {
   win.on('closed', () => {
     win = null
   });
+  let positioner = new Positioner(win);
+  positioner.move("bottomRight");
+}
+
+function createSettingsWindow () {
+  settingsWin = new BrowserWindow({
+	  width: 640,
+	  height: 480,
+	  frame: true,
+	  transparent: true,
+	  resizable: false,
+	  //Stops the program from appearing on the taskbar.
+	  skipTaskbar: true
+  });
+  settingsWin.setAlwaysOnTop(true);
+  
+  //This opens up the webpage or the actual application itself within the window.
+  settingsWin.loadURL(url.format({
+    pathname: path.join(__dirname, 'settings/index.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+  settingsWin.on('closed', () => {
+    settingsWin = null
+  });
 }
 
 app.on('ready', createWindow)
@@ -183,3 +213,4 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
