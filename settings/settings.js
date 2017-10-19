@@ -9,4 +9,3 @@ function saveOptions () {
 	loc = document.getElementById("locopt").innerHTML;
 	
 }
-

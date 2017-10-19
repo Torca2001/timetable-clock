@@ -68,7 +68,7 @@ function checkInternet(cb){
 
 //This is the function which actually downloads the files
 function downloadTimetable (content, timetableUrl, saveDestination, saveDestination2) {
-	download(timetableUrl).pipe(fs.createWriteStream(saveDestination+"cur.html"));
+	download(timetableUrl).pipe(fs.createWriteStream(saveDestination + "cur.html"));
 	Promise.all([
     timetableUrl
 	].map(x => download(x, saveDestination))).then(() => {
@@ -133,6 +133,8 @@ app.on('browser-window-created', function (event, win) {
   win.webContents.on('context-menu', function (e, params) {
     menu.popup(win, params.x, params.y)
   })
+  let positioner = new Positioner(win);
+  positioner.move("bottomRight");
 })
 
 //This function is executed when the window starts up.
@@ -167,8 +169,6 @@ function createWindow () {
   win.on('closed', () => {
     win = null
   });
-  let positioner = new Positioner(win);
-  positioner.move("bottomRight");
 }
 
 function createSettingsWindow () {
@@ -194,7 +194,9 @@ function createSettingsWindow () {
   });
 }
 
-app.on('ready', createWindow)
+app.on('ready', function () {
+	createWindow();
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -205,7 +207,7 @@ app.on('window-all-closed', () => {
 
 //This stops the keyboard shortcuts from running while the program isn't running.
 app.on('will-quit', function () {
-  globalShortcut.unregisterAll()
+  globalShortcut.unregisterAll();
 })
 
 app.on('activate', () => {
@@ -213,4 +215,3 @@ app.on('activate', () => {
     createWindow()
   }
 })
-

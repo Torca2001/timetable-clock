@@ -1,5 +1,3 @@
-const remote = require('electron').remote;
-
 function createSettingsWindow () {
   settingsWin = new BrowserWindow({
 	  width: 640,
@@ -20,8 +18,5 @@ function createSettingsWindow () {
   }));
   settingsWin.on('closed', () => {
     settingsWin = null
-});
-
-function checkForSettings () {
-var something = remote.getGlobal('windowLocation');  
+  });
 }
