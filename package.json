@@ -1,10 +1,44 @@
 {
-  "name": "Timetable",
-  "version": "4.0",
-  "main": "main.js",
-  "dependencies": {
+  "name": "timetable-clock",
+  "version": "4.2.0",
+  "license": "MIT",
+  "description": "A timetable clock for your classes",
+  "author": "Josh Harper",
+  "main": "./main.js",
+  "scripts": {
+    "postinstall": "install-app-deps",
+    "start": "npm install && electron ./app",
+    "pack": "build --dir",
+    "dist": "build"
+  },
+  "build": {
+    "appId": "com.github.mrmeguyme.timetable-clock",
+    "publish": {
+      "provider": "github",
+      "owner": "mrmeguyme",
+      "repo": "timetable-clock"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico",
+      "publish": [
+        "github"
+      ]
+    }
+  },
+  "devDependencies": {
     "download": "^6.2.5",
+    "electron": "latest",
+    "electron-builder": "^19.37.2",
     "electron-positioner": "^3.0.0",
     "windows-shortcuts": "^0.1.6"
+  },
+  "dependencies": {
+    "download": "latest",
+    "electron-positioner": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mrmeguyme/timetable-clock.git"
   }
 }

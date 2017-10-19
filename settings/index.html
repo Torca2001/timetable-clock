@@ -1,5 +1,6 @@
 <html>
 <head>
+<<<<<<< HEAD
  <script src="content.js"></script>
  <link rel="stylesheet" href="main.css">
 </head>
@@ -9,6 +10,26 @@
 <div>Set Location to topRight </div>
 <div style="background-color: green;" onclick="setLoc('topRight');">CLICK HERE</div>
 <div id="windowlocation">head</div>
+=======
+ <script src="settings.js"></script>
+ <link rel="stylesheet" href="main.css">
+</head>
+<body>
+<div>
+<h1>Settings</h1>
+<div class="dropdown" style="float: left;">
+  <span>Location of Window</span>
+  <div class="dropdown-content">
+    <a onClick="setLoc('topLeft');" href="#">Top Left</a><br>
+	<a onClick="setLoc('topRight');" href="#">Top Right</a><br>
+	<a onClick="setLoc('bottomLeft');" href="#">Bottom Left</a><br>
+	<a onClick="setLoc('bottomRight');" href="#">Bottom Right</a>
+  </div>
+</div>
+<div style="float: left; margin-left: 12px;">Current Option: </div>
+<div id="locopt" style="float: left; margin-left: 6px;">Bottom Right</div>
+<br><br><button onClick="saveOptions();">Save Options</button>
+>>>>>>> master
 </div>
 </body>
 </html>
