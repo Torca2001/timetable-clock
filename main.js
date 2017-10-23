@@ -14,6 +14,13 @@ const http = require("http");
 const download = require("download");
 const fs = require("fs");
 const Positioner = require("electron-positioner");
+global.sharedObject = {
+	tablev: "",
+	asl: "",
+	dayof:"",
+	early:"",
+	currnpd:""
+};
 
 //Downloads subjects, and works out day of school and term.
 checkSubjects();
@@ -24,8 +31,6 @@ function checkSubjects() {
 	var currentMinute = date.getMinutes();
 	var currentDay = date.getDay();
 	var currentYear = date.getFullYear();
-	//School Day On Timetable
-	var SchoolDay = schoolDay(0);
 	var SchoolTerm=schoolTerm();
 	var content="";
 	
@@ -86,20 +91,9 @@ function downloadTimetable (content, timetableUrl, saveDestination, saveDestinat
 }
 
 //This function finds the current school day on the timetable (1-10)
-function schoolDay (off) {
-	//Current Time
-	var date = new Date();
-	var reference = '2017-8-28'; //reference date of a day 1
-	var reference = new Date(reference);
-	reference.setHours(0); //set the reference time to be at hour 0 as by defualt its at midday
-	var reference=(Math.ceil((date.getTime()- reference.getTime())/86400000)-off)%14; //comparing two dates in milliseconds, then dividing the milliseconds into days then rounding up and modulo by 14
-	if (reference==6||reference==7||reference==13){reference=0;}
-	if (reference>7){reference=date.getDay()+5}
-	return reference;
-}
 function schoolTerm () {
 	var date = new Date();
-	var reference = '2017-7-02'; //reference date of a day 1
+	var reference = date.getFullYear()+'-7-02'; //reference date of a day 1
 	var reference = new Date(reference);
 	reference.setHours(0); //set the reference time to be at hour 0 as by defualt its at midday
 	var reference=(Math.ceil(date.getTime()- reference.getTime())); //comparing the two dates
@@ -141,7 +135,7 @@ app.on('browser-window-created', function (event, win) {
 //It creates the window from which the information is displayed
 function createWindow () {
   win = new BrowserWindow({
-	  width: 210,
+	  width: 205,
 	  height: 68,
 	  frame: false,
 	  transparent: true,
@@ -150,14 +144,18 @@ function createWindow () {
 	  skipTaskbar: true
   });
   win.setAlwaysOnTop(true);
-  //This is a keyboard shortcut (Ctrl + I) which shows the info about the app.
-  globalShortcut.register('CommandOrControl+I', function () {
+  //This is a keyboard shortcut (Ctrl + I + L ) which shows the info about the app.
+  globalShortcut.register('CommandOrControl+Alt+O', function () {
     dialog.showMessageBox({
       type: 'info',
       message: 'App Details',
       detail: 'Version: 4.2.0\nAuthors: Joshua Harper & William Condick\nGithub: https://github.com/Mrmeguyme/timetable-clock/',
       buttons: ['OK']
     });
+  });
+   globalShortcut.register('CommandOrControl+Alt+K', function () {
+		if (win.isVisible()==true){win.hide();}
+		else{win.show();}
   });
   
   //This opens up the webpage or the actual application itself within the window.

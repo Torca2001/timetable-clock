@@ -1,9 +1,9 @@
+
 {
   "name": "timetable-clock",
   "version": "4.2.0",
-  "license": "MIT",
   "description": "A timetable clock for your classes",
-  "author": "Josh Harper",
+  "author": "Josh Harper & William Condick",
   "main": "./main.js",
   "scripts": {
     "postinstall": "install-app-deps",
