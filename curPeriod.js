@@ -4,7 +4,9 @@ var classes2="";
 var datl="";
 const fs = require("fs");
 var SchoolTerm=schoolTerm();
+const remote = require('electron').remote;
 var date = new Date();
+var hine =0;
 var currentYear = date.getFullYear();
 const main = require('electron').remote.require('./main')
 var tableout=table("resources/" + UserInfo + currentYear + SchoolTerm + "/index.html")
@@ -39,14 +41,71 @@ if (tableout=="failed"){
 	a[14][4]="Go to Period 6";
 	a[15][4]="Period 6";
 }
+remote.getGlobal('sharedObject').tablev=tableout;
+remote.getGlobal('sharedObject').asl=a;
 var confag = fs.readFileSync("resources/config.txt",'utf8');
 var dayoff=confag[1];
 var kl=confag[0];
+const BrowserWindow = remote.BrowserWindow;
+var Positioner = require("electron-positioner");
+var win = new BrowserWindow({ width: 205, 
+height: 340,
+frame: false,
+transparent: true,
+resizable: true,
+skipTaskbar: true					
+});
+var positioner = new Positioner(win)
+win.webContents.on('did-finish-load', ()=>{
+	win.hide();
+   win.blur();
+ });
+win.setAlwaysOnTop(true);
+win.loadURL("C:/Users/618262/Desktop/Gitprojects/new/timetable-clock/table.html");
+positioner.move('bottomRight');
+win.setSize(205, 280);
+
+function relodwin(){
+win = new BrowserWindow({ width: 205, 
+height: 340,
+frame: false,
+transparent: true,
+resizable: true,
+skipTaskbar: true					
+});
+positioner = new Positioner(win)
+win.webContents.on('did-finish-load', ()=>{
+	win.show();
+   win.blur();
+ });
+win.setAlwaysOnTop(true);
+win.loadURL("C:/Users/618262/Desktop/Gitprojects/new/timetable-clock/table.html");
+positioner.move('bottomRight');
+win.setSize(205, 280);
+}
+function rununload(){
+	win.close();
+	
+	
+}
+function openses() {
+	hine=1-hine;
+	try {
+		win.isEnabled()
+	}
+	catch(err){
+		console.log("open back up");
+		relodwin();
+	}
+	if (hine==1){win.show();}
+	else{win.hide();}
+}
 function run(){
 var confag = fs.readFileSync("resources/config.txt",'utf8');
 var dayoff=confag[1];
+remote.getGlobal('sharedObject').dayof=confag[1];
 var kl=confag[0];
-var offset=-30;
+var offset=-60;
 var date = new Date();
 var day=0; //2 for Wednesday 5 for Early Finish
 var totalm=(date.getHours()*60*60)+(date.getMinutes()*60)+date.getSeconds()-offset;
@@ -58,6 +117,7 @@ for(count = 0; count < a.length; count++){
 	xma=((a[count][0+day]*60*60)+(a[count][1+day]*60))-totalm;
 	if (xma>0){break}else{xma=0}}
 if (count==a.length){out="End"}else{out=a[count][4]}
+remote.getGlobal('sharedObject').currnpd=count;
 if (date.getDay()==6||date.getDay()==0){out="Weekend";xma=0;}
 out = period(out);
 document.getElementById("counter").innerHTML = out[0];
@@ -69,9 +129,8 @@ if (hours<10){hours="0"+hours};
 if (minutes<10){minutes="0"+minutes};
 if (seconds<10){seconds="0"+seconds};
 document.getElementById("counterout").innerHTML = hours +":"+minutes+":"+seconds;
-document.getElementById("days").innerHTML = "Day:"+schoolDay(dayoff);
+document.getElementById("days").innerHTML = "Day "+schoolDay(dayoff);
 document.getElementById('counter').style.color = color;
-
 if (count+1<a.length){km=period(a[count+1][4]);document.getElementById('counter').title = km[0]+" "+km[1] ;}
 else {document.getElementById('counter').title = "";}
 }
@@ -86,8 +145,8 @@ fs.writeFile("resources/config.txt",confag[0]+dayoff+confag[2],'utf8');
 run();
 }
 
-function srtboot() {//this runs on boot of the html
 
+function srtboot() {//this runs on boot of the html
 	
 }
 

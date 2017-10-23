@@ -14,7 +14,15 @@ const http = require("http");
 const download = require("download");
 const fs = require("fs");
 const Positioner = require("electron-positioner");
+global.sharedObject = {
+	tablev: "",
+	asl: "",
+	dayof:"",
+	early:"",
+	currnpd:""
+};
 
+//Downloads subjects, and works out day of school and term.
 checkSubjects();
 function checkSubjects() {
 	//Current Time
@@ -23,8 +31,6 @@ function checkSubjects() {
 	var currentMinute = date.getMinutes();
 	var currentDay = date.getDay();
 	var currentYear = date.getFullYear();
-	//School Day On Timetable
-	var SchoolDay = schoolDay(0);
 	var SchoolTerm=schoolTerm();
 	var content="";
 	
@@ -67,7 +73,7 @@ function checkInternet(cb){
 
 //This is the function which actually downloads the files
 function downloadTimetable (content, timetableUrl, saveDestination, saveDestination2) {
-	download(timetableUrl).pipe(fs.createWriteStream(saveDestination+"cur.html"));
+	download(timetableUrl).pipe(fs.createWriteStream(saveDestination + "cur.html"));
 	Promise.all([
     timetableUrl
 	].map(x => download(x, saveDestination))).then(() => {
@@ -85,20 +91,9 @@ function downloadTimetable (content, timetableUrl, saveDestination, saveDestinat
 }
 
 //This function finds the current school day on the timetable (1-10)
-function schoolDay (off) {
-	//Current Time
-	var date = new Date();
-	var reference = '2017-8-28'; //reference date of a day 1
-	var reference = new Date(reference);
-	reference.setHours(0); //set the reference time to be at hour 0 as by defualt its at midday
-	var reference=(Math.ceil((date.getTime()- reference.getTime())/86400000)-off)%14; //comparing two dates in milliseconds, then dividing the milliseconds into days then rounding up and modulo by 14
-	if (reference==6||reference==7||reference==13){reference=0;}
-	if (reference>7){reference=date.getDay()+5}
-	return reference;
-}
 function schoolTerm () {
 	var date = new Date();
-	var reference = '2017-7-02'; //reference date of a day 1
+	var reference = date.getFullYear()+'-7-02'; //reference date of a day 1
 	var reference = new Date(reference);
 	reference.setHours(0); //set the reference time to be at hour 0 as by defualt its at midday
 	var reference=(Math.ceil(date.getTime()- reference.getTime())); //comparing the two dates
@@ -119,8 +114,15 @@ const menuItem = new MenuItem({
     win.close()
   }
 })
-menu.append(menuItem)
+const menuItem2 = new MenuItem({
+  label: 'Settings',
+  click: () => {
+	createSettingsWindow()
+  }
+})
 
+menu.append(menuItem2);
+menu.append(menuItem);
 app.on('browser-window-created', function (event, win) {
   win.webContents.on('context-menu', function (e, params) {
     menu.popup(win, params.x, params.y)
@@ -129,25 +131,31 @@ app.on('browser-window-created', function (event, win) {
   positioner.move("bottomRight");
 })
 
-//This function is executed when the window starts up
+//This function is executed when the window starts up.
+//It creates the window from which the information is displayed
 function createWindow () {
   win = new BrowserWindow({
-	  width: 210,
+	  width: 205,
 	  height: 68,
 	  frame: false,
 	  transparent: true,
 	  resizable: false,
+	  //Stops the program from appearing on the taskbar.
 	  skipTaskbar: true
   });
   win.setAlwaysOnTop(true);
-  //This is a keyboard shortcut (Ctrl + I) which shows the info about the app.
-  globalShortcut.register('CommandOrControl+I', function () {
+  //This is a keyboard shortcut (Ctrl + I + L ) which shows the info about the app.
+  globalShortcut.register('CommandOrControl+Alt+O', function () {
     dialog.showMessageBox({
       type: 'info',
       message: 'App Details',
       detail: 'Version: 4.2.0\nAuthors: Joshua Harper & William Condick\nGithub: https://github.com/Mrmeguyme/timetable-clock/',
       buttons: ['OK']
     });
+  });
+   globalShortcut.register('CommandOrControl+Alt+K', function () {
+		if (win.isVisible()==true){win.hide();}
+		else{win.show();}
   });
   
   //This opens up the webpage or the actual application itself within the window.
@@ -161,7 +169,32 @@ function createWindow () {
   });
 }
 
-app.on('ready', createWindow)
+function createSettingsWindow () {
+  settingsWin = new BrowserWindow({
+	  width: 640,
+	  height: 480,
+	  frame: true,
+	  transparent: true,
+	  resizable: false,
+	  //Stops the program from appearing on the taskbar.
+	  skipTaskbar: true
+  });
+  settingsWin.setAlwaysOnTop(true);
+  
+  //This opens up the webpage or the actual application itself within the window.
+  settingsWin.loadURL(url.format({
+    pathname: path.join(__dirname, 'settings/index.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+  settingsWin.on('closed', () => {
+    settingsWin = null
+  });
+}
+
+app.on('ready', function () {
+	createWindow();
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -172,7 +205,7 @@ app.on('window-all-closed', () => {
 
 //This stops the keyboard shortcuts from running while the program isn't running.
 app.on('will-quit', function () {
-  globalShortcut.unregisterAll()
+  globalShortcut.unregisterAll();
 })
 
 app.on('activate', () => {
