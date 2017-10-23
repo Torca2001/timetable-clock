@@ -2,6 +2,7 @@ var tableout;
 var classes="";
 var classes2="";
 var datl="";
+const path = require('path');
 const fs = require("fs");
 var SchoolTerm=schoolTerm();
 const remote = require('electron').remote;
@@ -61,7 +62,7 @@ win.webContents.on('did-finish-load', ()=>{
    win.blur();
  });
 win.setAlwaysOnTop(true);
-win.loadURL("C:/Users/618262/Desktop/Gitprojects/new/timetable-clock/table.html");
+win.loadURL(path.join(__dirname, "table.html"));
 positioner.move('bottomRight');
 win.setSize(205, 280);
 
@@ -79,7 +80,7 @@ win.webContents.on('did-finish-load', ()=>{
    win.blur();
  });
 win.setAlwaysOnTop(true);
-win.loadURL("C:/Users/618262/Desktop/Gitprojects/new/timetable-clock/table.html");
+win.loadURL(path.join(__dirname, "table.html"));
 positioner.move('bottomRight');
 win.setSize(205, 280);
 }
