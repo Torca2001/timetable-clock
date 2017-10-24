@@ -120,7 +120,14 @@ const menuItem2 = new MenuItem({
 	createSettingsWindow()
   }
 })
+const menuItem3 = new MenuItem({
+	label: 'Fullscreen',
+	click: () => {
+		createBigWindow()
+	}
+})
 
+menu.append(menuItem3);
 menu.append(menuItem2);
 menu.append(menuItem);
 app.on('browser-window-created', function (event, win) {
@@ -165,6 +172,26 @@ function createWindow () {
     slashes: true
   }));
   win.on('closed', () => {
+    win = null
+  });
+}
+
+function createBigWindow () {
+	bigwin = new BrowserWindow({
+	  width: 1920,
+	  height: 1080,
+	  fullscreen: true
+  });
+  bigwin.setAlwaysOnTop(true);
+  globalShortcut.register('CommandOrControl+Alt+J', function () {
+		win = null;
+  });
+    bigwin.loadURL(url.format({
+    pathname: path.join(__dirname, 'big.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+  bigwin.on('closed', () => {
     win = null
   });
 }
