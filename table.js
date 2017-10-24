@@ -6,19 +6,19 @@ function run () {
 	var out=period(a[3][4]);
 	document.getElementById("P1").innerHTML =out[0];
 	document.getElementById("P1L").innerHTML =out[1];
-	var out=period(a[5][4]);
+	out=period(a[5][4]);
 	document.getElementById("P2").innerHTML =out[0];
 	document.getElementById("P2L").innerHTML =out[1];
-	var out=period(a[8][4]);
+	out=period(a[8][4]);
 	document.getElementById("P3").innerHTML =out[0];
 	document.getElementById("P3L").innerHTML =out[1];
-	var out=period(a[10][4]);
+	out=period(a[10][4]);
 	document.getElementById("P4").innerHTML =out[0];
 	document.getElementById("P4L").innerHTML =out[1];
-	var out=period(a[13][4]);
+	out=period(a[13][4]);
 	document.getElementById("P5").innerHTML =out[0];
 	document.getElementById("P5L").innerHTML =out[1];
-	var out=period(a[15][4]);
+	out=period(a[15][4]);
 	document.getElementById("P6").innerHTML =out[0];
 	document.getElementById("P6L").innerHTML =out[1];
 	kl=remote.getGlobal('sharedObject').currnpd;
@@ -30,19 +30,29 @@ function run () {
 	var P6D="#ffffff";
 	if (kl<5){
 		P1D="#00ffff";
-	}else if (kl<7) {
+	}else if (kl<6) {
 		P2D="#00ffff";
+		if (period(a[3][4])[0] == period(a[5][4])[0]){
+			P1D="#00ffff";
+		}
 	}
 	else if (kl<9) {
 		P3D="#00ffff";
 	}
 	else if (kl<11) {
 		P4D="#00ffff";
+		if (period(a[8][4])[0] == period(a[10][4])[0]){
+			P3D="#00ffff";
+		}
 	}
 	else if (kl<14) {
 		P5D="#00ffff";
 	}
-	else {P6D="#00ffff";}
+	else {P6D="#00ffff";
+		if (period(a[13][4])[0] == period(a[15][4])[0]){
+			P5D="#00ffff";
+		}
+	}
 	document.getElementById("P1").style.color=P1D;
 	document.getElementById("P2").style.color=P2D;
 	document.getElementById("P3").style.color=P3D;
