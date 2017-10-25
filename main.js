@@ -161,8 +161,14 @@ function createWindow () {
     });
   });
    globalShortcut.register('CommandOrControl+Alt+K', function () {
-		if (win.isVisible()==true){win.hide();}
-		else{win.show();}
+		if (win.isVisible()==true) {
+			win.hide();
+			win.SetAlwaysOnTop(false);
+		}
+		else {
+			win.show();
+			win.SetAlwaysOnTop(true);
+		}
   });
   
   //This opens up the webpage or the actual application itself within the window.
@@ -218,7 +224,6 @@ function createSettingsWindow () {
     settingsWin = null
   });
 }
-
 app.on('ready', function () {
 	createWindow();
 })
