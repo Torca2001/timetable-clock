@@ -14,6 +14,11 @@ const http = require("http");
 const download = require("download");
 const fs = require("fs");
 const Positioner = require("electron-positioner");
+const github = require('octonode');
+const shell = electron.shell;
+const downloadFile = require('download-file')
+var client = github.client();
+
 global.sharedObject = {
 	tablev: "",
 	asl: "",
@@ -21,6 +26,10 @@ global.sharedObject = {
 	early:"",
 	currnpd:""
 };
+
+var CURRENT_VERSION = "4.3.0";
+var version_url = "";
+var latest_version = "";
 
 //Downloads subjects, and works out day of school and term.
 checkSubjects();
@@ -49,13 +58,16 @@ function checkSubjects() {
 		    fs.mkdirSync(saveDestination);
 		 }
 	});
-	if (fs.existsSync("resources/config.txt")==false){fs.writeFile("resources/config.txt","070",'utf8');};
-	//Downloads the timetable html file, and is supposed to save contents to variable. However, at the moment it doesn't do this.
+	if (fs.existsSync("resources/config.txt")==false) {
+		fs.writeFile("resources/config.txt","070",'utf8');
+	}
 	
 	checkInternet(function(isConnected) {
 	if (isConnected){
 		downloadTimetable(content, timetableUrl, saveDestination, saveDestination2);
-	} else {console.log("Not Connected to Internet");}
+	} else {
+		console.log("Not Connected to Internet");
+	}
 	});
 	//The location of the html file after it is saved.
 	var openDestination = saveDestination + "/index.html";
@@ -74,20 +86,17 @@ function checkInternet(cb){
 //This is the function which actually downloads the files
 function downloadTimetable (content, timetableUrl, saveDestination, saveDestination2) {
 	download(timetableUrl).pipe(fs.createWriteStream(saveDestination + "cur.html"));
-	Promise.all([
-    timetableUrl
-	].map(x => download(x, saveDestination))).then(() => {
+	Promise.all([timetableUrl].map(x => download(x, saveDestination))).then(() => {
     console.log('files downloaded!');
 	text=fs.readFileSync(saveDestination+"cur.html",'utf8');
 	if (text.length>30){
-		fs.rename(saveDestination+"cur.html",saveDestination+"index.html",function(err){if (err){console.log(err);}});
+		fs.rename(saveDestination + "cur.html", saveDestination + "index.html", function(err) {
+			if (err) {
+				console.log(err);
+			}
+		});
 	}
-	});
-	
-	//console.log(download(timetableUrl,saveDestination2));
-	
-	
-	//Should return the content of the file, however it doesn't do this.
+	});	
 }
 
 //This function finds the current school day on the timetable (1-10)
@@ -96,7 +105,7 @@ function schoolTerm () {
 	var reference = date.getFullYear()+'-7-02'; //reference date of a day 1
 	var reference = new Date(reference);
 	reference.setHours(0); //set the reference time to be at hour 0 as by defualt its at midday
-	var reference=(Math.ceil(date.getTime()- reference.getTime())); //comparing the two dates
+	var reference=(Math.ceil(date.getTime() - reference.getTime())); //comparing the two dates
 	if (reference>0){reference=3;}
 	else {reference=1;}
 	return reference;
@@ -137,6 +146,81 @@ app.on('browser-window-created', function (event, win) {
   let positioner = new Positioner(win);
   positioner.move("bottomRight");
 })
+
+function checkForUpdates () {
+	var jsonContent = {};
+	//Gets the content of the releases page, and saves it to /resources/updatelog.txt
+	client.get('https://api.github.com/repos/mrmeguyme/timetable-clock/releases/latest', {}, function (err, status, body, headers) {	
+		jsonContent = body;
+		fs.stat("resources/updatelog.txt", function (err, stats) {
+			if (err) {
+				fs.mkdirSync("resources/updatelog.txt");
+			}
+		});
+		fs.writeFile("resources/updatelog.txt", JSON.stringify(jsonContent), 'utf8');
+		if (err) {
+			console.log(err);
+		}
+	});
+	var jsonString = fs.readFileSync("resources/updatelog.txt",'utf8');
+	loc1 = jsonString.search('"browser_download_url":"') + 30;
+	loc2 = jsonString.search('"}],"tarball_url"');
+	loc3 = jsonString.search('"browser_download_url":"') + 87;
+	loc4 = loc3 + 5;
+	
+	
+	latest_version = "";
+	version_url = "";
+	
+	while (loc3 < loc4) {
+		latest_version += jsonString[loc3];
+		loc3 += 1;
+	}
+	
+	while (loc1 < loc2) {
+		version_url +=  jsonString[loc1];
+		loc1 +=  1;
+	}
+	console.log("Latest Version URL:")
+	console.log(version_url);
+	
+	if (CURRENT_VERSION.charAt(0) < latest_version.charAt(0)) {
+		console.log('New Update');
+		runUpdate();
+	}
+	else if (CURRENT_VERSION.charAt(2) < latest_version.charAt(2)) {
+		console.log('New Update');
+		runUpdate();
+	}
+	else if (CURRENT_VERSION.charAt(4) < latest_version.charAt(4)) {
+		console.log('New Update');
+		runUpdate();
+	}
+	else {
+		console.log('up-to-date!')
+	}
+}
+
+function runUpdate () {
+	dialog.showMessageBox({
+		type: 'info',
+		message: 'Update Available',
+		detail: 'Do you wish to download?',
+		buttons: ['Yes', 'No']
+    }, function(response){
+		if (response == 0) {
+			//If update is requested
+			var fullUrl = "http:" + version_url;
+
+			var file = fs.createWriteStream("resources/time_table_clock.exe");
+			var request = http.get(fullUrl, function(response) {
+				response.pipe(file);
+				shell.openItem(path.join(__dirname, "resources/timetable_clock.exe"));
+				app.quit();
+			});
+		}
+	});
+}
 
 //This function is executed when the window starts up.
 //It creates the window from which the information is displayed
@@ -224,8 +308,10 @@ function createSettingsWindow () {
     settingsWin = null
   });
 }
+
 app.on('ready', function () {
 	createWindow();
+	checkForUpdates();
 })
 
 app.on('window-all-closed', () => {

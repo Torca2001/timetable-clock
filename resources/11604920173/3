@@ -1,0 +1,857 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>
+  Timetable - Josh Harper - Term 3, 2017
+</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<link type="text/css" href="http://intranet.trinity.vic.edu.au/intranet_aux_media/css/tgs.css" rel="stylesheet"></link>
+<link type="text/css" href="http://intranet.trinity.vic.edu.au/intranet_aux_media/css/rico.css" rel="stylesheet"></link>
+<link type="text/css" href="http://intranet.trinity.vic.edu.au/intranet_aux_media/css/calendar-win2k-cold-1.css" rel="stylesheet"></link>
+
+		<script type="text/javascript" src="http://intranet.trinity.vic.edu.au/intranet_aux_media/js/jquery-1.3.2.js"></script>
+<script type="text/javascript" src="http://intranet.trinity.vic.edu.au/intranet_aux_media/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="http://intranet.trinity.vic.edu.au/intranet_aux_media/js/calendar.js"></script>
+<script type="text/javascript" src="http://intranet.trinity.vic.edu.au/intranet_aux_media/js/calendar-en.js"></script>
+<script type="text/javascript" src="http://intranet.trinity.vic.edu.au/intranet_aux_media/js/calendar-setup.js"></script>
+
+		
+		
+
+    
+  <h1>Timetable - Josh Harper - Term 3, 2017</h1>
+
+	
+
+  <br />
+
+  
+    <table class="full_timetable">
+      <thead>
+        <tr>
+          <th>
+            
+              Week A
+            
+          </th>
+          
+            <th>
+              Day 1
+            </th>
+          
+            <th>
+              Day 2
+            </th>
+          
+            <th>
+              Day 3
+            </th>
+          
+            <th>
+              Day 4
+            </th>
+          
+            <th>
+              Day 5
+            </th>
+          
+        </tr>
+      </thead>
+      
+        <tr>
+          <th>
+            Period 1
+          </th>
+          
+            <td>
+  <span class="classname">09TFS1 
+    (STB3)
+  </span>
+  
+    <span class="staffname">IRL</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09E9B1 
+    (CE11)
+  </span>
+  
+    <span class="staffname">GMD</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09H9H6 
+    (S3)
+  </span>
+  
+    <span class="staffname">ASM</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09MEB1 
+    (S4)
+  </span>
+  
+    <span class="staffname">KMG</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09MEB1 
+    (S4)
+  </span>
+  
+    <span class="staffname">KMG</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+        <tr>
+          <th>
+            Period 2
+          </th>
+          
+            <td>
+  <span class="classname">09H9H6 
+    (S3)
+  </span>
+  
+    <span class="staffname">ASM</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09E9B1 
+    (CE11)
+  </span>
+  
+    <span class="staffname">GMD</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09H9H6 
+    (S3)
+  </span>
+  
+    <span class="staffname">ASM</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09MEB1 
+    (S4)
+  </span>
+  
+    <span class="staffname">KMG</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09TFS1 
+    (STB3)
+  </span>
+  
+    <span class="staffname">IRL</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+        <tr>
+          <th>
+            Period 3
+          </th>
+          
+            <td>
+  <span class="classname">09G9F2 
+    (M12)
+  </span>
+  
+    <span class="staffname">KLT</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09CBP1 
+    (CR11)
+  </span>
+  
+    <span class="staffname">STL</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09E9B1 
+    (CE11)
+  </span>
+  
+    <span class="staffname">GMD</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09CHE2 
+    (R12)
+  </span>
+  
+    <span class="staffname">JLC</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09ADP3 
+    (CY14)
+  </span>
+  
+    <span class="staffname">PAR</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+        <tr>
+          <th>
+            Period 4
+          </th>
+          
+            <td>
+  <span class="classname">09P9D1 
+    (G1)
+  </span>
+  
+    <span class="staffname">GZB</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09CBP1 
+    (CR11)
+  </span>
+  
+    <span class="staffname">STL</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09MEB1 
+    (S4)
+  </span>
+  
+    <span class="staffname">KMG</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09C9H2 
+    
+  </span>
+  
+    <span class="staffname">ADB</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09BCD5 
+    (W2)
+  </span>
+  
+    <span class="staffname">JJP</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+        <tr>
+          <th>
+            Period 5
+          </th>
+          
+            <td>
+  <span class="classname">09MEB1 
+    (S4)
+  </span>
+  
+    <span class="staffname">KMG</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09SOC3 
+    (ST1)
+  </span>
+  
+    <span class="staffname">MOR</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09G9F2 
+    (M12)
+  </span>
+  
+    <span class="staffname">KLT</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09BCD5 
+    (W2)
+  </span>
+  
+    <span class="staffname">JJP</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09SOC3 
+    (ST1)
+  </span>
+  
+    <span class="staffname">MOR</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+        <tr>
+          <th>
+            Period 6
+          </th>
+          
+            <td>
+  <span class="classname">09F9M2 
+    (R12)
+  </span>
+  
+    <span class="staffname">SZM</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09ADP3 
+    (CY14)
+  </span>
+  
+    <span class="staffname">PAR</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09G9F2 
+    (M12)
+  </span>
+  
+    <span class="staffname">KLT</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09CBP1 
+    (CR11)
+  </span>
+  
+    <span class="staffname">STL</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09E9B1 
+    (CE11)
+  </span>
+  
+    <span class="staffname">GMD</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+    </table>
+
+    
+      <br /><br /> 
+    
+  
+    <table class="full_timetable">
+      <thead>
+        <tr>
+          <th>
+            
+              Week B
+            
+          </th>
+          
+            <th>
+              Day 6
+            </th>
+          
+            <th>
+              Day 7
+            </th>
+          
+            <th>
+              Day 8
+            </th>
+          
+            <th>
+              Day 9
+            </th>
+          
+            <th>
+              Day 10
+            </th>
+          
+        </tr>
+      </thead>
+      
+        <tr>
+          <th>
+            Period 1
+          </th>
+          
+            <td>
+  <span class="classname">09ADP3 
+    (CY14)
+  </span>
+  
+    <span class="staffname">PAR</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09BCD5 
+    (W2)
+  </span>
+  
+    <span class="staffname">JJP</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09TFS1 
+    (STB3)
+  </span>
+  
+    <span class="staffname">IRL</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09ADP3 
+    (CY14)
+  </span>
+  
+    <span class="staffname">PAR</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09SOC3 
+    (ST1)
+  </span>
+  
+    <span class="staffname">MOR</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+        <tr>
+          <th>
+            Period 2
+          </th>
+          
+            <td>
+  <span class="classname">09G9F2 
+    (M12)
+  </span>
+  
+    <span class="staffname">KLT</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09BCD5 
+    (W2)
+  </span>
+  
+    <span class="staffname">JJP</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09TFS1 
+    (STB3)
+  </span>
+  
+    <span class="staffname">IRL</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09ADP3 
+    (CY14)
+  </span>
+  
+    <span class="staffname">PAR</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09E9B1 
+    (CE11)
+  </span>
+  
+    <span class="staffname">GMD</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+        <tr>
+          <th>
+            Period 3
+          </th>
+          
+            <td>
+  <span class="classname">09TFS1 
+    (STB3)
+  </span>
+  
+    <span class="staffname">IRL</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09SOC3 
+    (ST1)
+  </span>
+  
+    <span class="staffname">MOR</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09MEB1 
+    (S4)
+  </span>
+  
+    <span class="staffname">KMG</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09CBP1 
+    (CR11)
+  </span>
+  
+    <span class="staffname">STL</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09BCD5 
+    (W2)
+  </span>
+  
+    <span class="staffname">JJP</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+        <tr>
+          <th>
+            Period 4
+          </th>
+          
+            <td>
+  <span class="classname">09E9B1 
+    (CE11)
+  </span>
+  
+    <span class="staffname">GMD</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09SOC3 
+    (ST1)
+  </span>
+  
+    <span class="staffname">MOR</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09MEB1 
+    (S4)
+  </span>
+  
+    <span class="staffname">KMG</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09H9H6 
+    (S3)
+  </span>
+  
+    <span class="staffname">ASM</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09CBP1 
+    (CR11)
+  </span>
+  
+    <span class="staffname">STL</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+        <tr>
+          <th>
+            Period 5
+          </th>
+          
+            <td>
+  <span class="classname">09MEB1 
+    (S4)
+  </span>
+  
+    <span class="staffname">KMG</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09E9B1 
+    (CE11)
+  </span>
+  
+    <span class="staffname">GMD</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09CHE2 
+    (R12)
+  </span>
+  
+    <span class="staffname">JLC</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09E9B1 
+    (CE11)
+  </span>
+  
+    <span class="staffname">GMD</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09F9M2 
+    (R12)
+  </span>
+  
+    <span class="staffname">SZM</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+        <tr>
+          <th>
+            Period 6
+          </th>
+          
+            <td>
+  <span class="classname">09H9H6 
+    (S3)
+  </span>
+  
+    <span class="staffname">ASM</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09MEB1 
+    (S4)
+  </span>
+  
+    <span class="staffname">KMG</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09G9F2 
+    (M12)
+  </span>
+  
+    <span class="staffname">KLT</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09E9B1 
+    (CE11)
+  </span>
+  
+    <span class="staffname">GMD</span>
+  
+
+
+</td>
+          
+            <td>
+  <span class="classname">09P9D9 
+    (G1)
+  </span>
+  
+    <span class="staffname">MFM</span>
+  
+
+
+</td>
+          
+        </tr>
+      
+    </table>
+
+    
+  
+
+</html>
+
+
