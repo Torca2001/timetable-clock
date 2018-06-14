@@ -227,11 +227,11 @@ namespace SplashScreen
                     seconds = (timeleft % 60).ToString();
                 }
                 g.DrawString(hours+":"+minutes+":"+seconds, new Font("Trebuchet MS", 18 *dx), brushc, 10, 40);
-                g.DrawString(Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].Room, new Font("Trebuchet MS", 18 * dx), brushc, 120, 40);
+                g.DrawString(Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)) ? Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].Room : "", new Font("Trebuchet MS", 18 * dx), brushc, 120, 40);
                 string label=temp[2];
-                if (temp[2].StartsWith("Period")||temp[2].StartsWith("Form"))
+                if (temp[2].StartsWith("Period")||temp[2].StartsWith("Form")&& Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
                     label = Program.timetableList[Program.curDay +""+ temp[2].Substring(temp[2].Length-1)].ClassDescription.Length >12? Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].ClassCode : Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].ClassDescription;
-                if (temp[2].StartsWith("Go to"))
+                if (temp[2].StartsWith("Go to")&& Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
                     label = "Go to "+Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length-1)].ClassCode;
                 g.DrawString(label, new Font("Trebuchet MS", 14*dx), brushc, 10, 2);
                 StringFormat stringFormat = new StringFormat();
@@ -306,6 +306,8 @@ namespace SplashScreen
 
         private void mouseClick(object sender, MouseEventArgs e)
         {
+            if (Expandedform.IsDisposed)
+                Expandedform = new Expanded();
             Expandedform.Show();
         }
 
@@ -436,6 +438,8 @@ namespace SplashScreen
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (settingsForm.IsDisposed)
+                settingsForm = new Settingsforms();
             settingsForm.Show();
         }
 
