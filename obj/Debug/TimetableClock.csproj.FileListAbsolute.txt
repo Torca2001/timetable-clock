@@ -1,0 +1,41 @@
+E:\Torca\Downloads\SplashScreen\TimetableClock\bin\Debug\SchoolManager.exe.config
+E:\Torca\Downloads\SplashScreen\TimetableClock\bin\Debug\SchoolManager.exe
+E:\Torca\Downloads\SplashScreen\TimetableClock\bin\Debug\SchoolManager.pdb
+E:\Torca\Downloads\SplashScreen\TimetableClock\bin\Debug\Newtonsoft.Json.xml
+E:\Torca\Downloads\SplashScreen\TimetableClock\obj\Debug\TimetableClock.csprojResolveAssemblyReference.cache
+E:\Torca\Downloads\SplashScreen\TimetableClock\obj\Debug\SchoolManager.Expanded.resources
+E:\Torca\Downloads\SplashScreen\TimetableClock\obj\Debug\SplashScreen.frmSplash.resources
+E:\Torca\Downloads\SplashScreen\TimetableClock\obj\Debug\SchoolManager.Properties.Resources.resources
+E:\Torca\Downloads\SplashScreen\TimetableClock\obj\Debug\SchoolManager.Settingsforms.resources
+E:\Torca\Downloads\SplashScreen\TimetableClock\obj\Debug\TimetableClock.csproj.GenerateResource.Cache
+E:\Torca\Downloads\SplashScreen\TimetableClock\obj\Debug\TimetableClock.csproj.CoreCompileInputs.cache
+E:\Torca\Downloads\SplashScreen\TimetableClock\obj\Debug\SchoolManager.exe
+E:\Torca\Downloads\SplashScreen\TimetableClock\obj\Debug\SchoolManager.pdb
+C:\Users\618262\Documents\School proj\timetable-clock\bin\Debug\SchoolManager.exe.config
+C:\Users\618262\Documents\School proj\timetable-clock\bin\Debug\SchoolManager.exe
+C:\Users\618262\Documents\School proj\timetable-clock\bin\Debug\SchoolManager.pdb
+C:\Users\618262\Documents\School proj\timetable-clock\bin\Debug\Newtonsoft.Json.xml
+C:\Users\618262\Documents\School proj\timetable-clock\obj\Debug\TimetableClock.csprojResolveAssemblyReference.cache
+C:\Users\618262\Documents\School proj\timetable-clock\obj\Debug\SchoolManager.Expanded.resources
+C:\Users\618262\Documents\School proj\timetable-clock\obj\Debug\SplashScreen.frmSplash.resources
+C:\Users\618262\Documents\School proj\timetable-clock\obj\Debug\SchoolManager.Properties.Resources.resources
+C:\Users\618262\Documents\School proj\timetable-clock\obj\Debug\SchoolManager.Settingsforms.resources
+C:\Users\618262\Documents\School proj\timetable-clock\obj\Debug\TimetableClock.csproj.GenerateResource.Cache
+C:\Users\618262\Documents\School proj\timetable-clock\obj\Debug\TimetableClock.csproj.CoreCompileInputs.cache
+C:\Users\618262\Documents\School proj\timetable-clock\obj\Debug\SchoolManager.exe
+C:\Users\618262\Documents\School proj\timetable-clock\obj\Debug\SchoolManager.pdb
+C:\Users\116049\Desktop\Coding\git\timetable-clock\bin\Debug\SchoolManager.exe.config
+C:\Users\116049\Desktop\Coding\git\timetable-clock\bin\Debug\SchoolManager.exe
+C:\Users\116049\Desktop\Coding\git\timetable-clock\bin\Debug\SchoolManager.pdb
+C:\Users\116049\Desktop\Coding\git\timetable-clock\bin\Debug\Newtonsoft.Json.dll
+C:\Users\116049\Desktop\Coding\git\timetable-clock\bin\Debug\Newtonsoft.Json.xml
+C:\Users\116049\Desktop\Coding\git\timetable-clock\obj\Debug\TimetableClock.csprojResolveAssemblyReference.cache
+C:\Users\116049\Desktop\Coding\git\timetable-clock\obj\Debug\SchoolManager.Expanded.resources
+C:\Users\116049\Desktop\Coding\git\timetable-clock\obj\Debug\SplashScreen.frmSplash.resources
+C:\Users\116049\Desktop\Coding\git\timetable-clock\obj\Debug\SchoolManager.Properties.Resources.resources
+C:\Users\116049\Desktop\Coding\git\timetable-clock\obj\Debug\SchoolManager.Settingsforms.resources
+C:\Users\116049\Desktop\Coding\git\timetable-clock\obj\Debug\TimetableClock.csproj.GenerateResource.cache
+C:\Users\116049\Desktop\Coding\git\timetable-clock\obj\Debug\TimetableClock.csproj.CoreCompileInputs.cache
+C:\Users\116049\Desktop\Coding\git\timetable-clock\obj\Debug\TimetableClock.csproj.CopyComplete
+C:\Users\116049\Desktop\Coding\git\timetable-clock\obj\Debug\SchoolManager.exe
+C:\Users\116049\Desktop\Coding\git\timetable-clock\obj\Debug\SchoolManager.pdb
