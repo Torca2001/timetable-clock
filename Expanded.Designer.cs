@@ -30,15 +30,18 @@
         {
             this.SuspendLayout();
             // 
-            // Form1
+            // Expanded
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(1184, 631);
             this.ControlBox = false;
-            this.Name = "Form1";
+            this.MaximumSize = new System.Drawing.Size(1200, 670);
+            this.MinimumSize = new System.Drawing.Size(1200, 670);
+            this.Name = "Expanded";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Expanded";
+            this.Activated += new System.EventHandler(this.Expanded_Activated);
             this.Deactivate += new System.EventHandler(this.Form1_Deactivate);
             this.ResumeLayout(false);
 

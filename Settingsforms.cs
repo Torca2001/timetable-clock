@@ -60,6 +60,8 @@ namespace SchoolManager
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
                 foreach (var V in timetableList)
                 {
+                    if (Program.timetableList.ContainsKey(V.DayNumber.ToString() + V.PeriodNumber))
+                        Program.timetableList.Remove(V.DayNumber.ToString() + V.PeriodNumber);
                     Program.timetableList.Add(V.DayNumber.ToString() + V.PeriodNumber, V);
                 }
                 web.Dispose();

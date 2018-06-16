@@ -23,8 +23,12 @@ namespace SplashScreen
         static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool GetWindowRect(IntPtr hWnd, out Rectangle lpRect);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern int GetWindowTextLength(HandleRef hWnd);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern int GetWindowText(HandleRef hWnd, StringBuilder lpString, int nMaxCount);
         Settingsforms settingsForm = new Settingsforms();
-        Expanded Expandedform = new Expanded();
+        Expanded Expandedform = null;
         public int counter = 255;
         public int dayo = 0;
         float dx;
@@ -49,6 +53,17 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51600", "51600", "49500", "Period 5" });
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
+            List<period> timetableListtemp = JsonConvert.DeserializeObject<List<period>>(File.ReadAllText(Environment.CurrentDirectory + "/Timetable.Json"));
+            using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Timetable.json"))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, timetableListtemp);
+            }
+            foreach (var V in timetableListtemp)
+            {
+                Program.timetableList.Add(V.DayNumber.ToString() + V.PeriodNumber, V);
+            }
+            Expandedform = new Expanded();
             InitializeComponent();
             notifyIcon1.ShowBalloonTip(100);
             this.MouseClick += mouseClick;
@@ -96,6 +111,8 @@ namespace SplashScreen
                 }
                 foreach (var V in timetableList)
                 {
+                    if (Program.timetableList.ContainsKey(V.DayNumber.ToString() + V.PeriodNumber))
+                        Program.timetableList.Remove(V.DayNumber.ToString() + V.PeriodNumber);
                     Program.timetableList.Add(V.DayNumber.ToString() + V.PeriodNumber, V);
                 }
                 web.Dispose();
@@ -129,9 +146,10 @@ namespace SplashScreen
         public List<string> currentcountdown()
         {
             int i = 0;
+            DateTime timenow = DateTime.Now;
             int tleft = 0;
             string outt;
-            if (DateTime.Now.DayOfWeek == DayOfWeek.Wednesday)
+            if (timenow.DayOfWeek == DayOfWeek.Wednesday)
                 dayo = 1;
             else
             {
@@ -139,7 +157,7 @@ namespace SplashScreen
             }
             for (; i < timelayout.Count; i++)
             {
-                tleft = Int32.Parse(timelayout[i][0 + dayo]) - (DateTime.Now.Hour * 3600 + DateTime.Now.Minute * 60 + DateTime.Now.Second);
+                tleft = Int32.Parse(timelayout[i][0 + dayo]) - (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second);
                 if (tleft > 0)
                 {
                     break;
@@ -202,7 +220,7 @@ namespace SplashScreen
                 string seconds;
                 if (Math.Floor(timeleft / 3600) < 10)
                 {
-                    hours = "0" + (Math.Floor(timeleft / 3600)).ToString();
+                    hours = "0" + (Math.Floor(timeleft / 3600));
                     timeleft %= 3600;
                 }
                 else
@@ -212,7 +230,7 @@ namespace SplashScreen
                 }
                 if (Math.Floor(timeleft / 60) < 10)
                 {
-                    minutes = "0" + (Math.Floor(timeleft / 60)).ToString();
+                    minutes = "0" + (Math.Floor(timeleft / 60));
                 }
                 else
                 {
@@ -220,19 +238,20 @@ namespace SplashScreen
                 }
                 if (Math.Floor(timeleft % 60) < 10)
                 {
-                    seconds = "0" + (timeleft % 60).ToString();
+                    seconds = "0" + (timeleft % 60);
                 }
                 else
                 {
                     seconds = (timeleft % 60).ToString();
                 }
                 g.DrawString(hours+":"+minutes+":"+seconds, new Font("Trebuchet MS", 18 *dx), brushc, 10, 40);
-                g.DrawString(Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)) ? Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].Room : "", new Font("Trebuchet MS", 18 * dx), brushc, 120, 40);
+                g.DrawString(Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)) ? Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].Room : "", new Font("Trebuchet MS", 18 * dx), brushc, 140, 40);
                 string label=temp[2];
-                if (temp[2].StartsWith("Period")||temp[2].StartsWith("Form")&& Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
-                    label = Program.timetableList[Program.curDay +""+ temp[2].Substring(temp[2].Length-1)].ClassDescription.Length >12? Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].ClassCode : Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].ClassDescription;
-                if (temp[2].StartsWith("Go to")&& Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
-                    label = "Go to "+Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length-1)].ClassCode;
+                if ((temp[2].StartsWith("Period") || temp[2].StartsWith("Form")) && Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
+                    label = Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].ClassDescription.Length > 12 ? Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].ClassCode : Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].ClassDescription;
+                if (temp[2].StartsWith("Go to") &&
+                    Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
+                    label = "Go to " + Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].ClassCode;
                 g.DrawString(label, new Font("Trebuchet MS", 14*dx), brushc, 10, 2);
                 StringFormat stringFormat = new StringFormat();
                 stringFormat.FormatFlags = StringFormatFlags.DirectionVertical;
@@ -314,10 +333,12 @@ namespace SplashScreen
         private Timer timer1;
         public void InitTimer()
         {
+            
             timer1 = new Timer();
             timer1.Tick += new EventHandler(timer1_Tick);
-            timer1.Interval = 50; // in miliseconds
+            timer1.Interval = 500; // in miliseconds
             timer1.Start();
+            
 
         }
 
@@ -331,7 +352,7 @@ namespace SplashScreen
                 }
                 if (counter > 0)
                 {
-                    counter += -40;
+                    counter += -200;
                 }
                 else
                 {
@@ -352,7 +373,7 @@ namespace SplashScreen
                 }
                 if (counter < 255)
                 {
-                    counter += 40;
+                    counter += 200;
                 }
                 else
                 {
@@ -377,14 +398,16 @@ namespace SplashScreen
             {
                 this.Visible = true;
             }
-
+            int capacity = GetWindowTextLength(new HandleRef(this, GetForegroundWindow())) * 2;
+            StringBuilder stringBuilder = new StringBuilder(capacity);
+            GetWindowText(new HandleRef(this, GetForegroundWindow()), stringBuilder, stringBuilder.Capacity);
             Rectangle rect = new Rectangle();
             GetWindowRect(GetForegroundWindow(), out rect);
-            if (!settingsForm.Visible && !Expandedform.Visible&&!contextMenu1.Visible&&(((rect.Height - rect.Y - Screen.FromHandle(Handle).Bounds.Height) !=0&& (rect.Width - rect.X- Screen.FromHandle(Handle).Bounds.Width) != 0)||Screen.FromHandle(GetForegroundWindow()).DeviceName!=Screen.FromHandle(Handle).DeviceName))
+            if (toolStripMenuItem1.Checked&&!settingsForm.Visible && !Expandedform.Visible&&!contextMenu1.Visible&&(((rect.Height - rect.Y - Screen.FromHandle(Handle).Bounds.Height) !=0&& (rect.Width - rect.X- Screen.FromHandle(Handle).Bounds.Width) != 0)||Screen.FromHandle(GetForegroundWindow()).DeviceName!=Screen.FromHandle(Handle).DeviceName||stringBuilder.Length==0))
                 TopMost = true;
             else
             {
-                if (!settingsForm.Visible && !Expandedform.Visible && !contextMenu1.Visible&&TopMost)
+                if (!settingsForm.Visible && !Expandedform.Visible && !contextMenu1.Visible&&stringBuilder.Length!=0&&TopMost)
                 {
                     TopMost = false;
                     SendToBack();
@@ -445,7 +468,23 @@ namespace SplashScreen
 
         private void frmSplash_Activated(object sender, EventArgs e)
         {
-            //SendToBack();
+            int capacity = GetWindowTextLength(new HandleRef(this, GetForegroundWindow())) * 2;
+            StringBuilder stringBuilder = new StringBuilder(capacity);
+            GetWindowText(new HandleRef(this, GetForegroundWindow()), stringBuilder, stringBuilder.Capacity);
+            if (!toolStripMenuItem1.Checked&&stringBuilder.Length!=0)
+                SendToBack();
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            toolStripMenuItem1.Checked = !toolStripMenuItem1.Checked;
+        }
+
+        private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
+        {
+            if (Expandedform.IsDisposed)
+                Expandedform = new Expanded();
+            Expandedform.Show();
         }
     }
 
@@ -508,7 +547,7 @@ namespace SplashScreen
         }
     }
 
-    public class period
+    public struct period
     {
         public int DayNumber;
         public int PeriodNumber;

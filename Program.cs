@@ -7,7 +7,6 @@ namespace SplashScreen
 {
     static class Program
     {
-        public static string globalString = "This is a global string.";
         public static int curDay = 0;
         public static string Calltype = "lookup";
         public static int SynID = 000000;
