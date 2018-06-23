@@ -41,18 +41,38 @@ namespace SchoolManager
             {
                 for (int i = 0; i <= 6; i++)
                 {
+                    period tPeriod;
+                    if (Program.timetableList.ContainsKey((k + 1) + "" + i))
+                        tPeriod = Program.timetableList[(k + 1) + "" + i];
+                    else
+                    {
+                       tPeriod = new period();
+                        tPeriod.ClassCode = "";
+                        tPeriod.DayNumber = -1;
+                        tPeriod.PeriodNumber = -1;
+                    }
                     TextBox textLabel = new TextBox();
+                    Label classroom = new Label();
+                    Label classcod = new Label();
+                    classroom.Text = tPeriod.Room;
+                    classroom.Location = new Point(65,65);
+                    classcod.Text = tPeriod.ClassCode;
+                    classcod.Location = new Point(0,65);
+                    classcod.AutoSize = true;
                     textLabel.ReadOnly = true;
                     textLabel.WordWrap = true;
                     textLabel.BorderStyle = BorderStyle.None;
                     textLabel.Width = 98;
-                    textLabel.Height = 30;
+                    textLabel.Height = 45;
                     textLabel.Multiline = true;
                     textLabel.Location = new Point(1, 3);
                     Panel eriod = (Panel)(Controls.Find((k + 1) + i.ToString(), false))[0];
+                    textLabel.Text = tPeriod.ClassDescription;
+                    eriod.BackColor = Program.Colorref.ContainsKey(tPeriod.ClassCode) ? Program.Colorref[tPeriod.ClassCode] : Color.White;
                     textLabel.BackColor = eriod.BackColor;
-                    textLabel.Text = Program.timetableList.ContainsKey((k + 1) + "" + i) ? Program.timetableList[(k + 1) + "" + i].ClassDescription : "Period " + i;
-                    eriod.Controls.Clear();
+                     eriod.Controls.Clear();
+                    eriod.Controls.Add(classcod);
+                    eriod.Controls.Add(classroom);
                     eriod.Controls.Add(textLabel);
                 }
             }

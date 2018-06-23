@@ -53,15 +53,29 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51600", "51600", "49500", "Period 5" });
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
-            List<period> timetableListtemp = JsonConvert.DeserializeObject<List<period>>(File.ReadAllText(Environment.CurrentDirectory + "/Timetable.Json"));
-            using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Timetable.json"))
+            if (File.Exists(Environment.CurrentDirectory + "/Timetable.json"))
             {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(file, timetableListtemp);
-            }
-            foreach (var V in timetableListtemp)
-            {
-                Program.timetableList.Add(V.DayNumber.ToString() + V.PeriodNumber, V);
+                List<period> timetableListtemp = JsonConvert.DeserializeObject<List<period>>(File.ReadAllText(Environment.CurrentDirectory + "/Timetable.Json"));
+                using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Timetable.json"))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(file, timetableListtemp);
+                }
+
+                Int16 colorint = 0;
+                foreach (var V in timetableListtemp)
+                {
+                    if (Program.timetableList.ContainsKey(V.DayNumber.ToString() + V.PeriodNumber))
+                        Program.timetableList.Remove(V.DayNumber.ToString() + V.PeriodNumber);
+                    if (!Program.Colorref.ContainsKey(V.ClassCode))
+                    {
+                        Program.Colorref.Add(V.ClassCode, Program.Colourtable[colorint]);
+                        colorint++;
+                        if (colorint >= Program.Colourtable.Count)
+                            colorint = 0;
+                    }
+                    Program.timetableList.Add(V.DayNumber.ToString() + V.PeriodNumber, V);
+                }
             }
             Expandedform = new Expanded();
             InitializeComponent();
@@ -84,7 +98,7 @@ namespace SplashScreen
                     RegexOptions.IgnoreCase);
                 if (match.Success)
                 {
-                    Program.curDay = Convert.ToInt32(match.Groups[1].Value);
+                    int.TryParse(match.Groups[1].Value, out Program.curDay);
                 }
 
                 match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">",
@@ -101,18 +115,25 @@ namespace SplashScreen
                 }
 
                 html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" +
-                                          Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm +
-                                          "&callType=" + Program.Calltype);
+                                          Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201--&callType=" + Program.Calltype);
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
                 using (StreamWriter file = File.CreateText(Environment.CurrentDirectory+"/Timetable.json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Serialize(file, timetableList);
                 }
+                Int16 colorint = 0;
                 foreach (var V in timetableList)
                 {
                     if (Program.timetableList.ContainsKey(V.DayNumber.ToString() + V.PeriodNumber))
                         Program.timetableList.Remove(V.DayNumber.ToString() + V.PeriodNumber);
+                    if (!Program.Colorref.ContainsKey(V.ClassCode))
+                    {
+                        Program.Colorref.Add(V.ClassCode, Program.Colourtable[colorint]);
+                        colorint++;
+                        if (colorint >= Program.Colourtable.Count)
+                            colorint = 0;
+                    }
                     Program.timetableList.Add(V.DayNumber.ToString() + V.PeriodNumber, V);
                 }
                 web.Dispose();
@@ -485,6 +506,7 @@ namespace SplashScreen
             if (Expandedform.IsDisposed)
                 Expandedform = new Expanded();
             Expandedform.Show();
+            Expandedform.Focus();
         }
     }
 
@@ -573,6 +595,14 @@ namespace SplashScreen
             StaffID = staffid;
             SchoolStaffCode = schoolstaffcode;
             Room = room;
+        }
+    }
+    public struct settingstruct
+    {
+        public DateTime Referencedayone;
+        public settingstruct(DateTime Refdateone)
+        {
+            Referencedayone = Refdateone;
         }
     }
 }

@@ -52,7 +52,6 @@
             this.Userbox.Name = "Userbox";
             this.Userbox.Size = new System.Drawing.Size(100, 20);
             this.Userbox.TabIndex = 1;
-            this.Userbox.Text = "Username-ID";
             // 
             // Errormsg
             // 
@@ -71,7 +70,7 @@
             this.Passbox.PasswordChar = '*';
             this.Passbox.Size = new System.Drawing.Size(100, 20);
             this.Passbox.TabIndex = 3;
-            this.Passbox.Text = "Password";
+            this.Passbox.UseSystemPasswordChar = true;
             // 
             // Loginbutton
             // 
@@ -109,6 +108,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Settingsforms";
             this.Deactivate += new System.EventHandler(this.Settingsforms_Deactivate);
+            this.Shown += new System.EventHandler(this.Settingsforms_Shown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
