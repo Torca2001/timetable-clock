@@ -48,7 +48,9 @@ namespace SchoolManager
                 match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"curDay\">", RegexOptions.IgnoreCase);
                 if (match.Success)
                 {
-                    int.TryParse(match.Groups[1].Value, out Program.curDay);
+                    int.TryParse(match.Groups[1].Value, out var tempint);
+                    Program.Settingsdata.Referencedayone = Program.CalDayone(tempint);
+                    Program.curDay = tempint;
                 }
                 match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">", RegexOptions.IgnoreCase);
                 if (match.Success)
@@ -96,12 +98,12 @@ namespace SchoolManager
             }
             catch (Exception ee)
             {
+                Errormsg.Text = ee.Message;
                 MessageBox.Show(ee.ToString());
             }
 
             Userbox.Text = "Username-ID";
             Passbox.Text = "Password";
-
         }
 
         private void Settingsforms_Shown(object sender, EventArgs e)

@@ -32,6 +32,7 @@ namespace SplashScreen
         public int counter = 255;
         public int dayo = 0;
         float dx;
+        private DayOfWeek lastDayOfWeek = DayOfWeek.Sunday;
         List<List<string>> timelayout = new List<List<string>>();
 
 
@@ -53,106 +54,57 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51600", "51600", "49500", "Period 5" });
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
-            if (File.Exists(Environment.CurrentDirectory + "/Timetable.json"))
+            bool timetableexist = File.Exists(Environment.CurrentDirectory + "/Timetable.json");
+            if (File.Exists(Environment.CurrentDirectory + "/Settings.Json"))
+            {
+                Program.Settingsdata = JsonConvert.DeserializeObject<settingstruct>(File.ReadAllText(Environment.CurrentDirectory + "/Settings.Json"));
+                if (Program.Settingsdata.User != Environment.UserName)
+                {
+                    Program.Settingsdata = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false);
+                    MessageBox.Show("Welcome " + Environment.UserName + @"!  Thanks for using the program!", "Welcome!");
+                    if (timetableexist)
+                    {
+                        File.Delete(Environment.CurrentDirectory + "/Timetable.json");
+                        timetableexist = false;
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Welcome "+Environment.UserName+@"!  Thanks for using the program!", "Welcome!");
+                if (timetableexist)
+                {
+                    File.Delete(Environment.CurrentDirectory + "/Timetable.json");
+                    timetableexist = false;
+                }
+            }
+            if (timetableexist)
             {
                 List<period> timetableListtemp = JsonConvert.DeserializeObject<List<period>>(File.ReadAllText(Environment.CurrentDirectory + "/Timetable.Json"));
-                using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Timetable.json"))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Serialize(file, timetableListtemp);
-                }
-
                 Int16 colorint = 0;
-                foreach (var V in timetableListtemp)
+                foreach (var v in timetableListtemp)
                 {
-                    if (Program.timetableList.ContainsKey(V.DayNumber.ToString() + V.PeriodNumber))
-                        Program.timetableList.Remove(V.DayNumber.ToString() + V.PeriodNumber);
-                    if (!Program.Colorref.ContainsKey(V.ClassCode))
+                    if (Program.timetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
+                        Program.timetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
+                    if (!Program.Colorref.ContainsKey(v.ClassCode))
                     {
-                        Program.Colorref.Add(V.ClassCode, Program.Colourtable[colorint]);
+                        Program.Colorref.Add(v.ClassCode, Program.Colourtable[colorint]);
                         colorint++;
                         if (colorint >= Program.Colourtable.Count)
                             colorint = 0;
                     }
-                    Program.timetableList.Add(V.DayNumber.ToString() + V.PeriodNumber, V);
+                    Program.timetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
                 }
             }
             Expandedform = new Expanded();
             InitializeComponent();
             notifyIcon1.ShowBalloonTip(100);
-            this.MouseClick += mouseClick;
-
-            try
-            {
-                MyWebClient web = new MyWebClient();
-                web.Credentials = CredentialCache.DefaultNetworkCredentials;
-                String html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/default.asp");
-                Match match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"callType\">",
-                    RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    Program.Calltype = match.Groups[1].Value;
-                }
-
-                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"curDay\">",
-                    RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    int.TryParse(match.Groups[1].Value, out Program.curDay);
-                }
-
-                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">",
-                    RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    Program.SynID = Convert.ToInt32(match.Groups[1].Value);
-                }
-
-                match = Regex.Match(html, "value=\"(.*?)\" id=\"curTerm\"", RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    Program.curTerm = Convert.ToInt32(match.Groups[1].Value);
-                }
-
-                html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" +
-                                          Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201--&callType=" + Program.Calltype);
-                List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
-                using (StreamWriter file = File.CreateText(Environment.CurrentDirectory+"/Timetable.json"))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Serialize(file, timetableList);
-                }
-                Int16 colorint = 0;
-                foreach (var V in timetableList)
-                {
-                    if (Program.timetableList.ContainsKey(V.DayNumber.ToString() + V.PeriodNumber))
-                        Program.timetableList.Remove(V.DayNumber.ToString() + V.PeriodNumber);
-                    if (!Program.Colorref.ContainsKey(V.ClassCode))
-                    {
-                        Program.Colorref.Add(V.ClassCode, Program.Colourtable[colorint]);
-                        colorint++;
-                        if (colorint >= Program.Colourtable.Count)
-                            colorint = 0;
-                    }
-                    Program.timetableList.Add(V.DayNumber.ToString() + V.PeriodNumber, V);
-                }
-                web.Dispose();
-            }
-            catch (WebException e)
-            {
-                if (e.Message.Contains("Unauthorized"))
-                {
-                    Console.WriteLine("Authorization failed");
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-            }
+            MouseClick += mouseClick;
+            Updatetimetable(CredentialCache.DefaultNetworkCredentials);
             InitTimer();
-            this.ShowInTaskbar = false;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            Graphics g = this.CreateGraphics();
+            ShowInTaskbar = false;
+            AutoScaleDimensions = new SizeF(6F, 13F);
+            Graphics g = CreateGraphics();
             try
             {
                 dx = 96/g.DpiX;
@@ -164,12 +116,17 @@ namespace SplashScreen
 
         }
 
-        public List<string> currentcountdown()
+        public List<string> Currentcountdown()
         {
             int i = 0;
             DateTime timenow = DateTime.Now;
             int tleft = 0;
             string outt;
+            if (lastDayOfWeek != timenow.DayOfWeek)
+            {
+                lastDayOfWeek = timenow.DayOfWeek;
+                Program.curDay = Program.Fetchday();
+            }
             if (timenow.DayOfWeek == DayOfWeek.Wednesday)
                 dayo = 1;
             else
@@ -223,8 +180,8 @@ namespace SplashScreen
         {
             IntPtr screenDc = API.GetDC(IntPtr.Zero);
             IntPtr memDc = API.CreateCompatibleDC(screenDc);
-            IntPtr hBitmap = IntPtr.Zero;
-            IntPtr oldBitmap = IntPtr.Zero;
+            IntPtr hBitmap;
+            IntPtr oldBitmap;
 
             try
             {
@@ -233,8 +190,8 @@ namespace SplashScreen
                 Graphics g = Graphics.FromImage(bmp);
                 
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-                System.Drawing.SolidBrush brushc = new System.Drawing.SolidBrush(Color.FromArgb(255, 255, 255, 255));
-                List<string> temp = currentcountdown();
+                var brushc = new System.Drawing.SolidBrush(Color.FromArgb(255, 255, 255, 255));
+                List<string> temp = Currentcountdown();
                 double timeleft = Int32.Parse(temp[0]);
                 string hours;
                 string minutes;
@@ -286,7 +243,7 @@ namespace SplashScreen
                 //Display-rectangle
                 Size size = bmp.Size;
                 Point pointSource = new Point(0, 0);
-                Point topPos = new Point(this.Left, this.Top);
+                Point topPos = new Point(Left, Top);
 
                 //Set up blending options
                 API.BLENDFUNCTION blend = new API.BLENDFUNCTION();
@@ -295,7 +252,7 @@ namespace SplashScreen
                 blend.SourceConstantAlpha = Convert.ToByte(counter);
                 blend.AlphaFormat = API.AC_SRC_ALPHA;
 
-                API.UpdateLayeredWindow(this.Handle, screenDc, ref topPos, ref size, memDc, ref pointSource, 0, ref blend, API.ULW_ALPHA);
+                API.UpdateLayeredWindow(Handle, screenDc, ref topPos, ref size, memDc, ref pointSource, 0, ref blend, API.ULW_ALPHA);
 
                 //Clean-up
                 stringFormat.Dispose();
@@ -312,6 +269,7 @@ namespace SplashScreen
             }
             catch (Exception)
             {
+                // ignored
             }
         } 
         #endregion
@@ -324,7 +282,7 @@ namespace SplashScreen
 
         private void mExit_Click(object sender, EventArgs e)
         {
-            this.Close(); //no extra commands are required
+            Close(); //no extra commands are required
         }
 
         #endregion
@@ -332,15 +290,15 @@ namespace SplashScreen
         #region FORM EVENTS -------------------------------------------------------
         private void Form1_Load(object sender, EventArgs e)
         {
-            UpdateFormDisplay(this.BackgroundImage);
-            this.SetDesktopLocation(Screen.PrimaryScreen.Bounds.Width - 208, Screen.PrimaryScreen.WorkingArea.Height-66);
+            UpdateFormDisplay(BackgroundImage);
+            SetDesktopLocation(Screen.PrimaryScreen.Bounds.Width - 208, Screen.PrimaryScreen.WorkingArea.Height-66);
         }
 
 
         protected override void OnPaint(PaintEventArgs e)
         {
             //Call our drawing function
-            UpdateFormDisplay(this.BackgroundImage);
+            UpdateFormDisplay(BackgroundImage);
         }
         #endregion
 
@@ -351,21 +309,21 @@ namespace SplashScreen
             Expandedform.Show();
         }
 
-        private Timer timer1;
+        private Timer _timer1;
         public void InitTimer()
         {
             
-            timer1 = new Timer();
-            timer1.Tick += new EventHandler(timer1_Tick);
-            timer1.Interval = 500; // in miliseconds
-            timer1.Start();
+            _timer1 = new Timer();
+            _timer1.Tick += timer1_Tick;
+            _timer1.Interval = 500; // in miliseconds
+            _timer1.Start();
             
 
         }
 
             private void timer1_Tick(object sender, EventArgs e)
         {
-            if (this.Left < System.Windows.Forms.Cursor.Position.X && this.Left + this.Width > System.Windows.Forms.Cursor.Position.X && this.Top < System.Windows.Forms.Cursor.Position.Y && this.Top + this.Height > System.Windows.Forms.Cursor.Position.Y&&dontHideToolStripMenuItem.Checked==false)
+            if (Left < Cursor.Position.X && Left + Width > System.Windows.Forms.Cursor.Position.X && Top < System.Windows.Forms.Cursor.Position.Y && Top + Height > System.Windows.Forms.Cursor.Position.Y&&dontHideToolStripMenuItem.Checked==false)
             {
                 if (autoToolStripMenuItem.Checked)
                 {
@@ -413,16 +371,16 @@ namespace SplashScreen
             }
             if (hideToolStripMenuItem.Checked)
             {
-                this.Visible = false;
+                Visible = false;
             }
             else
             {
-                this.Visible = true;
+                Visible = true;
             }
             int capacity = GetWindowTextLength(new HandleRef(this, GetForegroundWindow())) * 2;
             StringBuilder stringBuilder = new StringBuilder(capacity);
             GetWindowText(new HandleRef(this, GetForegroundWindow()), stringBuilder, stringBuilder.Capacity);
-            Rectangle rect = new Rectangle();
+            Rectangle rect;
             GetWindowRect(GetForegroundWindow(), out rect);
             if (toolStripMenuItem1.Checked&&!settingsForm.Visible && !Expandedform.Visible&&!contextMenu1.Visible&&(((rect.Height - rect.Y - Screen.FromHandle(Handle).Bounds.Height) !=0&& (rect.Width - rect.X- Screen.FromHandle(Handle).Bounds.Width) != 0)||Screen.FromHandle(GetForegroundWindow()).DeviceName!=Screen.FromHandle(Handle).DeviceName||stringBuilder.Length==0))
                 TopMost = true;
@@ -434,7 +392,7 @@ namespace SplashScreen
                     SendToBack();
                 }
             }
-            UpdateFormDisplay(this.BackgroundImage);
+            UpdateFormDisplay(BackgroundImage);
             //this.SetDesktopLocation(System.Windows.Forms.Cursor.Position.X-100, System.Windows.Forms.Cursor.Position.Y-30);
   
         }
@@ -478,6 +436,12 @@ namespace SplashScreen
         {
             notifyIcon1.Visible = false;
             notifyIcon1.Dispose();
+            using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Settings.Json"))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, Program.Settingsdata);
+            }
+            Console.WriteLine(@"Wrote to file");
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -507,6 +471,73 @@ namespace SplashScreen
                 Expandedform = new Expanded();
             Expandedform.Show();
             Expandedform.Focus();
+        }
+
+        public bool Updatetimetable(NetworkCredential networkcred)
+        {
+            try
+            {
+                MyWebClient web = new MyWebClient();
+                web.Credentials = networkcred;
+                String html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/default.asp");
+                Match match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"callType\">",
+                    RegexOptions.IgnoreCase);
+                if (match.Success)
+                    Program.Calltype = match.Groups[1].Value;
+
+                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"curDay\">",
+                    RegexOptions.IgnoreCase);
+                if (match.Success)
+                {
+                    int.TryParse(match.Groups[1].Value, out var tempint);
+                    Program.Settingsdata.Referencedayone = Program.CalDayone(tempint);
+                    Program.curDay = tempint;
+                }
+
+                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">",
+                    RegexOptions.IgnoreCase);
+                if (match.Success)
+                    Program.SynID = Convert.ToInt32(match.Groups[1].Value);
+                match = Regex.Match(html, "value=\"(.*?)\" id=\"curTerm\"", RegexOptions.IgnoreCase);
+                if (match.Success)
+                    Program.curTerm = Convert.ToInt32(match.Groups[1].Value);
+                html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" +
+                                          Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201--&callType=" + Program.Calltype);
+                List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
+                using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Timetable.json"))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(file, timetableList);
+                }
+                Int16 colorint = 0;
+                foreach (var v in timetableList)
+                {
+                    if (Program.timetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
+                        Program.timetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
+                    if (!Program.Colorref.ContainsKey(v.ClassCode))
+                    {
+                        Program.Colorref.Add(v.ClassCode, Program.Colourtable[colorint]);
+                        colorint++;
+                        if (colorint >= Program.Colourtable.Count)
+                            colorint = 0;
+                    }
+                    Program.timetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
+                }
+                web.Dispose();
+                return true;
+            }
+            catch (WebException e)
+            {
+                if (e.Message.Contains("Unauthorized"))
+                {
+                    Console.WriteLine(@"Authorization failed");
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
+            return false;
         }
     }
 
@@ -600,9 +631,15 @@ namespace SplashScreen
     public struct settingstruct
     {
         public DateTime Referencedayone;
-        public settingstruct(DateTime Refdateone)
+        public DateTime EarlyDate;
+        public string User;
+        public bool Weekoverride;
+        public settingstruct(DateTime refdateone, DateTime earlydate,string user, bool weekoverride)
         {
-            Referencedayone = Refdateone;
+            User = user;
+            Referencedayone = refdateone;
+            EarlyDate = earlydate;
+            Weekoverride = weekoverride;
         }
     }
 }

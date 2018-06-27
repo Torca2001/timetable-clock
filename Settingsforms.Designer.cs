@@ -1,4 +1,6 @@
-﻿namespace SchoolManager
+﻿using System;
+
+namespace SchoolManager
 {
     partial class Settingsforms
     {
@@ -34,6 +36,7 @@
             this.Passbox = new System.Windows.Forms.TextBox();
             this.Loginbutton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,9 +62,8 @@
             this.Errormsg.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.Errormsg.Location = new System.Drawing.Point(0, 371);
             this.Errormsg.Name = "Errormsg";
-            this.Errormsg.Size = new System.Drawing.Size(74, 13);
+            this.Errormsg.Size = new System.Drawing.Size(0, 13);
             this.Errormsg.TabIndex = 2;
-            this.Errormsg.Text = "Error message";
             // 
             // Passbox
             // 
@@ -85,6 +87,7 @@
             // panel1
             // 
             this.panel1.AutoSize = true;
+            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.Loginbutton);
             this.panel1.Controls.Add(this.Passbox);
             this.panel1.Controls.Add(this.Errormsg);
@@ -95,6 +98,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(641, 384);
             this.panel1.TabIndex = 0;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(469, 13);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(131, 52);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "About\r\nTimetable Clock made by\r\nWilliam C\r\nDistributed by\r\nJosh Harper";
             // 
             // Settingsforms
             // 
@@ -124,5 +136,6 @@
         private System.Windows.Forms.TextBox Passbox;
         private System.Windows.Forms.Button Loginbutton;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label2;
     }
 }
