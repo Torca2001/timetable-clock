@@ -23,6 +23,7 @@ namespace SchoolManager
         public Settingsforms()
         {
             InitializeComponent();
+            label2.Text += Program.AppVersion;
         }
 
         private void Settingsforms_Deactivate(object sender, EventArgs e)
@@ -34,6 +35,8 @@ namespace SchoolManager
         {
             try
             {
+                Errormsg.Text = "Attempting fetch...";
+                Errormsg.Update();
                 MyWebClient web = new MyWebClient();
                 web.Proxy = null;
                 CredentialCache myCache = new CredentialCache();
@@ -110,6 +113,12 @@ namespace SchoolManager
         {
             SendMessage(Userbox.Handle, EM_SETCUEBANNER, 0, "Username");
             SendMessage(Passbox.Handle, EM_SETCUEBANNER, 0, "Password");
+        }
+
+        private void Passbox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                Loginbutton.PerformClick();
         }
     }
 }

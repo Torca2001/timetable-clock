@@ -1,4 +1,5 @@
 ﻿using System;
+using SplashScreen;
 
 namespace SchoolManager
 {
@@ -73,6 +74,7 @@ namespace SchoolManager
             this.Passbox.Size = new System.Drawing.Size(100, 20);
             this.Passbox.TabIndex = 3;
             this.Passbox.UseSystemPasswordChar = true;
+            this.Passbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Passbox_KeyDown);
             // 
             // Loginbutton
             // 
@@ -104,9 +106,10 @@ namespace SchoolManager
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(469, 13);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(131, 52);
+            this.label2.Size = new System.Drawing.Size(126, 78);
             this.label2.TabIndex = 5;
-            this.label2.Text = "About\r\nTimetable Clock made by\r\nWilliam C\r\nDistributed by\r\nJosh Harper";
+            this.label2.Text = "About\r\nTimetable Clock made by\r\nWilliam C\r\nDistributed by\r\nJosh Harper\r\nVersion: " +
+    "";
             // 
             // Settingsforms
             // 

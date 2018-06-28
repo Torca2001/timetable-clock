@@ -13,7 +13,9 @@ using System.Security.Authentication;
 using System.Windows.Forms.VisualStyles;
 using SchoolManager;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Newtonsoft.Json;
+using Timer = System.Windows.Forms.Timer;
 
 namespace SplashScreen
 {
@@ -98,9 +100,14 @@ namespace SplashScreen
             }
             Expandedform = new Expanded();
             InitializeComponent();
-            notifyIcon1.ShowBalloonTip(100);
             MouseClick += mouseClick;
             Updatetimetable(CredentialCache.DefaultNetworkCredentials);
+            if (Program.timetableList.Count == 0)
+            {
+                if (File.Exists(Environment.CurrentDirectory + "/Timetable.Json"))
+                    notifyIcon1.Text = "Unable to fetch timetable";
+                notifyIcon1.ShowBalloonTip(1000);
+            }
             InitTimer();
             ShowInTaskbar = false;
             AutoScaleDimensions = new SizeF(6F, 13F);
@@ -467,10 +474,10 @@ namespace SplashScreen
 
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
         {
-            if (Expandedform.IsDisposed)
-                Expandedform = new Expanded();
-            Expandedform.Show();
-            Expandedform.Focus();
+            if (settingsForm.IsDisposed)
+                settingsForm = new Settingsforms();
+            settingsForm.Show();
+            settingsForm.Activate();
         }
 
         public bool Updatetimetable(NetworkCredential networkcred)

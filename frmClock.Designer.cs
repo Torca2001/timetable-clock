@@ -132,7 +132,7 @@ namespace SplashScreen
             // 
             // notifyIcon1
             // 
-            this.notifyIcon1.BalloonTipText = "Click here to expand";
+            this.notifyIcon1.BalloonTipText = "Login to fetch table";
             this.notifyIcon1.BalloonTipTitle = "Timetable";
             this.notifyIcon1.ContextMenuStrip = this.contextMenu1;
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
