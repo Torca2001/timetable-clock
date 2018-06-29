@@ -36,6 +36,7 @@ namespace SplashScreen
             this.autoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dontHideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.mHomepage = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mExit = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,7 +52,7 @@ namespace SplashScreen
             this.settingsToolStripMenuItem,
             this.mExit});
             this.contextMenu1.Name = "contextMenu1";
-            this.contextMenu1.Size = new System.Drawing.Size(153, 114);
+            this.contextMenu1.Size = new System.Drawing.Size(117, 92);
             // 
             // mMove
             // 
@@ -61,9 +62,10 @@ namespace SplashScreen
             this.autoAnimatedToolStripMenuItem,
             this.autoToolStripMenuItem,
             this.dontHideToolStripMenuItem,
-            this.hideToolStripMenuItem});
+            this.hideToolStripMenuItem,
+            this.toolStripMenuItem1});
             this.mMove.Name = "mMove";
-            this.mMove.Size = new System.Drawing.Size(152, 22);
+            this.mMove.Size = new System.Drawing.Size(116, 22);
             this.mMove.Text = "Hide";
             this.mMove.Click += new System.EventHandler(this.mMove_Click_1);
             // 
@@ -98,35 +100,45 @@ namespace SplashScreen
             this.hideToolStripMenuItem.Text = "Hide ";
             this.hideToolStripMenuItem.Click += new System.EventHandler(this.hideToolStripMenuItem_Click);
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Checked = true;
+            this.toolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(163, 22);
+            this.toolStripMenuItem1.Text = "Always On Top";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            // 
             // mHomepage
             // 
             this.mHomepage.Name = "mHomepage";
-            this.mHomepage.Size = new System.Drawing.Size(152, 22);
+            this.mHomepage.Size = new System.Drawing.Size(116, 22);
             this.mHomepage.Text = "Help";
             this.mHomepage.Click += new System.EventHandler(this.mHomepage_Click);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // mExit
             // 
             this.mExit.Name = "mExit";
-            this.mExit.Size = new System.Drawing.Size(152, 22);
+            this.mExit.Size = new System.Drawing.Size(116, 22);
             this.mExit.Text = "Exit";
             this.mExit.Click += new System.EventHandler(this.mExit_Click);
             // 
             // notifyIcon1
             // 
-            this.notifyIcon1.BalloonTipText = "Click here to expand";
+            this.notifyIcon1.BalloonTipText = "Login to fetch table";
             this.notifyIcon1.BalloonTipTitle = "Timetable";
             this.notifyIcon1.ContextMenuStrip = this.contextMenu1;
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "School Manager";
             this.notifyIcon1.Visible = true;
+            this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mouseClick);
             // 
             // frmSplash
@@ -161,6 +173,7 @@ namespace SplashScreen
         private System.Windows.Forms.ToolStripMenuItem dontHideToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hideToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }
 

@@ -1,4 +1,7 @@
-﻿namespace SchoolManager
+﻿using System;
+using SplashScreen;
+
+namespace SchoolManager
 {
     partial class Settingsforms
     {
@@ -34,6 +37,8 @@
             this.Passbox = new System.Windows.Forms.TextBox();
             this.Loginbutton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.label2 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,7 +57,6 @@
             this.Userbox.Name = "Userbox";
             this.Userbox.Size = new System.Drawing.Size(100, 20);
             this.Userbox.TabIndex = 1;
-            this.Userbox.Text = "Username-ID";
             // 
             // Errormsg
             // 
@@ -60,9 +64,8 @@
             this.Errormsg.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.Errormsg.Location = new System.Drawing.Point(0, 371);
             this.Errormsg.Name = "Errormsg";
-            this.Errormsg.Size = new System.Drawing.Size(74, 13);
+            this.Errormsg.Size = new System.Drawing.Size(0, 13);
             this.Errormsg.TabIndex = 2;
-            this.Errormsg.Text = "Error message";
             // 
             // Passbox
             // 
@@ -71,7 +74,8 @@
             this.Passbox.PasswordChar = '*';
             this.Passbox.Size = new System.Drawing.Size(100, 20);
             this.Passbox.TabIndex = 3;
-            this.Passbox.Text = "Password";
+            this.Passbox.UseSystemPasswordChar = true;
+            this.Passbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Passbox_KeyDown);
             // 
             // Loginbutton
             // 
@@ -86,6 +90,8 @@
             // panel1
             // 
             this.panel1.AutoSize = true;
+            this.panel1.Controls.Add(this.progressBar1);
+            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.Loginbutton);
             this.panel1.Controls.Add(this.Passbox);
             this.panel1.Controls.Add(this.Errormsg);
@@ -96,6 +102,23 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(641, 384);
             this.panel1.TabIndex = 0;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(472, 106);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(141, 23);
+            this.progressBar1.TabIndex = 6;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(469, 13);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(126, 78);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "About\r\nTimetable Clock made by\r\nWilliam C\r\nDistributed by\r\nJosh Harper\r\nVersion: " +
+    "";
             // 
             // Settingsforms
             // 
@@ -109,6 +132,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Settingsforms";
             this.Deactivate += new System.EventHandler(this.Settingsforms_Deactivate);
+            this.Shown += new System.EventHandler(this.Settingsforms_Shown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -124,5 +148,7 @@
         private System.Windows.Forms.TextBox Passbox;
         private System.Windows.Forms.Button Loginbutton;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
