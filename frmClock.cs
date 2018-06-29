@@ -15,6 +15,7 @@ using SchoolManager;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Newtonsoft.Json;
+using Octokit;
 using Timer = System.Windows.Forms.Timer;
 
 namespace SplashScreen
@@ -57,6 +58,8 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
             bool timetableexist = File.Exists(Environment.CurrentDirectory + "/Timetable.json");
+                    File.Delete(Environment.CurrentDirectory + "/delete.exe");
+            Githubupdate("Mrmeguyme", "Timetable-clock", false);
             if (File.Exists(Environment.CurrentDirectory + "/Settings.Json"))
             {
                 Program.Settingsdata = JsonConvert.DeserializeObject<settingstruct>(File.ReadAllText(Environment.CurrentDirectory + "/Settings.Json"));
@@ -84,10 +87,9 @@ namespace SplashScreen
             {
                 List<period> timetableListtemp = JsonConvert.DeserializeObject<List<period>>(File.ReadAllText(Environment.CurrentDirectory + "/Timetable.Json"));
                 Int16 colorint = 0;
+                Program.timetableList.Clear();
                 foreach (var v in timetableListtemp)
                 {
-                    if (Program.timetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
-                        Program.timetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
                     if (!Program.Colorref.ContainsKey(v.ClassCode))
                     {
                         Program.Colorref.Add(v.ClassCode, Program.Colourtable[colorint]);
@@ -95,6 +97,9 @@ namespace SplashScreen
                         if (colorint >= Program.Colourtable.Count)
                             colorint = 0;
                     }
+
+                    if (Program.timetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
+                        Program.timetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
                     Program.timetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
                 }
             }
@@ -448,7 +453,6 @@ namespace SplashScreen
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(file, Program.Settingsdata);
             }
-            Console.WriteLine(@"Wrote to file");
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -480,6 +484,27 @@ namespace SplashScreen
             settingsForm.Activate();
         }
 
+        public string Githubupdate(string owner, string name,bool check)
+        {
+            GitHubClient client = new GitHubClient(ProductHeaderValue.Parse("Timetable"));
+            var releases = client.Repository.Release.GetAll(owner, name);
+            var latest = releases.Result[0];
+            if (Convert.ToDouble(latest.TagName.Substring(0, latest.TagName.Length - 2)) < Program.AppVersion)
+                return "Up to date";
+            WebClient downloader = new WebClient();
+            Console.WriteLine("Download started");
+            downloader.DownloadFileAsync(new Uri(latest.Assets[0].BrowserDownloadUrl),Environment.CurrentDirectory+"/NewTimetableclock.exe");
+            downloader.DownloadProgressChanged += (s, e) => { settingsForm.Download = e.ProgressPercentage; };
+            downloader.DownloadFileCompleted += delegate
+            {
+                File.Move(System.AppDomain.CurrentDomain.FriendlyName,"delete.exe");
+                File.Move("NewTimetableclock.exe","SchoolManager.exe");
+                System.Diagnostics.Process.Start("SchoolManager.exe");
+                Close();
+            };
+            return "Updating";
+        }
+
         public bool Updatetimetable(NetworkCredential networkcred)
         {
             try
@@ -509,7 +534,7 @@ namespace SplashScreen
                 if (match.Success)
                     Program.curTerm = Convert.ToInt32(match.Groups[1].Value);
                 html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" +
-                                          Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201--&callType=" + Program.Calltype);
+                                          Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--&callType=" + Program.Calltype);
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
                 using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Timetable.json"))
                 {

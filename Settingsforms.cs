@@ -16,6 +16,17 @@ namespace SchoolManager
 {
     public partial class Settingsforms : Form
     {
+        public int Download
+        {
+            get { return _Download; }
+            set
+            {
+                _Download = value;
+                progressBar1.Value = value;
+            }
+        }
+
+        private int _Download;
         private const int EM_SETCUEBANNER = 0x1501;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -65,9 +76,9 @@ namespace SchoolManager
                 {
                     Program.curTerm = Convert.ToInt32(match.Groups[1].Value);
                 }
-                myCache.Add(new Uri("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + @"%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201--&callType=" + Program.Calltype), "NTLM", new NetworkCredential(Userbox.Text, Passbox.Text));
+                myCache.Add(new Uri("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + @"%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--&callType=" + Program.Calltype), "NTLM", new NetworkCredential(Userbox.Text, Passbox.Text));
                 web.Credentials = myCache;
-                html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + @"%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201--&callType=" + Program.Calltype);
+                html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + @"%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--&callType=" + Program.Calltype);
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
                 using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Timetable.json"))
                 {
@@ -75,10 +86,9 @@ namespace SchoolManager
                     serializer.Serialize(file, timetableList);
                 }
                 Int16 colorint = 0;
+                Program.timetableList.Clear();
                 foreach (var V in timetableList)
-                {
-                    if (Program.timetableList.ContainsKey(V.DayNumber.ToString() + V.PeriodNumber))
-                        Program.timetableList.Remove(V.DayNumber.ToString() + V.PeriodNumber);
+                { 
                     if (!Program.Colorref.ContainsKey(V.ClassCode))
                     {
                         Program.Colorref.Add(V.ClassCode,Program.Colourtable[colorint]);

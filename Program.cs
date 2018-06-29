@@ -13,7 +13,7 @@ namespace SplashScreen
         public static string Calltype = "lookup";
         public static int SynID = 000000;
         public static int curTerm = 0;
-        public static string AppVersion = "4.4";
+        public static double AppVersion = 4.4;
         public static settingstruct Settingsdata = new settingstruct(new DateTime(2017,8,28,0,0,0), new DateTime(2017,1,1,0,0,0), Environment.UserName,false );
         public static List<Color> Colourtable = new List<Color>(new Color[]{Color.Cyan, Color.DodgerBlue, Color.Orange, Color.Yellow, Color.Lime, Color.Green,Color.Red, Color.Purple, Color.Magenta,Color.Gray,Color.Teal,Color.Pink});
         public static Dictionary<string, Color> Colorref = new Dictionary<string, Color>();

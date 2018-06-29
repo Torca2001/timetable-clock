@@ -77,6 +77,15 @@ namespace SchoolManager
 
         private void Expanded_Activated(object sender, EventArgs e)
         {
+            if (Program.timetableList.Count == 0)
+            {
+                MissingLabel.BringToFront();
+                MissingLabel.Show();
+            }
+            else
+            {
+                MissingLabel.Hide();
+            }
             if (!started)
             {
                 started = true;

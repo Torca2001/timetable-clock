@@ -37,6 +37,7 @@ namespace SchoolManager
             this.Passbox = new System.Windows.Forms.TextBox();
             this.Loginbutton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -89,6 +90,7 @@ namespace SchoolManager
             // panel1
             // 
             this.panel1.AutoSize = true;
+            this.panel1.Controls.Add(this.progressBar1);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.Loginbutton);
             this.panel1.Controls.Add(this.Passbox);
@@ -100,6 +102,13 @@ namespace SchoolManager
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(641, 384);
             this.panel1.TabIndex = 0;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(472, 106);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(141, 23);
+            this.progressBar1.TabIndex = 6;
             // 
             // label2
             // 
@@ -140,5 +149,6 @@ namespace SchoolManager
         private System.Windows.Forms.Button Loginbutton;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
