@@ -364,7 +364,7 @@ namespace SplashScreen
                 }
                 if (counter < 255)
                 {
-                    counter += 200;
+                    counter += 25;
                 }
                 else
                 {
