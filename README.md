@@ -5,6 +5,10 @@
 This is basically a clock which downloads your school timetable, and displays what period is next, and how much time until the current period ends.
 
 ## Controls & Tips
+If your timetable clock looks like this:
+![](https://i.imgur.com/Wygsbpp.jpg)
+
+Then follow these tips:
 
 * Clicking on the class code will switch between early finish and normal timetable
 * The class code will be written in blue if it is on early finish
