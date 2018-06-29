@@ -327,7 +327,7 @@ namespace SplashScreen
             
             _timer1 = new Timer();
             _timer1.Tick += timer1_Tick;
-            _timer1.Interval = 500; // in miliseconds
+            _timer1.Interval = 10; // in miliseconds
             _timer1.Start();
             
 
@@ -343,7 +343,7 @@ namespace SplashScreen
                 }
                 if (counter > 0)
                 {
-                    counter += -200;
+                    counter -= 25;
                 }
                 else
                 {
