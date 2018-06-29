@@ -7,7 +7,6 @@ This is basically a clock which downloads your school timetable, and displays wh
 ## Controls & Tips
 If your timetable clock looks like this:
 ![](https://i.imgur.com/Wygsbpp.jpg)
-
 Then follow these tips:
 
 * Clicking on the class code will switch between early finish and normal timetable
