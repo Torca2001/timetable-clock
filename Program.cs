@@ -2,18 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace SplashScreen
 {
+
     static class Program
     {
         public static int curDay = 0;
         public static string Calltype = "lookup";
         public static int SynID = 000000;
         public static int curTerm = 0;
-        public static double AppVersion = 4.4;
+        public static int AppVersion = 440; // Make sure for example 4.4 becomes 440 just get rid of each dot and make sure its 3 long 
+        public static string CurDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
         public static settingstruct Settingsdata = new settingstruct(new DateTime(2017,8,28,0,0,0), new DateTime(2017,1,1,0,0,0), Environment.UserName,false );
         public static List<Color> Colourtable = new List<Color>(new Color[]{Color.Cyan, Color.DodgerBlue, Color.Orange, Color.Yellow, Color.Lime, Color.Green,Color.Red, Color.Purple, Color.Magenta,Color.Gray,Color.Teal,Color.Pink});
         public static Dictionary<string, Color> Colorref = new Dictionary<string, Color>();
@@ -26,6 +29,19 @@ namespace SplashScreen
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                String thisExe = Assembly.GetExecutingAssembly().GetName().Name;
+                AssemblyName embeddedAssembly = new AssemblyName(args.Name);
+                String resourceName = thisExe + "." + embeddedAssembly.Name + ".dll";
+
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                {
+                    Byte[] assemblyData = new Byte[stream.Length];
+                    stream.Read(assemblyData, 0, assemblyData.Length);
+                    return Assembly.Load(assemblyData);
+                }
+            };
             Application.Run(new frmSplash());
         }
 

@@ -21,14 +21,28 @@ namespace SchoolManager
             get { return _Download; }
             set
             {
+                if (100 > value && value > 0)
+                {
+                    progresslabel.Text = bytesreceived.ToString("0.###") + "/" + Bytesneeded.ToString("0.###") + " MB";
+                    progressBar1.Visible = true;
+                }
+                else if (progressBar1.Visible)
+                {
+                    progressBar1.Visible = false;
+                    if (value==100)
+                        progresslabel.Text = "Downloaded";
+                }
+
                 _Download = value;
                 progressBar1.Value = value;
             }
         }
 
+        public decimal bytesreceived;
+        public decimal Bytesneeded;
+
         private int _Download;
         private const int EM_SETCUEBANNER = 0x1501;
-
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)]string lParam);
         public Settingsforms()
@@ -80,7 +94,7 @@ namespace SchoolManager
                 web.Credentials = myCache;
                 html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + @"%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--&callType=" + Program.Calltype);
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
-                using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Timetable.json"))
+                using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Timetable.json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Serialize(file, timetableList);

@@ -37,6 +37,7 @@ namespace SchoolManager
             this.Passbox = new System.Windows.Forms.TextBox();
             this.Loginbutton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.progresslabel = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
@@ -90,6 +91,7 @@ namespace SchoolManager
             // panel1
             // 
             this.panel1.AutoSize = true;
+            this.panel1.Controls.Add(this.progresslabel);
             this.panel1.Controls.Add(this.progressBar1);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.Loginbutton);
@@ -103,9 +105,18 @@ namespace SchoolManager
             this.panel1.Size = new System.Drawing.Size(641, 384);
             this.panel1.TabIndex = 0;
             // 
+            // progresslabel
+            // 
+            this.progresslabel.AutoSize = true;
+            this.progresslabel.Location = new System.Drawing.Point(472, 95);
+            this.progresslabel.Name = "progresslabel";
+            this.progresslabel.Size = new System.Drawing.Size(57, 13);
+            this.progresslabel.TabIndex = 7;
+            this.progresslabel.Text = "Up to date";
+            // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(472, 106);
+            this.progressBar1.Location = new System.Drawing.Point(472, 111);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(141, 23);
             this.progressBar1.TabIndex = 6;
@@ -150,5 +161,6 @@ namespace SchoolManager
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label progresslabel;
     }
 }

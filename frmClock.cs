@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Authentication;
 using System.Windows.Forms.VisualStyles;
 using SchoolManager;
@@ -42,7 +43,7 @@ namespace SplashScreen
         public frmSplash()
         {
             timelayout.Add(new List<string> { "29700", "29700", "29700", "School Start" }); //Dayo = 1 is wednesday, dayo= 2 is Early finish
-            timelayout.Add(new List<string> { "31500", "30300", "31500", "Form               0" });
+            timelayout.Add(new List<string> { "31500", "30300", "31500", "Form                                                                     0" });
             timelayout.Add(new List<string> { "31800", "30600", "31800", "Go to Period 1" });
             timelayout.Add(new List<string> { "34800", "33600", "34500", "Period 1" });
             timelayout.Add(new List<string> { "35100", "33900", "34800", "Go to Period 2" });
@@ -57,19 +58,39 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51600", "51600", "49500", "Period 5" });
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
-            bool timetableexist = File.Exists(Environment.CurrentDirectory + "/Timetable.json");
-                    File.Delete(Environment.CurrentDirectory + "/delete.exe");
-            Githubupdate("Mrmeguyme", "Timetable-clock", false);
-            if (File.Exists(Environment.CurrentDirectory + "/Settings.Json"))
+            bool timetableexist = File.Exists(Program.CurDirectory + "/Timetable.json");
+                    File.Delete(Program.CurDirectory + "/delete.exe");
+            Githubupdate("Torca2001", "Timetable-clock", false);
+            try
             {
-                Program.Settingsdata = JsonConvert.DeserializeObject<settingstruct>(File.ReadAllText(Environment.CurrentDirectory + "/Settings.Json"));
+                using (StreamWriter writer =
+                    new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\TimetableClock" +
+                                     ".url"))
+                {
+                    string app = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                    writer.WriteLine("[InternetShortcut]");
+                    writer.WriteLine("URL=file:///" + app);
+                    writer.WriteLine("IconIndex=0");
+                    string icon = app.Replace('\\', '/');
+                    writer.WriteLine("IconFile=" + icon);
+                    writer.Flush();
+                }
+            }
+            catch
+            {
+
+            }
+
+            if (File.Exists(Program.CurDirectory + "/Settings.Json"))
+            {
+                Program.Settingsdata = JsonConvert.DeserializeObject<settingstruct>(File.ReadAllText(Program.CurDirectory + "/Settings.Json"));
                 if (Program.Settingsdata.User != Environment.UserName)
                 {
                     Program.Settingsdata = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false);
                     MessageBox.Show("Welcome " + Environment.UserName + @"!  Thanks for using the program!", "Welcome!");
                     if (timetableexist)
                     {
-                        File.Delete(Environment.CurrentDirectory + "/Timetable.json");
+                        File.Delete(Program.CurDirectory + "/Timetable.json");
                         timetableexist = false;
                     }
                 }
@@ -79,13 +100,13 @@ namespace SplashScreen
                 MessageBox.Show("Welcome "+Environment.UserName+@"!  Thanks for using the program!", "Welcome!");
                 if (timetableexist)
                 {
-                    File.Delete(Environment.CurrentDirectory + "/Timetable.json");
+                    File.Delete(Program.CurDirectory + "/Timetable.json");
                     timetableexist = false;
                 }
             }
             if (timetableexist)
             {
-                List<period> timetableListtemp = JsonConvert.DeserializeObject<List<period>>(File.ReadAllText(Environment.CurrentDirectory + "/Timetable.Json"));
+                List<period> timetableListtemp = JsonConvert.DeserializeObject<List<period>>(File.ReadAllText(Program.CurDirectory + "/Timetable.Json"));
                 Int16 colorint = 0;
                 Program.timetableList.Clear();
                 foreach (var v in timetableListtemp)
@@ -109,7 +130,7 @@ namespace SplashScreen
             Updatetimetable(CredentialCache.DefaultNetworkCredentials);
             if (Program.timetableList.Count == 0)
             {
-                if (File.Exists(Environment.CurrentDirectory + "/Timetable.Json"))
+                if (File.Exists(Program.CurDirectory + "/Timetable.Json"))
                     notifyIcon1.Text = "Unable to fetch timetable";
                 notifyIcon1.ShowBalloonTip(1000);
             }
@@ -289,7 +310,7 @@ namespace SplashScreen
         #region MENU EVENTS -------------------------------------------------------
         private void mHomepage_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://www.google.com/");
+            System.Diagnostics.Process.Start("https://mrmeguyme.github.io/timetable-clock/#controls--tips");
         }
 
         private void mExit_Click(object sender, EventArgs e)
@@ -327,7 +348,7 @@ namespace SplashScreen
             
             _timer1 = new Timer();
             _timer1.Tick += timer1_Tick;
-            _timer1.Interval = 500; // in miliseconds
+            _timer1.Interval = 10; // in miliseconds
             _timer1.Start();
             
 
@@ -343,7 +364,7 @@ namespace SplashScreen
                 }
                 if (counter > 0)
                 {
-                    counter += -200;
+                    counter += -25;
                 }
                 else
                 {
@@ -364,7 +385,7 @@ namespace SplashScreen
                 }
                 if (counter < 255)
                 {
-                    counter += 200;
+                    counter += 25;
                 }
                 else
                 {
@@ -448,7 +469,7 @@ namespace SplashScreen
         {
             notifyIcon1.Visible = false;
             notifyIcon1.Dispose();
-            using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Settings.Json"))
+            using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Settings.Json"))
             {
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(file, Program.Settingsdata);
@@ -481,28 +502,36 @@ namespace SplashScreen
             if (settingsForm.IsDisposed)
                 settingsForm = new Settingsforms();
             settingsForm.Show();
+            settingsForm.Focus();
             settingsForm.Activate();
         }
 
         public string Githubupdate(string owner, string name,bool check)
         {
-            GitHubClient client = new GitHubClient(ProductHeaderValue.Parse("Timetable"));
-            var releases = client.Repository.Release.GetAll(owner, name);
-            var latest = releases.Result[0];
-            if (Convert.ToDouble(latest.TagName.Substring(0, latest.TagName.Length - 2)) < Program.AppVersion)
-                return "Up to date";
-            WebClient downloader = new WebClient();
-            Console.WriteLine("Download started");
-            downloader.DownloadFileAsync(new Uri(latest.Assets[0].BrowserDownloadUrl),Environment.CurrentDirectory+"/NewTimetableclock.exe");
-            downloader.DownloadProgressChanged += (s, e) => { settingsForm.Download = e.ProgressPercentage; };
-            downloader.DownloadFileCompleted += delegate
-            {
-                File.Move(System.AppDomain.CurrentDomain.FriendlyName,"delete.exe");
-                File.Move("NewTimetableclock.exe","SchoolManager.exe");
-                System.Diagnostics.Process.Start("SchoolManager.exe");
-                Close();
-            };
-            return "Updating";
+                var header = new ProductHeaderValue("TimeteAuto");
+                GitHubClient client = new GitHubClient(header);
+                var releases = client.Repository.Release.GetAll(owner, name);
+                var latest = releases.Result[0];
+                if (Convert.ToInt16(latest.TagName.Replace(".","")) > Program.AppVersion)
+                    return "Up to date";
+                WebClient downloader = new WebClient();
+                Console.WriteLine("Download started");
+                downloader.DownloadFileAsync(new Uri(latest.Assets[0].BrowserDownloadUrl),
+                    Program.CurDirectory + "/NewTimetableclock.exe");
+                downloader.DownloadProgressChanged += (s, e) =>
+                {
+                    settingsForm.Download = e.ProgressPercentage;
+                    settingsForm.Bytesneeded = Decimal.Divide(e.TotalBytesToReceive, 1048576);
+                    settingsForm.bytesreceived = Decimal.Divide(e.BytesReceived, 1048576);
+                };
+                downloader.DownloadFileCompleted += delegate
+                {
+                    File.Move(AppDomain.CurrentDomain.FriendlyName, "delete.exe");
+                    File.Move("NewTimetableclock.exe", "SchoolManager.exe");
+                    System.Diagnostics.Process.Start("SchoolManager.exe");
+                    Close();
+                };
+                return "Updating";
         }
 
         public bool Updatetimetable(NetworkCredential networkcred)
@@ -536,7 +565,7 @@ namespace SplashScreen
                 html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" +
                                           Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--&callType=" + Program.Calltype);
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
-                using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Timetable.json"))
+                using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Timetable.json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Serialize(file, timetableList);
