@@ -566,8 +566,8 @@ namespace SplashScreen
                     ProcessStartInfo Info = new ProcessStartInfo();
                     Console.WriteLine(Program.CurDirectory);
                     Info.Arguments = "/C timeout /t 3 & Del " + Program.CurDirectory.Replace("/","\\")+"\\delete.exe";
-                    //Info.WindowStyle = ProcessWindowStyle.Hidden;
-                    Info.CreateNoWindow = false;
+                    Info.WindowStyle = ProcessWindowStyle.Hidden;
+                    Info.CreateNoWindow = true;
                     Info.FileName = "cmd.exe";
                     Process.Start(Info);
                     Close();
