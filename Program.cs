@@ -14,10 +14,9 @@ namespace SplashScreen
         public static int curDay = 0;
         public static string Calltype = "lookup";
         public static int SynID = 000000;
-        public static int curTerm = 0;
-        public static int AppVersion = 440; // Make sure for example 4.4 becomes 440 just get rid of each dot and make sure its 3 long 
+        public static int AppVersion = 431; // Make sure for example 4.4 becomes 440 just get rid of each dot and make sure its 3 long 
         public static string CurDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-        public static settingstruct Settingsdata = new settingstruct(new DateTime(2017,8,28,0,0,0), new DateTime(2017,1,1,0,0,0), Environment.UserName,false );
+        public static settingstruct Settingsdata = new settingstruct(new DateTime(2017,8,28,0,0,0), new DateTime(2017,1,1,0,0,0), Environment.UserName,false,false,0,true,1 );
         public static List<Color> Colourtable = new List<Color>(new Color[]{Color.Cyan, Color.DodgerBlue, Color.Orange, Color.Yellow, Color.Lime, Color.Green,Color.Red, Color.Purple, Color.Magenta,Color.Gray,Color.Teal,Color.Pink});
         public static Dictionary<string, Color> Colorref = new Dictionary<string, Color>();
         public static Dictionary<string,period> timetableList = new Dictionary<string, period>();

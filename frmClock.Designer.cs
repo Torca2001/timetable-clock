@@ -98,7 +98,6 @@ namespace SplashScreen
             this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
             this.hideToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.hideToolStripMenuItem.Text = "Hide ";
-            this.hideToolStripMenuItem.Click += new System.EventHandler(this.hideToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 

@@ -120,6 +120,7 @@ namespace SchoolManager
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(141, 23);
             this.progressBar1.TabIndex = 6;
+            this.progressBar1.Visible = false;
             // 
             // label2
             // 
@@ -143,6 +144,7 @@ namespace SchoolManager
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Settingsforms";
             this.Deactivate += new System.EventHandler(this.Settingsforms_Deactivate);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Settingsforms_FormClosing);
             this.Shown += new System.EventHandler(this.Settingsforms_Shown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

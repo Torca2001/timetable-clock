@@ -34,6 +34,7 @@ namespace SchoolManager
         private void Form1_Deactivate(object sender, EventArgs e)
         {
             Hide();
+            Termlabel.Text = "Term " + Program.Settingsdata.Curterm;
             for (int k = 0; k < 10; k++)
             {
                 for (int i = 0; i <= 6; i++)
@@ -88,6 +89,7 @@ namespace SchoolManager
             }
             if (!started)
             {
+                Termlabel.Text = "Term " + Program.Settingsdata.Curterm;
                 started = true;
                 Console.WriteLine("Loaded");
                 for (int k = 0; k < 10; k++)
@@ -130,6 +132,12 @@ namespace SchoolManager
                     }
                 }
             }
+        }
+
+        private void Expanded_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Hide();
+            e.Cancel = true; // this cancels the close event.
         }
     }
 }

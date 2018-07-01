@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq.Expressions;
@@ -9,6 +10,7 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Messaging;
 using System.Security.Authentication;
 using System.Windows.Forms.VisualStyles;
@@ -17,6 +19,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Newtonsoft.Json;
 using Octokit;
+using Application = System.Windows.Forms.Application;
 using Timer = System.Windows.Forms.Timer;
 
 namespace SplashScreen
@@ -32,13 +35,12 @@ namespace SplashScreen
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int GetWindowText(HandleRef hWnd, StringBuilder lpString, int nMaxCount);
         Settingsforms settingsForm = new Settingsforms();
-        Expanded Expandedform = null;
+        Expanded Expandedform = new Expanded();
         public int counter = 255;
         public int dayo = 0;
         float dx;
         private DayOfWeek lastDayOfWeek = DayOfWeek.Sunday;
         List<List<string>> timelayout = new List<List<string>>();
-
 
         public frmSplash()
         {
@@ -59,8 +61,7 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
             bool timetableexist = File.Exists(Program.CurDirectory + "/Timetable.json");
-                    File.Delete(Program.CurDirectory + "/delete.exe");
-            Githubupdate("Torca2001", "Timetable-clock", false);
+            int ilk = 0;
             try
             {
                 using (StreamWriter writer =
@@ -78,7 +79,7 @@ namespace SplashScreen
             }
             catch
             {
-
+                Console.WriteLine("Shortcut creation failed");
             }
 
             if (File.Exists(Program.CurDirectory + "/Settings.Json"))
@@ -86,7 +87,7 @@ namespace SplashScreen
                 Program.Settingsdata = JsonConvert.DeserializeObject<settingstruct>(File.ReadAllText(Program.CurDirectory + "/Settings.Json"));
                 if (Program.Settingsdata.User != Environment.UserName)
                 {
-                    Program.Settingsdata = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false);
+                    Program.Settingsdata = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false,false,0,true,1);
                     MessageBox.Show("Welcome " + Environment.UserName + @"!  Thanks for using the program!", "Welcome!");
                     if (timetableexist)
                     {
@@ -94,6 +95,7 @@ namespace SplashScreen
                         timetableexist = false;
                     }
                 }
+
             }
             else
             {
@@ -104,6 +106,7 @@ namespace SplashScreen
                     timetableexist = false;
                 }
             }
+            Githubupdate("Torca2001", "timetable-clock", false);
             if (timetableexist)
             {
                 List<period> timetableListtemp = JsonConvert.DeserializeObject<List<period>>(File.ReadAllText(Program.CurDirectory + "/Timetable.Json"));
@@ -124,8 +127,21 @@ namespace SplashScreen
                     Program.timetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
                 }
             }
-            Expandedform = new Expanded();
             InitializeComponent();
+            if (!Program.Settingsdata.Alwaystop)
+                toolStripMenuItem1.Checked = false;
+            switch (Program.Settingsdata.Hideset)
+            {
+                case 1:
+                    autoToolStripMenuItem.PerformClick();
+                    break;
+                case 2:
+                    dontHideToolStripMenuItem.PerformClick();
+                    break;
+                case 3:
+                    hideToolStripMenuItem.PerformClick();
+                    break;
+            }
             MouseClick += mouseClick;
             Updatetimetable(CredentialCache.DefaultNetworkCredentials);
             if (Program.timetableList.Count == 0)
@@ -337,9 +353,8 @@ namespace SplashScreen
 
         private void mouseClick(object sender, MouseEventArgs e)
         {
-            if (Expandedform.IsDisposed)
-                Expandedform = new Expanded();
             Expandedform.Show();
+            Expandedform.Activate();
         }
 
         private Timer _timer1;
@@ -460,14 +475,18 @@ namespace SplashScreen
             dontHideToolStripMenuItem.Checked = false;
         }
 
-        private void hideToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void frmSplash_FormClosing(object sender, FormClosingEventArgs e)
         {
             notifyIcon1.Visible = false;
+            Program.Settingsdata.Alwaystop = toolStripMenuItem1.Checked;
+            if (dontHideToolStripMenuItem.Checked)
+                Program.Settingsdata.Hideset = 2;
+            else if (autoToolStripMenuItem.Checked)
+                Program.Settingsdata.Hideset = 1;
+            else if (hideToolStripMenuItem.Checked)
+                Program.Settingsdata.Hideset = 3;
+            else
+                Program.Settingsdata.Hideset = 0;
             notifyIcon1.Dispose();
             using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Settings.Json"))
             {
@@ -478,9 +497,8 @@ namespace SplashScreen
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (settingsForm.IsDisposed)
-                settingsForm = new Settingsforms();
             settingsForm.Show();
+            settingsForm.Activate();
         }
 
         private void frmSplash_Activated(object sender, EventArgs e)
@@ -499,23 +517,37 @@ namespace SplashScreen
 
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
         {
-            if (settingsForm.IsDisposed)
-                settingsForm = new Settingsforms();
             settingsForm.Show();
-            settingsForm.Focus();
             settingsForm.Activate();
         }
 
         public string Githubupdate(string owner, string name,bool check)
         {
+            try
+            {
                 var header = new ProductHeaderValue("TimeteAuto");
                 GitHubClient client = new GitHubClient(header);
-                var releases = client.Repository.Release.GetAll(owner, name);
-                var latest = releases.Result[0];
-                if (Convert.ToInt16(latest.TagName.Replace(".","")) > Program.AppVersion)
+                var release = client.Repository.Release.GetAll(owner, name);
+                Release latest = new Release();
+                if (!Program.Settingsdata.Dev)
+                {
+                    foreach (var v in release.Result)
+                    {
+                        if (!v.Prerelease)
+                        {
+                            latest = v;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    latest = release.Result[0];
+                }
+
+                if (latest.TagName == null || Convert.ToInt16(latest.TagName.Replace(".", "")) <= Program.AppVersion)
                     return "Up to date";
                 WebClient downloader = new WebClient();
-                Console.WriteLine("Download started");
                 downloader.DownloadFileAsync(new Uri(latest.Assets[0].BrowserDownloadUrl),
                     Program.CurDirectory + "/NewTimetableclock.exe");
                 downloader.DownloadProgressChanged += (s, e) =>
@@ -528,10 +560,24 @@ namespace SplashScreen
                 {
                     File.Move(AppDomain.CurrentDomain.FriendlyName, "delete.exe");
                     File.Move("NewTimetableclock.exe", "SchoolManager.exe");
-                    System.Diagnostics.Process.Start("SchoolManager.exe");
+                    ProcessStartInfo processInfo = new ProcessStartInfo();
+                    processInfo.FileName = "SchoolManager.exe";
+                    processInfo.WorkingDirectory = Program.CurDirectory;
+                    Process.Start(processInfo);
+                    ProcessStartInfo Info = new ProcessStartInfo();
+                    Info.Arguments = "/C choice /C Y /N /D Y /T 3 & Del " + System.Windows.Forms.Application.ExecutablePath;
+                    Info.WindowStyle = ProcessWindowStyle.Hidden;
+                    Info.CreateNoWindow = true;
+                    Info.FileName = "cmd.exe";
+                    Process.Start(Info);
                     Close();
                 };
                 return "Updating";
+            }
+            catch
+            {
+                return "Failed";
+            }
         }
 
         public bool Updatetimetable(NetworkCredential networkcred)
@@ -561,9 +607,24 @@ namespace SplashScreen
                     Program.SynID = Convert.ToInt32(match.Groups[1].Value);
                 match = Regex.Match(html, "value=\"(.*?)\" id=\"curTerm\"", RegexOptions.IgnoreCase);
                 if (match.Success)
-                    Program.curTerm = Convert.ToInt32(match.Groups[1].Value);
-                html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" +
-                                          Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--&callType=" + Program.Calltype);
+                    Program.Settingsdata.Curterm = Convert.ToInt32(match.Groups[1].Value);
+                if (Program.Settingsdata.Curterm == 0) 
+                {
+                    for (int i = 4; i > 0; i--)
+                    {
+                        html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + i + @"%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--&callType=" + Program.Calltype);
+                        if (html.Length > 10)
+                        {
+                            Program.Settingsdata.Curterm = i;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.Settingsdata.Curterm + @"%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--&callType=" + Program.Calltype);
+                }
+                Console.WriteLine(html.Length);
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
                 using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Timetable.json"))
                 {
@@ -695,12 +756,20 @@ namespace SplashScreen
         public DateTime EarlyDate;
         public string User;
         public bool Weekoverride;
-        public settingstruct(DateTime refdateone, DateTime earlydate,string user, bool weekoverride)
+        public bool Dev;
+        public bool Alwaystop;
+        public int Curterm;
+        public int Hideset;
+        public settingstruct(DateTime refdateone, DateTime earlydate,string user, bool weekoverride, bool dev, int term, bool top, int hide)
         {
             User = user;
             Referencedayone = refdateone;
             EarlyDate = earlydate;
             Weekoverride = weekoverride;
+            Dev = dev;
+            Curterm = term;
+            Alwaystop = top;
+            Hideset = hide;
         }
     }
 }
