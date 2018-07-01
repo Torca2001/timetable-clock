@@ -61,7 +61,6 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
             bool timetableexist = File.Exists(Program.CurDirectory + "/Timetable.json");
-            int ilk = 0;
             try
             {
                 using (StreamWriter writer =
@@ -565,9 +564,10 @@ namespace SplashScreen
                     processInfo.WorkingDirectory = Program.CurDirectory;
                     Process.Start(processInfo);
                     ProcessStartInfo Info = new ProcessStartInfo();
-                    Info.Arguments = "/C choice /C Y /N /D Y /T 3 & Del " + System.Windows.Forms.Application.ExecutablePath;
-                    Info.WindowStyle = ProcessWindowStyle.Hidden;
-                    Info.CreateNoWindow = true;
+                    Console.WriteLine(Program.CurDirectory);
+                    Info.Arguments = "/C timeout /t 3 & Del " + Program.CurDirectory.Replace("/","\\")+"\\delete.exe";
+                    //Info.WindowStyle = ProcessWindowStyle.Hidden;
+                    Info.CreateNoWindow = false;
                     Info.FileName = "cmd.exe";
                     Process.Start(Info);
                     Close();
