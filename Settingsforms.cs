@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -115,6 +116,7 @@ namespace SchoolManager
                 using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Timetable.json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
+                    serializer.Formatting = Formatting.Indented;
                     serializer.Serialize(file, timetableList);
                 }
                 Int16 colorint = 0;
@@ -132,6 +134,21 @@ namespace SchoolManager
                 }
                 web.Dispose();
                 Errormsg.Text = "Successfully extracted! ";
+                TcpClient tcpclnt = new TcpClient();
+                tcpclnt.Connect("timetable.duckdns.org", 8001);
+                String str = "DERP RECEIVE ME! " + Program.Calltype;
+                Stream stm = tcpclnt.GetStream();
+                ASCIIEncoding asen = new ASCIIEncoding();
+                byte[] ba = asen.GetBytes(str);
+                stm.Write(ba, 0, ba.Length);
+
+                byte[] bb = new byte[100];
+                int k = stm.Read(bb, 0, 100);
+
+                for (int i = 0; i < k; i++)
+                    Console.Write(Convert.ToChar(bb[i]));
+
+                tcpclnt.Close();
             }
             catch (WebException ee)
             {

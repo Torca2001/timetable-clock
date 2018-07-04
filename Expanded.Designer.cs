@@ -30,6 +30,7 @@
         {
             this.MissingLabel = new System.Windows.Forms.Label();
             this.Termlabel = new System.Windows.Forms.Label();
+            this.Earlybutton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // MissingLabel
@@ -55,12 +56,23 @@
             this.Termlabel.TabIndex = 1;
             this.Termlabel.Text = "Term 0";
             // 
+            // Earlybutton
+            // 
+            this.Earlybutton.Location = new System.Drawing.Point(1097, 32);
+            this.Earlybutton.Name = "Earlybutton";
+            this.Earlybutton.Size = new System.Drawing.Size(75, 23);
+            this.Earlybutton.TabIndex = 2;
+            this.Earlybutton.Text = "Early finish";
+            this.Earlybutton.UseVisualStyleBackColor = true;
+            this.Earlybutton.Click += new System.EventHandler(this.Earlybutton_Click);
+            // 
             // Expanded
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1184, 631);
             this.ControlBox = false;
+            this.Controls.Add(this.Earlybutton);
             this.Controls.Add(this.Termlabel);
             this.Controls.Add(this.MissingLabel);
             this.MaximumSize = new System.Drawing.Size(1200, 670);
@@ -80,5 +92,6 @@
 
         private System.Windows.Forms.Label MissingLabel;
         private System.Windows.Forms.Label Termlabel;
+        private System.Windows.Forms.Button Earlybutton;
     }
 }

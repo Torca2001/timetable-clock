@@ -139,5 +139,13 @@ namespace SchoolManager
             Hide();
             e.Cancel = true; // this cancels the close event.
         }
+
+        private void Earlybutton_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(Program.Settingsdata.EarlyDate.Date);
+            Program.Settingsdata.EarlyDate = DateTime.Now;
+            Console.WriteLine("click");
+            Console.WriteLine(DateTime.Now.Date);
+        }
     }
 }

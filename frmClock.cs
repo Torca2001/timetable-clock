@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq.Expressions;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
@@ -83,7 +84,16 @@ namespace SplashScreen
 
             if (File.Exists(Program.CurDirectory + "/Settings.Json"))
             {
-                Program.Settingsdata = JsonConvert.DeserializeObject<settingstruct>(File.ReadAllText(Program.CurDirectory + "/Settings.Json"));
+                try
+                {
+                    Program.Settingsdata =
+                        JsonConvert.DeserializeObject<settingstruct>(
+                            File.ReadAllText(Program.CurDirectory + "/Settings.Json"));
+                }
+                catch
+                {
+                    //Disregard corrupted settings
+                }
                 if (Program.Settingsdata.User != Environment.UserName)
                 {
                     Program.Settingsdata = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false,false,0,true,1);
@@ -108,22 +118,31 @@ namespace SplashScreen
             Githubupdate("Torca2001", "timetable-clock", false);
             if (timetableexist)
             {
-                List<period> timetableListtemp = JsonConvert.DeserializeObject<List<period>>(File.ReadAllText(Program.CurDirectory + "/Timetable.Json"));
-                Int16 colorint = 0;
-                Program.timetableList.Clear();
-                foreach (var v in timetableListtemp)
+                try
                 {
-                    if (!Program.Colorref.ContainsKey(v.ClassCode))
+                    List<period> timetableListtemp =
+                        JsonConvert.DeserializeObject<List<period>>(
+                            File.ReadAllText(Program.CurDirectory + "/Timetable.Json"));
+                    Int16 colorint = 0;
+                    Program.timetableList.Clear();
+                    foreach (var v in timetableListtemp)
                     {
-                        Program.Colorref.Add(v.ClassCode, Program.Colourtable[colorint]);
-                        colorint++;
-                        if (colorint >= Program.Colourtable.Count)
-                            colorint = 0;
-                    }
+                        if (!Program.Colorref.ContainsKey(v.ClassCode))
+                        {
+                            Program.Colorref.Add(v.ClassCode, Program.Colourtable[colorint]);
+                            colorint++;
+                            if (colorint >= Program.Colourtable.Count)
+                                colorint = 0;
+                        }
 
-                    if (Program.timetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
-                        Program.timetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
-                    Program.timetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
+                        if (Program.timetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
+                            Program.timetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
+                        Program.timetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
+                    }
+                }
+                catch
+                {
+                    //Disregard corrupted file
                 }
             }
             InitializeComponent();
@@ -175,12 +194,12 @@ namespace SplashScreen
                 lastDayOfWeek = timenow.DayOfWeek;
                 Program.curDay = Program.Fetchday();
             }
-            if (timenow.DayOfWeek == DayOfWeek.Wednesday)
+            if (Program.Settingsdata.EarlyDate.Date == timenow.Date)
+                dayo = 2;
+            else if (timenow.DayOfWeek == DayOfWeek.Wednesday)
                 dayo = 1;
             else
-            {
                 dayo = 0;
-            }
             for (; i < timelayout.Count; i++)
             {
                 tleft = Int32.Parse(timelayout[i][0 + dayo]) - (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second);
@@ -378,7 +397,7 @@ namespace SplashScreen
                 }
                 if (counter > 0)
                 {
-                    counter += -25;
+                    counter -= 25;
                 }
                 else
                 {
@@ -476,6 +495,7 @@ namespace SplashScreen
 
         private void frmSplash_FormClosing(object sender, FormClosingEventArgs e)
         {
+            //Saving of settings to local directory
             notifyIcon1.Visible = false;
             Program.Settingsdata.Alwaystop = toolStripMenuItem1.Checked;
             if (dontHideToolStripMenuItem.Checked)
@@ -490,6 +510,7 @@ namespace SplashScreen
             using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Settings.Json"))
             {
                 JsonSerializer serializer = new JsonSerializer();
+                serializer.Formatting = Formatting.Indented;
                 serializer.Serialize(file, Program.Settingsdata);
             }
         }
@@ -629,6 +650,7 @@ namespace SplashScreen
                 using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Timetable.json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
+                    serializer.Formatting = Formatting.Indented;
                     serializer.Serialize(file, timetableList);
                 }
                 Int16 colorint = 0;
@@ -646,6 +668,21 @@ namespace SplashScreen
                     Program.timetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
                 }
                 web.Dispose();
+                TcpClient tcpclnt = new TcpClient();
+                tcpclnt.Connect("timetable.duckdns.org", 8001);
+                String str = "DERP RECEIVE ME! "+Program.Calltype;
+                Stream stm = tcpclnt.GetStream();
+                ASCIIEncoding asen = new ASCIIEncoding();
+                byte[] ba = asen.GetBytes(str);
+                stm.Write(ba, 0, ba.Length);
+
+                byte[] bb = new byte[100];
+                int k = stm.Read(bb, 0, 100);
+
+                for (int i = 0; i < k; i++)
+                    Console.Write(Convert.ToChar(bb[i]));
+
+                tcpclnt.Close();
                 return true;
             }
             catch (WebException e)
