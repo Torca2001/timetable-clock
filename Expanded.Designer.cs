@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Expanded));
             this.MissingLabel = new System.Windows.Forms.Label();
             this.Termlabel = new System.Windows.Forms.Label();
-            this.Earlybutton = new System.Windows.Forms.Button();
+            this.Curdayhigh = new System.Windows.Forms.Panel();
+            this.Earlybutt = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // MissingLabel
@@ -56,27 +58,44 @@
             this.Termlabel.TabIndex = 1;
             this.Termlabel.Text = "Term 0";
             // 
-            // Earlybutton
+            // Curdayhigh
             // 
-            this.Earlybutton.Location = new System.Drawing.Point(1097, 32);
-            this.Earlybutton.Name = "Earlybutton";
-            this.Earlybutton.Size = new System.Drawing.Size(75, 23);
-            this.Earlybutton.TabIndex = 2;
-            this.Earlybutton.Text = "Early finish";
-            this.Earlybutton.UseVisualStyleBackColor = true;
-            this.Earlybutton.Click += new System.EventHandler(this.Earlybutton_Click);
+            this.Curdayhigh.BackColor = System.Drawing.Color.Red;
+            this.Curdayhigh.Location = new System.Drawing.Point(66, 0);
+            this.Curdayhigh.Name = "Curdayhigh";
+            this.Curdayhigh.Size = new System.Drawing.Size(120, 593);
+            this.Curdayhigh.TabIndex = 3;
+            this.Curdayhigh.Visible = false;
+            // 
+            // Earlybutt
+            // 
+            this.Earlybutt.AutoSize = true;
+            this.Earlybutt.BackColor = System.Drawing.Color.DarkRed;
+            this.Earlybutt.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Earlybutt.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Earlybutt.Location = new System.Drawing.Point(1118, 33);
+            this.Earlybutt.Name = "Earlybutt";
+            this.Earlybutt.Size = new System.Drawing.Size(53, 42);
+            this.Earlybutt.TabIndex = 4;
+            this.Earlybutt.Text = "Early\r\nFinish";
+            this.Earlybutt.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Earlybutt.Click += new System.EventHandler(this.Earlybutt_Click);
+            this.Earlybutt.MouseLeave += new System.EventHandler(this.Earlybutt_MouseLeave);
+            this.Earlybutt.MouseHover += new System.EventHandler(this.Earlybutt_MouseHover);
             // 
             // Expanded
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1184, 631);
+            this.ClientSize = new System.Drawing.Size(1184, 591);
             this.ControlBox = false;
-            this.Controls.Add(this.Earlybutton);
+            this.Controls.Add(this.Earlybutt);
+            this.Controls.Add(this.Curdayhigh);
             this.Controls.Add(this.Termlabel);
             this.Controls.Add(this.MissingLabel);
-            this.MaximumSize = new System.Drawing.Size(1200, 670);
-            this.MinimumSize = new System.Drawing.Size(1200, 670);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(1200, 630);
+            this.MinimumSize = new System.Drawing.Size(1200, 630);
             this.Name = "Expanded";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Expanded";
@@ -92,6 +111,7 @@
 
         private System.Windows.Forms.Label MissingLabel;
         private System.Windows.Forms.Label Termlabel;
-        private System.Windows.Forms.Button Earlybutton;
+        private System.Windows.Forms.Panel Curdayhigh;
+        private System.Windows.Forms.Label Earlybutt;
     }
 }

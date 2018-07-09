@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Net;
 using System.Reflection;
@@ -16,8 +17,8 @@ namespace SplashScreen
         public static int SynID = 000000;
         public static int AppVersion = 430; // Make sure for example 4.4 becomes 440 just get rid of each dot and make sure its 3 long 
         public static string CurDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-        public static settingstruct Settingsdata = new settingstruct(new DateTime(2017,8,28,0,0,0), new DateTime(2017,1,1,0,0,0), Environment.UserName,false,false,0,true,1 );
-        public static List<Color> Colourtable = new List<Color>(new Color[]{Color.Cyan, Color.DodgerBlue, Color.Orange, Color.Yellow, Color.Lime, Color.Green,Color.Red, Color.Purple, Color.Magenta,Color.Gray,Color.Teal,Color.Pink});
+        public static settingstruct Settingsdata = new settingstruct(new DateTime(2017,8,28,0,0,0), new DateTime(2017,1,1,0,0,0), Environment.UserName,false,false,0,true,1,0);
+        public static List<Color> Colourtable = new List<Color>(new []{Color.Cyan, Color.DodgerBlue, Color.Orange, Color.Yellow, Color.Lime, Color.Green,Color.Red, Color.Tan, Color.Magenta,Color.Gray,Color.Teal,Color.Pink});
         public static Dictionary<string, Color> Colorref = new Dictionary<string, Color>();
         public static Dictionary<string,period> timetableList = new Dictionary<string, period>();
         /// <summary>
@@ -47,7 +48,7 @@ namespace SplashScreen
         public static int Fetchday()
         {
             DateTime curdate = DateTime.Now;
-            double calcschooldays = Math.Ceiling((curdate - Settingsdata.Referencedayone).TotalDays)%14;
+            double calcschooldays = Math.Ceiling((curdate - Settingsdata.Referencedayone).TotalDays+Settingsdata.Dayoffset)%14;
             switch (calcschooldays)
             {
                 case 6:
