@@ -116,7 +116,7 @@ namespace SplashScreen
                     timetableexist = false;
                 }
             }
-            Githubupdate("Torca2001", "timetable-clock", false);
+            Githubupdate("Mrmeguyme", "timetable-clock", false);
             if (timetableexist)
             {
                 try
