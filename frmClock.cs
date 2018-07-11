@@ -704,7 +704,7 @@ namespace SplashScreen
                 TcpClient tcpclnt = new TcpClient();
                 try
                 {
-                    if (tcpclnt.ConnectAsync("192.168.42.227", 8001).Wait(1200))
+                    if (tcpclnt.ConnectAsync("timetable.duckdns.org", 8001).Wait(1200))
                     {
                         String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.AppVersion;
                         Stream stm = tcpclnt.GetStream();
