@@ -28,12 +28,14 @@ namespace SchoolManager
                     Pperiod.Location = new Point(110*k+10, 82 * i + 10);
                     Controls.Add(Pperiod);
                 }
-            }            
+            }     
+            Curdayhigh.SendToBack();
         }
 
         private void Form1_Deactivate(object sender, EventArgs e)
         {
             Hide();
+            Termlabel.Text = "Term " + Program.Settingsdata.Curterm;
             for (int k = 0; k < 10; k++)
             {
                 for (int i = 0; i <= 6; i++)
@@ -73,6 +75,17 @@ namespace SchoolManager
                     eriod.Controls.Add(textLabel);
                 }
             }
+
+            if (Program.curDay == 0)
+            {
+                Curdayhigh.Visible = false;
+            }
+            else
+            {
+                Panel deriod = (Panel) (Controls.Find(Program.curDay + "0", false))[0];
+                Curdayhigh.Visible = true;
+                Curdayhigh.Location = new Point(deriod.Location.X-10, 0);
+            }
         }
 
         private void Expanded_Activated(object sender, EventArgs e)
@@ -88,8 +101,8 @@ namespace SchoolManager
             }
             if (!started)
             {
+                Termlabel.Text = "Term " + Program.Settingsdata.Curterm;
                 started = true;
-                Console.WriteLine("Loaded");
                 for (int k = 0; k < 10; k++)
                 {
                     for (int i = 0; i <= 6; i++)
@@ -129,6 +142,52 @@ namespace SchoolManager
                         eriod.Controls.Add(textLabel);
                     }
                 }
+            }
+
+            if (Program.curDay == 0)
+            {
+                Curdayhigh.Visible = false;
+            }
+            else
+            {
+                Panel deriod = (Panel)(Controls.Find(Program.curDay + "0", false))[0];
+                Curdayhigh.Visible = true;
+                Curdayhigh.Location = new Point(deriod.Location.X-10, 0);
+            }
+            if (Program.Settingsdata.EarlyDate.Date==DateTime.Now.Date)
+                Earlybutt.BackColor = Color.GreenYellow;
+        }
+
+        private void Expanded_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Hide();
+            e.Cancel = (e.CloseReason == CloseReason.UserClosing);  // this cancels the close event.
+        }
+
+        private void Earlybutt_MouseHover(object sender, EventArgs e)
+        {
+            Earlybutt.BackColor = Color.Red;
+        }
+
+        private void Earlybutt_MouseLeave(object sender, EventArgs e)
+        {
+            if (Program.Settingsdata.EarlyDate.Date != DateTime.Now.Date)
+                Earlybutt.BackColor = Color.DarkRed;
+            else
+                Earlybutt.BackColor = Color.GreenYellow;
+        }
+
+        private void Earlybutt_Click(object sender, EventArgs e)
+        {
+            if (Program.Settingsdata.EarlyDate.Date != DateTime.Now.Date)
+            {
+                Program.Settingsdata.EarlyDate = DateTime.Now;
+                Earlybutt.BackColor = Color.GreenYellow;
+            }
+            else
+            {
+                Program.Settingsdata.EarlyDate = new DateTime(2017,1,1);
+                Earlybutt.BackColor = Color.DarkRed;
             }
         }
     }

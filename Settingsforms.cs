@@ -5,11 +5,14 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using SplashScreen;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Newtonsoft.Json;
 
 namespace SchoolManager
@@ -21,14 +24,28 @@ namespace SchoolManager
             get { return _Download; }
             set
             {
+                if (100 > value && value > 0)
+                {
+                    progresslabel.Text = bytesreceived.ToString("0.###") + "/" + Bytesneeded.ToString("0.###") + " MB";
+                    progressBar1.Visible = true;
+                }
+                else if (progressBar1.Visible)
+                {
+                    progressBar1.Visible = false;
+                    if (value==100)
+                        progresslabel.Text = "Downloaded";
+                }
+
                 _Download = value;
                 progressBar1.Value = value;
             }
         }
 
+        public decimal bytesreceived;
+        public decimal Bytesneeded;
+
         private int _Download;
         private const int EM_SETCUEBANNER = 0x1501;
-
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)]string lParam);
         public Settingsforms()
@@ -74,15 +91,37 @@ namespace SchoolManager
                 match = Regex.Match(html, "value=\"(.*?)\" id=\"curTerm\"", RegexOptions.IgnoreCase);
                 if (match.Success)
                 {
-                    Program.curTerm = Convert.ToInt32(match.Groups[1].Value);
+                    Program.Settingsdata.Curterm = Convert.ToInt32(match.Groups[1].Value);
                 }
-                myCache.Add(new Uri("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + @"%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--&callType=" + Program.Calltype), "NTLM", new NetworkCredential(Userbox.Text, Passbox.Text));
-                web.Credentials = myCache;
-                html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.curTerm + @"%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--&callType=" + Program.Calltype);
+                string sqlinject = "";
+                if (Program.Calltype == "student")
+                    sqlinject =
+                        "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--";
+                if (Program.Settingsdata.Curterm == 0)
+                {
+                    for (int i = 4; i > 0; i--)
+                    {
+                        myCache.Add(new Uri("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + i + sqlinject + "&callType=" + Program.Calltype), "NTLM", new NetworkCredential(Userbox.Text, Passbox.Text));
+                        web.Credentials = myCache;
+                        html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + i + sqlinject + "&callType=" + Program.Calltype);
+                        if (html.Length > 10)
+                        {
+                            Program.Settingsdata.Curterm = i;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    myCache.Add(new Uri("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.Settingsdata.Curterm + sqlinject + "&callType=" + Program.Calltype), "NTLM", new NetworkCredential(Userbox.Text, Passbox.Text));
+                    web.Credentials = myCache;
+                    html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.Settingsdata.Curterm + sqlinject + "&callType=" + Program.Calltype);
+                }
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
-                using (StreamWriter file = File.CreateText(Environment.CurrentDirectory + "/Timetable.json"))
+                using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Timetable.json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
+                    serializer.Formatting = Formatting.Indented;
                     serializer.Serialize(file, timetableList);
                 }
                 Int16 colorint = 0;
@@ -100,6 +139,28 @@ namespace SchoolManager
                 }
                 web.Dispose();
                 Errormsg.Text = "Successfully extracted! ";
+                Errormsg.Update();
+                    TcpClient tcpclnt = new TcpClient();
+                try
+                {
+                    if (tcpclnt.ConnectAsync("timetable.duckdns.org", 8001).Wait(1200))
+                    {
+                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.AppVersion;
+                        Stream stm = tcpclnt.GetStream();
+                        ASCIIEncoding asen = new ASCIIEncoding();
+                        byte[] ba = asen.GetBytes(str);
+                        stm.Write(ba, 0, ba.Length);
+                        Errormsg.Text += "Saved";
+                    }
+                    else
+                        Errormsg.Text += "Filed";
+                }
+                catch
+                {
+                    Errormsg.Text += "Filed";
+                }
+
+                tcpclnt.Close();
             }
             catch (WebException ee)
             {
@@ -115,12 +176,14 @@ namespace SchoolManager
                 MessageBox.Show(ee.ToString());
             }
 
-            Userbox.Text = "Username-ID";
-            Passbox.Text = "Password";
+            Userbox.Text = "";
+            Passbox.Text = "";
         }
 
         private void Settingsforms_Shown(object sender, EventArgs e)
         {
+            if (Program.Settingsdata.Dayoffset == 7)
+                Weekoverride.BackColor = Color.GreenYellow;
             SendMessage(Userbox.Handle, EM_SETCUEBANNER, 0, "Username");
             SendMessage(Passbox.Handle, EM_SETCUEBANNER, 0, "Password");
         }
@@ -129,6 +192,28 @@ namespace SchoolManager
         {
             if (e.KeyCode == Keys.Enter)
                 Loginbutton.PerformClick();
+        }
+
+        private void Settingsforms_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Hide();
+            e.Cancel = (e.CloseReason == CloseReason.UserClosing);  // this cancels the close event.
+        }
+
+        private void Weekoverride_Click(object sender, EventArgs e)
+        {
+            if (Program.Settingsdata.Dayoffset == 0)
+            {
+                Program.Settingsdata.Dayoffset = 7;
+                Weekoverride.BackColor = Color.GreenYellow;
+            }
+            else
+            {
+                Program.Settingsdata.Dayoffset = 0;
+                Weekoverride.BackColor = Color.Red;
+            }
+
+            Program.curDay = Program.Fetchday();
         }
     }
 }

@@ -31,25 +31,18 @@ namespace SchoolManager
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settingsforms));
             this.Userbox = new System.Windows.Forms.TextBox();
             this.Errormsg = new System.Windows.Forms.Label();
             this.Passbox = new System.Windows.Forms.TextBox();
             this.Loginbutton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.progresslabel = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
+            this.Weekoverride = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(79, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Week Override";
             // 
             // Userbox
             // 
@@ -90,25 +83,36 @@ namespace SchoolManager
             // panel1
             // 
             this.panel1.AutoSize = true;
+            this.panel1.Controls.Add(this.Weekoverride);
+            this.panel1.Controls.Add(this.progresslabel);
             this.panel1.Controls.Add(this.progressBar1);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.Loginbutton);
             this.panel1.Controls.Add(this.Passbox);
             this.panel1.Controls.Add(this.Errormsg);
             this.panel1.Controls.Add(this.Userbox);
-            this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(641, 384);
             this.panel1.TabIndex = 0;
             // 
+            // progresslabel
+            // 
+            this.progresslabel.AutoSize = true;
+            this.progresslabel.Location = new System.Drawing.Point(469, 95);
+            this.progresslabel.Name = "progresslabel";
+            this.progresslabel.Size = new System.Drawing.Size(57, 13);
+            this.progresslabel.TabIndex = 7;
+            this.progresslabel.Text = "Up to date";
+            // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(472, 106);
+            this.progressBar1.Location = new System.Drawing.Point(472, 111);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(141, 23);
             this.progressBar1.TabIndex = 6;
+            this.progressBar1.Visible = false;
             // 
             // label2
             // 
@@ -120,6 +124,18 @@ namespace SchoolManager
             this.label2.Text = "About\r\nTimetable Clock made by\r\nWilliam C\r\nDistributed by\r\nJosh Harper\r\nVersion: " +
     "";
             // 
+            // Weekoverride
+            // 
+            this.Weekoverride.BackColor = System.Drawing.Color.Red;
+            this.Weekoverride.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.Weekoverride.Location = new System.Drawing.Point(13, 13);
+            this.Weekoverride.Name = "Weekoverride";
+            this.Weekoverride.Size = new System.Drawing.Size(75, 23);
+            this.Weekoverride.TabIndex = 8;
+            this.Weekoverride.Text = "Override week";
+            this.Weekoverride.UseVisualStyleBackColor = false;
+            this.Weekoverride.Click += new System.EventHandler(this.Weekoverride_Click);
+            // 
             // Settingsforms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -128,10 +144,12 @@ namespace SchoolManager
             this.ControlBox = false;
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Settingsforms";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Settingsforms";
             this.Deactivate += new System.EventHandler(this.Settingsforms_Deactivate);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Settingsforms_FormClosing);
             this.Shown += new System.EventHandler(this.Settingsforms_Shown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -141,8 +159,6 @@ namespace SchoolManager
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox Userbox;
         private System.Windows.Forms.Label Errormsg;
         private System.Windows.Forms.TextBox Passbox;
@@ -150,5 +166,7 @@ namespace SchoolManager
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label progresslabel;
+        private System.Windows.Forms.Button Weekoverride;
     }
 }
