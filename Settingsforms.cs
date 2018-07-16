@@ -197,7 +197,7 @@ namespace SchoolManager
         private void Settingsforms_FormClosing(object sender, FormClosingEventArgs e)
         {
             Hide();
-            e.Cancel = true; // this cancels the close event.
+            e.Cancel = (e.CloseReason == CloseReason.UserClosing);  // this cancels the close event.
         }
 
         private void Weekoverride_Click(object sender, EventArgs e)

@@ -522,25 +522,28 @@ namespace SplashScreen
         private void frmSplash_FormClosing(object sender, FormClosingEventArgs e)
         {
             //Saving of settings to local directory
-            notifyIcon1.Visible = false;
-            Program.Settingsdata.Alwaystop = toolStripMenuItem1.Checked;
-            if (dontHideToolStripMenuItem.Checked)
-                Program.Settingsdata.Hideset = 2;
-            else if (autoToolStripMenuItem.Checked)
-                Program.Settingsdata.Hideset = 1;
-            else if (hideToolStripMenuItem.Checked)
-                Program.Settingsdata.Hideset = 3;
-            else
-                Program.Settingsdata.Hideset = 0;
-            notifyIcon1.Dispose();
-            using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Settings.Json"))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Formatting = Formatting.Indented;
-                serializer.Serialize(file, Program.Settingsdata);
-            }
-            settingsForm.Dispose();
-            Expandedform.Dispose();
+                _timer1.Dispose();
+                notifyIcon1.Visible = false;
+                Program.Settingsdata.Alwaystop = toolStripMenuItem1.Checked;
+                if (dontHideToolStripMenuItem.Checked)
+                    Program.Settingsdata.Hideset = 2;
+                else if (autoToolStripMenuItem.Checked)
+                    Program.Settingsdata.Hideset = 1;
+                else if (hideToolStripMenuItem.Checked)
+                    Program.Settingsdata.Hideset = 3;
+                else
+                    Program.Settingsdata.Hideset = 0;
+                notifyIcon1.Dispose();
+                using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Settings.Json"))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Formatting = Formatting.Indented;
+                    serializer.Serialize(file, Program.Settingsdata);
+                }
+
+                settingsForm.Dispose();
+                Expandedform.Dispose();
+                Dispose();
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)

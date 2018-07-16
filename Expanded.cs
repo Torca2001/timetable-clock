@@ -161,7 +161,7 @@ namespace SchoolManager
         private void Expanded_FormClosing(object sender, FormClosingEventArgs e)
         {
             Hide();
-            e.Cancel = true; // this cancels the close event.
+            e.Cancel = (e.CloseReason == CloseReason.UserClosing);  // this cancels the close event.
         }
 
         private void Earlybutt_MouseHover(object sender, EventArgs e)
