@@ -143,7 +143,7 @@ namespace SchoolManager
                     TcpClient tcpclnt = new TcpClient();
                 try
                 {
-                    if (tcpclnt.ConnectAsync("timetable.duckdns.org", 8001).Wait(1200))
+                    if (tcpclnt.ConnectAsync("timetable.duckdns.org", 80).Wait(1200))
                     {
                         String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.AppVersion;
                         Stream stm = tcpclnt.GetStream();
