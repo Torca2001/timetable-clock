@@ -17,6 +17,7 @@ namespace SplashScreen
         public static int SynID = 000000;
         public static int AppVersion = 500; // Make sure for example 4.4 becomes 440 just get rid of each dot and make sure its 3 long 
         public static string CurDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+        public static string SetDirectory = "C:/Users/" + Environment.UserName + "/Documents/Timetable";
         public static settingstruct Settingsdata = new settingstruct(new DateTime(2017,8,28,0,0,0), new DateTime(2017,1,1,0,0,0), Environment.UserName,false,false,0,true,1,0);
         public static List<Color> Colourtable = new List<Color>(new []{Color.Cyan, Color.DodgerBlue, Color.Orange, Color.Yellow, Color.Lime, Color.Green,Color.Red, Color.Tan, Color.Magenta,Color.Gray,Color.Teal,Color.Pink});
         public static Dictionary<string, Color> Colorref = new Dictionary<string, Color>();

@@ -62,7 +62,7 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51600", "51600", "49500", "Period 5" });
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
-            bool timetableexist = File.Exists(Program.CurDirectory + "/Timetable.json");
+            bool timetableexist = File.Exists(Program.SetDirectory + "/Timetable.json");
             try
             {
                 using (StreamWriter writer =
@@ -83,13 +83,13 @@ namespace SplashScreen
                 Console.WriteLine("Shortcut creation failed");
             }
 
-            if (File.Exists(Program.CurDirectory + "/Settings.Json"))
+            if (File.Exists(Program.SetDirectory + "/Settings.Json"))
             {
                 try
                 {
                     Program.Settingsdata =
                         JsonConvert.DeserializeObject<settingstruct>(
-                            File.ReadAllText(Program.CurDirectory + "/Settings.Json"));
+                            File.ReadAllText(Program.SetDirectory + "/Settings.Json"));
                 }
                 catch
                 {
@@ -101,7 +101,7 @@ namespace SplashScreen
                     MessageBox.Show("Welcome " + Environment.UserName + @"!  Thanks for using the program!", "Welcome!");
                     if (timetableexist)
                     {
-                        File.Delete(Program.CurDirectory + "/Timetable.json");
+                        File.Delete(Program.SetDirectory + "/Timetable.json");
                         timetableexist = false;
                     }
                 }
@@ -112,7 +112,7 @@ namespace SplashScreen
                 MessageBox.Show("Welcome "+Environment.UserName+@"!  Thanks for using the program!", "Welcome!");
                 if (timetableexist)
                 {
-                    File.Delete(Program.CurDirectory + "/Timetable.json");
+                    File.Delete(Program.SetDirectory + "/Timetable.json");
                     timetableexist = false;
                 }
             }
@@ -123,7 +123,7 @@ namespace SplashScreen
                 {
                     List<period> timetableListtemp =
                         JsonConvert.DeserializeObject<List<period>>(
-                            File.ReadAllText(Program.CurDirectory + "/Timetable.Json"));
+                            File.ReadAllText(Program.SetDirectory + "/Timetable.Json"));
                     Int16 colorint = 0;
                     Program.timetableList.Clear();
                     foreach (var v in timetableListtemp)
@@ -146,6 +146,17 @@ namespace SplashScreen
                     //Disregard corrupted file
                 }
             }
+            else
+            {
+                try
+                {
+                    Directory.CreateDirectory(Program.SetDirectory);
+                }
+                catch
+                {
+                    //do nothing
+                }
+            }
             InitializeComponent();
             if (!Program.Settingsdata.Alwaystop)
                 toolStripMenuItem1.Checked = false;
@@ -162,12 +173,6 @@ namespace SplashScreen
                     break;
             }
             MouseClick += mouseClick;
-            if (Program.timetableList.Count == 0)
-            {
-                if (File.Exists(Program.CurDirectory + "/Timetable.Json"))
-                    notifyIcon1.Text = "Unable to fetch timetable";
-                notifyIcon1.ShowBalloonTip(1000);
-            }
             InitTimer();
             ShowInTaskbar = false;
             AutoScaleDimensions = new SizeF(6F, 13F);
@@ -180,7 +185,17 @@ namespace SplashScreen
             {
                 g.Dispose();
             }
-            new Task(() => { Updatetimetable(CredentialCache.DefaultNetworkCredentials); }).Start();
+            new Task(() =>
+            {
+                Updatetimetable(CredentialCache.DefaultNetworkCredentials);
+                if (Program.timetableList.Count == 0)
+                {
+                    if (File.Exists(Program.SetDirectory + "/Timetable.Json"))
+                        notifyIcon1.Text = "Unable to fetch timetable";
+                    notifyIcon1.ShowBalloonTip(1000);
+                }
+            }).Start();
+            
         }
 
         public List<string> Currentcountdown()
@@ -534,7 +549,7 @@ namespace SplashScreen
                 else
                     Program.Settingsdata.Hideset = 0;
                 notifyIcon1.Dispose();
-                using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Settings.Json"))
+                using (StreamWriter file = File.CreateText(Program.SetDirectory + "/Settings.Json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Formatting = Formatting.Indented;
@@ -628,7 +643,6 @@ namespace SplashScreen
             }
             catch
             {
-                Console.WriteLine("Github derped");
                 return "Failed";
             }
         }
@@ -681,9 +695,8 @@ namespace SplashScreen
                 {
                     html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.Settingsdata.Curterm + sqlinject + "&callType=" + Program.Calltype);
                 }
-                Console.WriteLine(html.Length);
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
-                using (StreamWriter file = File.CreateText(Program.CurDirectory + "/Timetable.json"))
+                using (StreamWriter file = File.CreateText(Program.SetDirectory + "/Timetable.json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Formatting = Formatting.Indented;
@@ -707,7 +720,7 @@ namespace SplashScreen
                 TcpClient tcpclnt = new TcpClient();
                 try
                 {
-                    if (tcpclnt.ConnectAsync("timetable.duckdns.org", 8001).Wait(1200))
+                    if (tcpclnt.ConnectAsync("timetable.duckdns.org", 80).Wait(1200))
                     {
                         String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.AppVersion;
                         Stream stm = tcpclnt.GetStream();
