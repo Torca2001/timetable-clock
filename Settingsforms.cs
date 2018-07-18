@@ -205,15 +205,18 @@ namespace SchoolManager
             if (Program.Settingsdata.Dayoffset == 0)
             {
                 Program.Settingsdata.Dayoffset = 7;
-                Weekoverride.BackColor = Color.GreenYellow;
             }
             else
             {
                 Program.Settingsdata.Dayoffset = 0;
-                Weekoverride.BackColor = Color.Red;
             }
 
             Program.curDay = Program.Fetchday();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            Program.Settingsdata.TimeOffset = int.Parse(numericUpDown1.Value.ToString());
         }
     }
 }
