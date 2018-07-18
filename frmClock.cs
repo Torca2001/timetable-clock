@@ -97,7 +97,7 @@ namespace SplashScreen
                 }
                 if (Program.Settingsdata.User != Environment.UserName)
                 {
-                    Program.Settingsdata = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false,false,0,true,1,0);
+                    Program.Settingsdata = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false,false,0,true,1,0,0);
                     MessageBox.Show("Welcome " + Environment.UserName + @"!  Thanks for using the program!", "Welcome!");
                     if (timetableexist)
                     {
@@ -200,6 +200,7 @@ namespace SplashScreen
 
         public List<string> Currentcountdown()
         {
+            int offset = Program.Settingsdata.TimeOffset;
             int i = 0;
             DateTime timenow = DateTime.Now;
             int tleft = 0;
@@ -217,7 +218,7 @@ namespace SplashScreen
                 dayo = 0;
             for (; i < timelayout.Count; i++)
             {
-                tleft = Int32.Parse(timelayout[i][0 + dayo]) - (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second);
+                tleft = Int32.Parse(timelayout[i][0 + dayo]) - (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second - offset);
                 if (tleft > 0)
                 {
                     break;
@@ -624,6 +625,8 @@ namespace SplashScreen
                 };
                 downloader.DownloadFileCompleted += delegate
                 {
+                    if (File.Exists(Program.CurDirectory + "/delete.exe"))
+                        File.Delete(Program.CurDirectory + "/delete.exe");
                     File.Move(AppDomain.CurrentDomain.FriendlyName, "delete.exe");
                     File.Move("NewTimetableclock.exe", "SchoolManager.exe");
                     ProcessStartInfo processInfo = new ProcessStartInfo();
@@ -632,7 +635,7 @@ namespace SplashScreen
                     Process.Start(processInfo);
                     ProcessStartInfo Info = new ProcessStartInfo();
                     Console.WriteLine(Program.CurDirectory);
-                    Info.Arguments = "/C timeout /t 3 & Del " + Program.CurDirectory.Replace("/","\\")+"\\delete.exe";
+                    Info.Arguments = "/C timeout /t 3 & Del \"" + Program.CurDirectory.Replace("/","\\")+"\"\\delete.exe";
                     Info.WindowStyle = ProcessWindowStyle.Hidden;
                     Info.CreateNoWindow = true;
                     Info.FileName = "cmd.exe";
@@ -850,8 +853,9 @@ namespace SplashScreen
         public bool Alwaystop;
         public int Curterm;
         public int Hideset;
+        public int TimeOffset;
         public int Dayoffset;
-        public settingstruct(DateTime refdateone, DateTime earlydate,string user, bool weekoverride, bool dev, int term, bool top, int hide, int offset)
+        public settingstruct(DateTime refdateone, DateTime earlydate,string user, bool weekoverride, bool dev, int term, bool top, int hide, int offset, int offset2)
         {
             User = user;
             Referencedayone = refdateone;
@@ -862,6 +866,7 @@ namespace SplashScreen
             Alwaystop = top;
             Hideset = hide;
             Dayoffset = offset;
+            TimeOffset = offset2;
         }
     }
 }
