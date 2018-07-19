@@ -81,7 +81,8 @@ namespace SchoolManager
                 {
                     int.TryParse(match.Groups[1].Value, out var tempint);
                     Program.Settingsdata.Referencedayone = Program.CalDayone(tempint);
-                    Program.curDay = tempint;
+                    if (Program.Settingsdata.Dayoffset == 0)
+                        Program.curDay = tempint;
                 }
                 match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">", RegexOptions.IgnoreCase);
                 if (match.Success)
@@ -182,8 +183,7 @@ namespace SchoolManager
 
         private void Settingsforms_Shown(object sender, EventArgs e)
         {
-            if (Program.Settingsdata.Dayoffset == 7)
-                Weekoverride.BackColor = Color.GreenYellow;
+            numericUpDown1.Value = Program.Settingsdata.TimeOffset;
             SendMessage(Userbox.Handle, EM_SETCUEBANNER, 0, "Username");
             SendMessage(Passbox.Handle, EM_SETCUEBANNER, 0, "Password");
         }

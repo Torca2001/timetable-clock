@@ -155,6 +155,7 @@ namespace SplashScreen
             this.Activated += new System.EventHandler(this.frmSplash_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSplash_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Shown += new System.EventHandler(this.frmSplash_Shown);
             this.contextMenu1.ResumeLayout(false);
             this.ResumeLayout(false);
 
