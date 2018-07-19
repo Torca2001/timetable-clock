@@ -62,7 +62,7 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51600", "51600", "49500", "Period 5" });
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
-            bool timetableexist = File.Exists(Program.SetDirectory + "/Timetable.json");
+            bool timetableexist = File.Exists(Program.SETTINGS_DIRECTORY + "/Timetable.json");
             try
             {
                 using (StreamWriter writer =
@@ -83,25 +83,25 @@ namespace SplashScreen
                 Console.WriteLine("Shortcut creation failed");
             }
 
-            if (File.Exists(Program.SetDirectory + "/Settings.Json"))
+            if (File.Exists(Program.SETTINGS_DIRECTORY + "/Settings.Json"))
             {
                 try
                 {
-                    Program.Settingsdata =
+                    Program.SettingsData =
                         JsonConvert.DeserializeObject<settingstruct>(
-                            File.ReadAllText(Program.SetDirectory + "/Settings.Json"));
+                            File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Settings.Json"));
                 }
                 catch
                 {
                     //Disregard corrupted settings
                 }
-                if (Program.Settingsdata.User != Environment.UserName)
+                if (Program.SettingsData.User != Environment.UserName)
                 {
-                    Program.Settingsdata = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false,false,0,true,1,0,0);
+                    Program.SettingsData = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false,false,0,true,1,0,0);
                     MessageBox.Show("Welcome " + Environment.UserName + @"!  Thanks for using the program!", "Welcome!");
                     if (timetableexist)
                     {
-                        File.Delete(Program.SetDirectory + "/Timetable.json");
+                        File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.json");
                         timetableexist = false;
                     }
                 }
@@ -112,7 +112,7 @@ namespace SplashScreen
                 MessageBox.Show("Welcome "+Environment.UserName+@"!  Thanks for using the program!", "Welcome!");
                 if (timetableexist)
                 {
-                    File.Delete(Program.SetDirectory + "/Timetable.json");
+                    File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.json");
                     timetableexist = false;
                 }
             }
@@ -123,22 +123,22 @@ namespace SplashScreen
                 {
                     List<period> timetableListtemp =
                         JsonConvert.DeserializeObject<List<period>>(
-                            File.ReadAllText(Program.SetDirectory + "/Timetable.Json"));
+                            File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Timetable.Json"));
                     Int16 colorint = 0;
-                    Program.timetableList.Clear();
+                    Program.TimetableList.Clear();
                     foreach (var v in timetableListtemp)
                     {
-                        if (!Program.Colorref.ContainsKey(v.ClassCode))
+                        if (!Program.ColorRef.ContainsKey(v.ClassCode))
                         {
-                            Program.Colorref.Add(v.ClassCode, Program.Colourtable[colorint]);
+                            Program.ColorRef.Add(v.ClassCode, Program.ColourTable[colorint]);
                             colorint++;
-                            if (colorint >= Program.Colourtable.Count)
+                            if (colorint >= Program.ColourTable.Count)
                                 colorint = 0;
                         }
 
-                        if (Program.timetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
-                            Program.timetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
-                        Program.timetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
+                        if (Program.TimetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
+                            Program.TimetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
+                        Program.TimetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
                     }
                 }
                 catch
@@ -150,7 +150,7 @@ namespace SplashScreen
             {
                 try
                 {
-                    Directory.CreateDirectory(Program.SetDirectory);
+                    Directory.CreateDirectory(Program.SETTINGS_DIRECTORY);
                 }
                 catch
                 {
@@ -158,9 +158,9 @@ namespace SplashScreen
                 }
             }
             InitializeComponent();
-            if (!Program.Settingsdata.Alwaystop)
+            if (!Program.SettingsData.Alwaystop)
                 toolStripMenuItem1.Checked = false;
-            switch (Program.Settingsdata.Hideset)
+            switch (Program.SettingsData.Hideset)
             {
                 case 1:
                     autoToolStripMenuItem.PerformClick();
@@ -188,9 +188,9 @@ namespace SplashScreen
             new Task(() =>
             {
                 Updatetimetable(CredentialCache.DefaultNetworkCredentials);
-                if (Program.timetableList.Count == 0)
+                if (Program.TimetableList.Count == 0)
                 {
-                    if (File.Exists(Program.SetDirectory + "/Timetable.Json"))
+                    if (File.Exists(Program.SETTINGS_DIRECTORY + "/Timetable.Json"))
                         notifyIcon1.Text = "Unable to fetch timetable";
                     notifyIcon1.ShowBalloonTip(1000);
                 }
@@ -200,7 +200,7 @@ namespace SplashScreen
 
         public List<string> Currentcountdown()
         {
-            int offset = Program.Settingsdata.TimeOffset;
+            int offset = Program.SettingsData.TimeOffset;
             int i = 0;
             DateTime timenow = DateTime.Now;
             int tleft = 0;
@@ -210,7 +210,7 @@ namespace SplashScreen
                 lastDayOfWeek = timenow.DayOfWeek;
                 Program.curDay = Program.Fetchday();
             }
-            if (Program.Settingsdata.EarlyDate.Date == timenow.Date)
+            if (Program.SettingsData.EarlyDate.Date == timenow.Date)
                 dayo = 2;
             else if (timenow.DayOfWeek == DayOfWeek.Wednesday)
                 dayo = 1;
@@ -314,23 +314,23 @@ namespace SplashScreen
                     g.DrawString(hours + ":" + minutes + ":" + seconds, new Font("Trebuchet MS", 18 * dx), brushc, 10,
                         40);
                     g.DrawString(
-                        Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1))
-                            ? Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].Room
+                        Program.TimetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1))
+                            ? Program.TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].Room
                             : "", new Font("Trebuchet MS", 18 * dx), brushc, 140, 40);
                     string label = temp[2];
                     if ((temp[2].StartsWith("Period") || temp[2].StartsWith("Form")) &&
-                        Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
+                        Program.TimetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
                         label =
-                            Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
+                            Program.TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
                                 .ClassDescription.Length > 12
-                                ? Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
+                                ? Program.TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
                                     .ClassCode
-                                : Program.timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
+                                : Program.TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
                                     .ClassDescription;
                     if (temp[2].StartsWith("Go to") &&
-                        Program.timetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
+                        Program.TimetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
                         label = "Go to " + Program
-                                    .timetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
+                                    .TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
                                     .ClassCode;
                     g.DrawString(label, new Font("Trebuchet MS", 14 * dx), brushc, 10, 2);
                     StringFormat stringFormat = new StringFormat();
@@ -540,21 +540,21 @@ namespace SplashScreen
             //Saving of settings to local directory
                 _timer1.Dispose();
                 notifyIcon1.Visible = false;
-                Program.Settingsdata.Alwaystop = toolStripMenuItem1.Checked;
+                Program.SettingsData.Alwaystop = toolStripMenuItem1.Checked;
                 if (dontHideToolStripMenuItem.Checked)
-                    Program.Settingsdata.Hideset = 2;
+                    Program.SettingsData.Hideset = 2;
                 else if (autoToolStripMenuItem.Checked)
-                    Program.Settingsdata.Hideset = 1;
+                    Program.SettingsData.Hideset = 1;
                 else if (hideToolStripMenuItem.Checked)
-                    Program.Settingsdata.Hideset = 3;
+                    Program.SettingsData.Hideset = 3;
                 else
-                    Program.Settingsdata.Hideset = 0;
+                    Program.SettingsData.Hideset = 0;
                 notifyIcon1.Dispose();
-                using (StreamWriter file = File.CreateText(Program.SetDirectory + "/Settings.Json"))
+                using (StreamWriter file = File.CreateText(Program.SETTINGS_DIRECTORY + "/Settings.Json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Formatting = Formatting.Indented;
-                    serializer.Serialize(file, Program.Settingsdata);
+                    serializer.Serialize(file, Program.SettingsData);
                 }
 
                 settingsForm.Dispose();
@@ -596,7 +596,7 @@ namespace SplashScreen
                 GitHubClient client = new GitHubClient(header);
                 var release = client.Repository.Release.GetAll(owner, name);
                 Release latest = new Release();
-                if (!Program.Settingsdata.Dev)
+                if (!Program.SettingsData.Dev)
                 {
                     foreach (var v in release.Result)
                     {
@@ -612,11 +612,11 @@ namespace SplashScreen
                     latest = release.Result[0];
                 }
 
-                if (latest.TagName == null || Convert.ToInt16(latest.TagName.Replace(".", "")) <= Program.AppVersion)
+                if (latest.TagName == null || Convert.ToInt16(latest.TagName.Replace(".", "")) <= Program.APP_VERSION)
                     return "Up to date";
                 WebClient downloader = new WebClient();
                 downloader.DownloadFileAsync(new Uri(latest.Assets[0].BrowserDownloadUrl),
-                    Program.CurDirectory + "/NewTimetableclock.exe");
+                    Program.CURRENT_DIRECTORY + "/NewTimetableclock.exe");
                 downloader.DownloadProgressChanged += (s, e) =>
                 {
                     settingsForm.Download = e.ProgressPercentage;
@@ -625,17 +625,17 @@ namespace SplashScreen
                 };
                 downloader.DownloadFileCompleted += delegate
                 {
-                    if (File.Exists(Program.CurDirectory + "/delete.exe"))
-                        File.Delete(Program.CurDirectory + "/delete.exe");
+                    if (File.Exists(Program.CURRENT_DIRECTORY + "/delete.exe"))
+                        File.Delete(Program.CURRENT_DIRECTORY + "/delete.exe");
                     File.Move(AppDomain.CurrentDomain.FriendlyName, "delete.exe");
                     File.Move("NewTimetableclock.exe", "SchoolManager.exe");
                     ProcessStartInfo processInfo = new ProcessStartInfo();
                     processInfo.FileName = "SchoolManager.exe";
-                    processInfo.WorkingDirectory = Program.CurDirectory;
+                    processInfo.WorkingDirectory = Program.CURRENT_DIRECTORY;
                     Process.Start(processInfo);
                     ProcessStartInfo Info = new ProcessStartInfo();
-                    Console.WriteLine(Program.CurDirectory);
-                    Info.Arguments = "/C timeout /t 3 & Del \"" + Program.CurDirectory.Replace("/","\\")+"\"\\delete.exe";
+                    Console.WriteLine(Program.CURRENT_DIRECTORY);
+                    Info.Arguments = "/C timeout /t 3 & Del \"" + Program.CURRENT_DIRECTORY.Replace("/","\\")+"\"\\delete.exe";
                     Info.WindowStyle = ProcessWindowStyle.Hidden;
                     Info.CreateNoWindow = true;
                     Info.FileName = "cmd.exe";
@@ -667,7 +667,7 @@ namespace SplashScreen
                 if (match.Success)
                 {
                     int.TryParse(match.Groups[1].Value, out var tempint);
-                    Program.Settingsdata.Referencedayone = Program.CalDayone(tempint);
+                    Program.SettingsData.Referencedayone = Program.CalDayone(tempint);
                     Program.curDay = tempint;
                 }
 
@@ -677,29 +677,29 @@ namespace SplashScreen
                     Program.SynID = Convert.ToInt32(match.Groups[1].Value);
                 match = Regex.Match(html, "value=\"(.*?)\" id=\"curTerm\"", RegexOptions.IgnoreCase);
                 if (match.Success)
-                    Program.Settingsdata.Curterm = Convert.ToInt32(match.Groups[1].Value);
+                    Program.SettingsData.Curterm = Convert.ToInt32(match.Groups[1].Value);
                 string sqlinject="";
                 if (Program.Calltype == "student")
                     sqlinject =
                         "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--";
-                if (Program.Settingsdata.Curterm == 0) 
+                if (Program.SettingsData.Curterm == 0) 
                 {
                     for (int i = 4; i > 0; i--)
                     {
                         html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + i + sqlinject + "&callType=" + Program.Calltype);
                         if (html.Length > 10)
                         {
-                            Program.Settingsdata.Curterm = i;
+                            Program.SettingsData.Curterm = i;
                             break;
                         }
                     }
                 }
                 else
                 {
-                    html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.Settingsdata.Curterm + sqlinject + "&callType=" + Program.Calltype);
+                    html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.SettingsData.Curterm + sqlinject + "&callType=" + Program.Calltype);
                 }
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
-                using (StreamWriter file = File.CreateText(Program.SetDirectory + "/Timetable.json"))
+                using (StreamWriter file = File.CreateText(Program.SETTINGS_DIRECTORY + "/Timetable.json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Formatting = Formatting.Indented;
@@ -708,16 +708,16 @@ namespace SplashScreen
                 Int16 colorint = 0;
                 foreach (var v in timetableList)
                 {
-                    if (Program.timetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
-                        Program.timetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
-                    if (!Program.Colorref.ContainsKey(v.ClassCode))
+                    if (Program.TimetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
+                        Program.TimetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
+                    if (!Program.ColorRef.ContainsKey(v.ClassCode))
                     {
-                        Program.Colorref.Add(v.ClassCode, Program.Colourtable[colorint]);
+                        Program.ColorRef.Add(v.ClassCode, Program.ColourTable[colorint]);
                         colorint++;
-                        if (colorint >= Program.Colourtable.Count)
+                        if (colorint >= Program.ColourTable.Count)
                             colorint = 0;
                     }
-                    Program.timetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
+                    Program.TimetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
                 }
                 web.Dispose();
                 TcpClient tcpclnt = new TcpClient();
@@ -725,7 +725,7 @@ namespace SplashScreen
                 {
                     if (tcpclnt.ConnectAsync("timetable.duckdns.org", 80).Wait(1200))
                     {
-                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.AppVersion;
+                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.APP_VERSION;
                         Stream stm = tcpclnt.GetStream();
                         ASCIIEncoding asen = new ASCIIEncoding();
                         byte[] ba = asen.GetBytes(str);
