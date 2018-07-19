@@ -85,24 +85,27 @@ namespace SplashScreen
 
             if (File.Exists(Program.SETTINGS_DIRECTORY + "/Settings.Json"))
             {
-                try
-                {
-                    Program.SettingsData =
-                        JsonConvert.DeserializeObject<settingstruct>(
-                            File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Settings.Json"));
-                }
-                catch
-                {
-                    //Disregard corrupted settings
-                }
                 if (Program.SettingsData.User != Environment.UserName)
                 {
+                    Console.WriteLine("The settings were for the wrong user.");
                     Program.SettingsData = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false,false,0,true,1,0,0);
                     MessageBox.Show("Welcome " + Environment.UserName + @"!  Thanks for using the program!", "Welcome!");
                     if (timetableexist)
                     {
                         File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.json");
                         timetableexist = false;
+                    }
+                } else
+                {
+                    try
+                    {
+                        Program.SettingsData =
+                            JsonConvert.DeserializeObject<settingstruct>(
+                                File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Settings.Json"));
+                    }
+                    catch
+                    {
+                        //Disregard corrupted settings
                     }
                 }
 

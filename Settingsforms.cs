@@ -182,8 +182,7 @@ namespace SchoolManager
 
         private void Settingsforms_Shown(object sender, EventArgs e)
         {
-            if (Program.SettingsData.Dayoffset == 7)
-                Weekoverride.BackColor = Color.GreenYellow;
+            numericUpDown1.Value = Program.SettingsData.TimeOffset;
             SendMessage(Userbox.Handle, EM_SETCUEBANNER, 0, "Username");
             SendMessage(Passbox.Handle, EM_SETCUEBANNER, 0, "Password");
         }
