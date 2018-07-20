@@ -144,7 +144,7 @@ namespace SchoolManager
             this.numericUpDown1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.numericUpDown1.Location = new System.Drawing.Point(135, 49);
             this.numericUpDown1.Maximum = new decimal(new int[] {
-            10000,
+            1000,
             0,
             0,
             0});
@@ -241,7 +241,6 @@ namespace SchoolManager
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

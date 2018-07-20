@@ -35,14 +35,14 @@ namespace SchoolManager
         private void Form1_Deactivate(object sender, EventArgs e)
         {
             Hide();
-            Termlabel.Text = "Term " + Program.Settingsdata.Curterm;
+            Termlabel.Text = "Term " + Program.SettingsData.Curterm;
             for (int k = 0; k < 10; k++)
             {
                 for (int i = 0; i <= 6; i++)
                 {
                     period tPeriod;
-                    if (Program.timetableList.ContainsKey((k + 1) + "" + i))
-                        tPeriod = Program.timetableList[(k + 1) + "" + i];
+                    if (Program.TimetableList.ContainsKey((k + 1) + "" + i))
+                        tPeriod = Program.TimetableList[(k + 1) + "" + i];
                     else
                     {
                         tPeriod = new period();
@@ -67,7 +67,7 @@ namespace SchoolManager
                     textLabel.Location = new Point(1, 3);
                     Panel eriod = (Panel)(Controls.Find((k + 1) + i.ToString(), false))[0];
                     textLabel.Text = tPeriod.ClassDescription;
-                    eriod.BackColor = Program.Colorref.ContainsKey(tPeriod.ClassCode) ? Program.Colorref[tPeriod.ClassCode] : Color.White;
+                    eriod.BackColor = Program.ColorRef.ContainsKey(tPeriod.ClassCode) ? Program.ColorRef[tPeriod.ClassCode] : Color.White;
                     textLabel.BackColor = eriod.BackColor;
                     eriod.Controls.Clear();
                     eriod.Controls.Add(classcod);
@@ -90,7 +90,7 @@ namespace SchoolManager
 
         private void Expanded_Activated(object sender, EventArgs e)
         {
-            if (Program.timetableList.Count == 0)
+            if (Program.TimetableList.Count == 0)
             {
                 MissingLabel.BringToFront();
                 MissingLabel.Show();
@@ -101,15 +101,15 @@ namespace SchoolManager
             }
             if (!started)
             {
-                Termlabel.Text = "Term " + Program.Settingsdata.Curterm;
+                Termlabel.Text = "Term " + Program.SettingsData.Curterm;
                 started = true;
                 for (int k = 0; k < 10; k++)
                 {
                     for (int i = 0; i <= 6; i++)
                     {
                         period tPeriod;
-                        if (Program.timetableList.ContainsKey((k + 1) + "" + i))
-                            tPeriod = Program.timetableList[(k + 1) + "" + i];
+                        if (Program.TimetableList.ContainsKey((k + 1) + "" + i))
+                            tPeriod = Program.TimetableList[(k + 1) + "" + i];
                         else
                         {
                             tPeriod = new period();
@@ -134,7 +134,7 @@ namespace SchoolManager
                         textLabel.Location = new Point(1, 3);
                         Panel eriod = (Panel)(Controls.Find((k + 1) + i.ToString(), false))[0];
                         textLabel.Text = tPeriod.ClassDescription;
-                        eriod.BackColor = Program.Colorref.ContainsKey(tPeriod.ClassCode) ? Program.Colorref[tPeriod.ClassCode] : Color.White;
+                        eriod.BackColor = Program.ColorRef.ContainsKey(tPeriod.ClassCode) ? Program.ColorRef[tPeriod.ClassCode] : Color.White;
                         textLabel.BackColor = eriod.BackColor;
                         eriod.Controls.Clear();
                         eriod.Controls.Add(classcod);
@@ -154,7 +154,7 @@ namespace SchoolManager
                 Curdayhigh.Visible = true;
                 Curdayhigh.Location = new Point(deriod.Location.X-10, 0);
             }
-            if (Program.Settingsdata.EarlyDate.Date==DateTime.Now.Date)
+            if (Program.SettingsData.EarlyDate.Date==DateTime.Now.Date)
                 Earlybutt.BackColor = Color.GreenYellow;
         }
 
@@ -171,7 +171,7 @@ namespace SchoolManager
 
         private void Earlybutt_MouseLeave(object sender, EventArgs e)
         {
-            if (Program.Settingsdata.EarlyDate.Date != DateTime.Now.Date)
+            if (Program.SettingsData.EarlyDate.Date != DateTime.Now.Date)
                 Earlybutt.BackColor = Color.DarkRed;
             else
                 Earlybutt.BackColor = Color.GreenYellow;
@@ -179,14 +179,14 @@ namespace SchoolManager
 
         private void Earlybutt_Click(object sender, EventArgs e)
         {
-            if (Program.Settingsdata.EarlyDate.Date != DateTime.Now.Date)
+            if (Program.SettingsData.EarlyDate.Date != DateTime.Now.Date)
             {
-                Program.Settingsdata.EarlyDate = DateTime.Now;
+                Program.SettingsData.EarlyDate = DateTime.Now;
                 Earlybutt.BackColor = Color.GreenYellow;
             }
             else
             {
-                Program.Settingsdata.EarlyDate = new DateTime(2017,1,1);
+                Program.SettingsData.EarlyDate = new DateTime(2017,1,1);
                 Earlybutt.BackColor = Color.DarkRed;
             }
         }
