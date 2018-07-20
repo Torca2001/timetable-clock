@@ -123,12 +123,12 @@ namespace SplashScreen
             {
                 try
                 {
-                    List<period> timetableListtemp =
+                    List<period> TimetableListtemp =
                         JsonConvert.DeserializeObject<List<period>>(
                             File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Timetable.Json"));
                     Int16 colorint = 0;
                     Program.TimetableList.Clear();
-                    foreach (var v in timetableListtemp)
+                    foreach (var v in TimetableListtemp)
                     {
                         if (!Program.ColorRef.ContainsKey(v.ClassCode))
                         {
@@ -227,10 +227,10 @@ namespace SplashScreen
                         {
                             case 3:
                             case 4:
-                                if (Program.timetableList.ContainsKey(Program.curDay + "1") &&
-                                    Program.timetableList.ContainsKey(Program.curDay + "2") &&
-                                    Program.timetableList[Program.curDay + "1"].ClassCode ==
-                                    Program.timetableList[Program.curDay + "2"].ClassCode)
+                                if (Program.TimetableList.ContainsKey(Program.curDay + "1") &&
+                                    Program.TimetableList.ContainsKey(Program.curDay + "2") &&
+                                    Program.TimetableList[Program.curDay + "1"].ClassCode ==
+                                    Program.TimetableList[Program.curDay + "2"].ClassCode)
                                 {
                                     tleft = Int32.Parse(timelayout[5][0 + dayo]) -
                                             (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second - offset);
@@ -240,10 +240,10 @@ namespace SplashScreen
                                 break;
                             case 8:
                             case 9:
-                                if (Program.timetableList.ContainsKey(Program.curDay + "3") &&
-                                    Program.timetableList.ContainsKey(Program.curDay + "4") &&
-                                    Program.timetableList[Program.curDay + "3"].ClassCode ==
-                                    Program.timetableList[Program.curDay + "4"].ClassCode)
+                                if (Program.TimetableList.ContainsKey(Program.curDay + "3") &&
+                                    Program.TimetableList.ContainsKey(Program.curDay + "4") &&
+                                    Program.TimetableList[Program.curDay + "3"].ClassCode ==
+                                    Program.TimetableList[Program.curDay + "4"].ClassCode)
                                 {
                                     tleft = Int32.Parse(timelayout[10][0 + dayo]) -
                                             (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second - offset);
@@ -252,10 +252,10 @@ namespace SplashScreen
                                 break;
                             case 13:
                             case 14:
-                                if (Program.timetableList.ContainsKey(Program.curDay + "5") &&
-                                    Program.timetableList.ContainsKey(Program.curDay + "6") &&
-                                    Program.timetableList[Program.curDay + "5"].ClassCode ==
-                                    Program.timetableList[Program.curDay + "6"].ClassCode)
+                                if (Program.TimetableList.ContainsKey(Program.curDay + "5") &&
+                                    Program.TimetableList.ContainsKey(Program.curDay + "6") &&
+                                    Program.TimetableList[Program.curDay + "5"].ClassCode ==
+                                    Program.TimetableList[Program.curDay + "6"].ClassCode)
                                 {
                                     tleft = Int32.Parse(timelayout[15][0 + dayo]) -
                                             (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second - offset);
@@ -723,8 +723,8 @@ namespace SplashScreen
                 if (match.Success)
                 {
                     int.TryParse(match.Groups[1].Value, out var tempint);
-                    Program.Settingsdata.Referencedayone = Program.CalDayone(tempint);
-                    if (Program.Settingsdata.Dayoffset==0)
+                    Program.SettingsData.Referencedayone = Program.CalDayone(tempint);
+                    if (Program.SettingsData.Dayoffset==0)
                         Program.curDay = tempint;
                 }
 
@@ -755,15 +755,15 @@ namespace SplashScreen
                 {
                     html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.SettingsData.Curterm + sqlinject + "&callType=" + Program.Calltype);
                 }
-                List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
+                List<period> TimetableList = JsonConvert.DeserializeObject<List<period>>(html);
                 using (StreamWriter file = File.CreateText(Program.SETTINGS_DIRECTORY + "/Timetable.json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Formatting = Formatting.Indented;
-                    serializer.Serialize(file, timetableList);
+                    serializer.Serialize(file, TimetableList);
                 }
                 Int16 colorint = 0;
-                foreach (var v in timetableList)
+                foreach (var v in TimetableList)
                 {
                     if (Program.TimetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
                         Program.TimetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
