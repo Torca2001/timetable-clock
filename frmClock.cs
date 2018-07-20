@@ -119,7 +119,6 @@ namespace SplashScreen
                     timetableexist = false;
                 }
             }
-            Githubupdate("Mrmeguyme", "timetable-clock", false);
             if (timetableexist)
             {
                 try
@@ -198,7 +197,7 @@ namespace SplashScreen
                     notifyIcon1.ShowBalloonTip(1000);
                 }
             }).Start();
-            
+            Githubupdate("Mrmeguyme", "timetable-clock", false);
         }
 
         public List<string> Currentcountdown()
@@ -224,6 +223,47 @@ namespace SplashScreen
                 tleft = Int32.Parse(timelayout[i][0 + dayo]) - (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second - offset);
                 if (tleft > 0)
                 {
+                        switch (i)
+                        {
+                            case 3:
+                            case 4:
+                                if (Program.timetableList.ContainsKey(Program.curDay + "1") &&
+                                    Program.timetableList.ContainsKey(Program.curDay + "2") &&
+                                    Program.timetableList[Program.curDay + "1"].ClassCode ==
+                                    Program.timetableList[Program.curDay + "2"].ClassCode)
+                                {
+                                    tleft = Int32.Parse(timelayout[5][0 + dayo]) -
+                                            (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second - offset);
+                                    i = 5;
+                                }
+
+                                break;
+                            case 8:
+                            case 9:
+                                if (Program.timetableList.ContainsKey(Program.curDay + "3") &&
+                                    Program.timetableList.ContainsKey(Program.curDay + "4") &&
+                                    Program.timetableList[Program.curDay + "3"].ClassCode ==
+                                    Program.timetableList[Program.curDay + "4"].ClassCode)
+                                {
+                                    tleft = Int32.Parse(timelayout[10][0 + dayo]) -
+                                            (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second - offset);
+                                    i = 10;
+                                }
+                                break;
+                            case 13:
+                            case 14:
+                                if (Program.timetableList.ContainsKey(Program.curDay + "5") &&
+                                    Program.timetableList.ContainsKey(Program.curDay + "6") &&
+                                    Program.timetableList[Program.curDay + "5"].ClassCode ==
+                                    Program.timetableList[Program.curDay + "6"].ClassCode)
+                                {
+                                    tleft = Int32.Parse(timelayout[15][0 + dayo]) -
+                                            (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second - offset);
+                                    i = 15;
+                                }
+
+                                break;
+                        }
                     break;
                 }
             }
@@ -277,11 +317,13 @@ namespace SplashScreen
                 
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                 var brushc = new System.Drawing.SolidBrush(Color.FromArgb(255, 255, 255, 255));
-                if (counter != 0){
+                if (counter != 0)
+                {
                     List<string> temp = Currentcountdown();
                     double timeleft = Int32.Parse(temp[0]);
                     if (temp[2] == "End")
                         counter = 0;
+
                     string hours;
                     string minutes;
                     string seconds;
@@ -342,6 +384,7 @@ namespace SplashScreen
                     string k = "Day " + Program.curDay;
                     g.DrawString(k, new Font("Trebuchet MS", 8 * dx), brushc, -63, 2);
                     stringFormat.Dispose();
+                    
                 }
 
                 hBitmap = bmp.GetHbitmap(Color.FromArgb(0));  //Set the fact that background is transparent
@@ -415,6 +458,7 @@ namespace SplashScreen
         }
 
         private Timer _timer1;
+        private Timer _timer2;
         public void InitTimer()
         {
             
@@ -422,7 +466,10 @@ namespace SplashScreen
             _timer1.Tick += timer1_Tick;
             _timer1.Interval = 10; // in miliseconds
             _timer1.Start();
-            
+            _timer2 = new Timer();
+            _timer2.Tick += timer2_Tick;
+            _timer2.Interval = 600000;
+            _timer2.Start();
 
         }
 
@@ -506,6 +553,11 @@ namespace SplashScreen
             UpdateFormDisplay(BackgroundImage);
             //this.SetDesktopLocation(System.Windows.Forms.Cursor.Position.X-100, System.Windows.Forms.Cursor.Position.Y-30);
   
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            Githubupdate("Mrmeguyme", "timetable-clock", false);
         }
 
         private void mMove_Click_1(object sender, EventArgs e)
@@ -618,8 +670,9 @@ namespace SplashScreen
                 if (latest.TagName == null || Convert.ToInt16(latest.TagName.Replace(".", "")) <= Program.APP_VERSION)
                     return "Up to date";
                 WebClient downloader = new WebClient();
+                Console.WriteLine("Downloading update");
                 downloader.DownloadFileAsync(new Uri(latest.Assets[0].BrowserDownloadUrl),
-                    Program.CURRENT_DIRECTORY + "/NewTimetableclock.exe");
+                    Program.SETTINGS_DIRECTORY + "/NewTimetableclock.exe");
                 downloader.DownloadProgressChanged += (s, e) =>
                 {
                     settingsForm.Download = e.ProgressPercentage;
@@ -628,17 +681,17 @@ namespace SplashScreen
                 };
                 downloader.DownloadFileCompleted += delegate
                 {
-                    if (File.Exists(Program.CURRENT_DIRECTORY + "/delete.exe"))
-                        File.Delete(Program.CURRENT_DIRECTORY + "/delete.exe");
-                    File.Move(AppDomain.CurrentDomain.FriendlyName, "delete.exe");
-                    File.Move("NewTimetableclock.exe", "SchoolManager.exe");
+                    if (File.Exists(Program.SETTINGS_DIRECTORY + "/delete.exe"))
+                        File.Delete(Program.SETTINGS_DIRECTORY + "/delete.exe");
+                    File.Move(Program.CURRENT_DIRECTORY + "/SchoolManager.exe", Program.SETTINGS_DIRECTORY+"/delete.exe");
+                    File.Move(Program.SETTINGS_DIRECTORY+"/NewTimetableclock.exe", Program.CURRENT_DIRECTORY+"/SchoolManager.exe");
                     ProcessStartInfo processInfo = new ProcessStartInfo();
                     processInfo.FileName = "SchoolManager.exe";
                     processInfo.WorkingDirectory = Program.CURRENT_DIRECTORY;
                     Process.Start(processInfo);
                     ProcessStartInfo Info = new ProcessStartInfo();
                     Console.WriteLine(Program.CURRENT_DIRECTORY);
-                    Info.Arguments = "/C timeout /t 3 & Del \"" + Program.CURRENT_DIRECTORY.Replace("/","\\")+"\"\\delete.exe";
+                    Info.Arguments = "/C timeout /t 3 & Del \"" + Program.SETTINGS_DIRECTORY.Replace("/","\\")+"\"\\delete.exe";
                     Info.WindowStyle = ProcessWindowStyle.Hidden;
                     Info.CreateNoWindow = true;
                     Info.FileName = "cmd.exe";
@@ -670,8 +723,9 @@ namespace SplashScreen
                 if (match.Success)
                 {
                     int.TryParse(match.Groups[1].Value, out var tempint);
-                    Program.SettingsData.Referencedayone = Program.CalDayone(tempint);
-                    Program.curDay = tempint;
+                    Program.Settingsdata.Referencedayone = Program.CalDayone(tempint);
+                    if (Program.Settingsdata.Dayoffset==0)
+                        Program.curDay = tempint;
                 }
 
                 match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">",
@@ -756,6 +810,11 @@ namespace SplashScreen
             {
                 MessageBox.Show(e.ToString());
             }
+        }
+
+        private void frmSplash_Shown(object sender, EventArgs e)
+        {
+            Left += 1;
         }
     }
 
