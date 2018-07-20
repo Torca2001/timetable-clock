@@ -680,9 +680,9 @@ namespace SplashScreen
                 };
                 downloader.DownloadFileCompleted += delegate
                 {
-                    if (File.Exists(Program.SETTINGS_DIRECTORY + "/delete.exe"))
-                        File.Delete(Program.SETTINGS_DIRECTORY + "/delete.exe");
-                    File.Move(Program.CURRENT_DIRECTORY + "/SchoolManager.exe", Program.SETTINGS_DIRECTORY+"/delete.exe");
+                    if (File.Exists(Program.CURRENT_DIRECTORY + "/delete.exe"))
+                        File.Delete(Program.CURRENT_DIRECTORY + "/delete.exe");
+                    File.Move(Program.CURRENT_DIRECTORY + "/SchoolManager.exe", Program.CURRENT_DIRECTORY+"/delete.exe");
                     File.Move(Program.SETTINGS_DIRECTORY+"/NewTimetableclock.exe", Program.CURRENT_DIRECTORY+"/SchoolManager.exe");
                     ProcessStartInfo processInfo = new ProcessStartInfo();
                     processInfo.FileName = "SchoolManager.exe";
@@ -690,7 +690,7 @@ namespace SplashScreen
                     Process.Start(processInfo);
                     ProcessStartInfo Info = new ProcessStartInfo();
                     Console.WriteLine(Program.CURRENT_DIRECTORY);
-                    Info.Arguments = "/C timeout /t 3 & Del \"" + Program.SETTINGS_DIRECTORY.Replace("/","\\")+"\"\\delete.exe";
+                    Info.Arguments = "/C timeout /t 3 & Del \"" + Program.CURRENT_DIRECTORY.Replace("/","\\")+"\"\\delete.exe";
                     Info.WindowStyle = ProcessWindowStyle.Hidden;
                     Info.CreateNoWindow = true;
                     Info.FileName = "cmd.exe";
