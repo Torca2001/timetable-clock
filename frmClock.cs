@@ -62,7 +62,7 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51600", "51600", "49500", "Period 5" });
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
-            bool timetableexist = File.Exists(Program.SETTINGS_DIRECTORY + "/Timetable.json");
+            bool timetableexist = File.Exists(Program.SETTINGS_DIRECTORY + "/Timetable.Json");
             try
             {
                 using (StreamWriter writer =
@@ -92,7 +92,7 @@ namespace SplashScreen
                     MessageBox.Show("Welcome " + Environment.UserName + @"!  Thanks for using the program!", "Welcome!");
                     if (timetableexist)
                     {
-                        File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.json");
+                        File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.Json");
                         timetableexist = false;
                     }
                 } else
@@ -115,7 +115,7 @@ namespace SplashScreen
                 MessageBox.Show("Welcome "+Environment.UserName+@"!  Thanks for using the program!", "Welcome!");
                 if (timetableexist)
                 {
-                    File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.json");
+                    File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.Json");
                     timetableexist = false;
                 }
             }
@@ -189,11 +189,11 @@ namespace SplashScreen
             }
             new Task(() =>
             {
-                Updatetimetable(CredentialCache.DefaultNetworkCredentials);
+                Timetable.UpdateTimetable("", "");
                 if (Program.TimetableList.Count == 0)
                 {
                     if (File.Exists(Program.SETTINGS_DIRECTORY + "/Timetable.Json"))
-                        notifyIcon1.Text = "Unable to fetch timetable";
+                        notifyIcon1.BalloonTipText = "Unable to fetch timetable";
                     notifyIcon1.ShowBalloonTip(1000);
                 }
             }).Start();
@@ -667,7 +667,7 @@ namespace SplashScreen
                     latest = release.Result[0];
                 }
 
-                if (latest.TagName == null || Convert.ToInt16(latest.TagName.Replace(".", "")) <= Program.APP_VERSION)
+                if (latest.TagName == null || !Timetable.Compareversions(Program.APP_VERSION, latest.TagName))
                     return "Up to date";
                 WebClient downloader = new WebClient();
                 Console.WriteLine("Downloading update");
@@ -683,7 +683,8 @@ namespace SplashScreen
                 {
                     if (File.Exists(Program.SETTINGS_DIRECTORY + "/delete.exe"))
                         File.Delete(Program.SETTINGS_DIRECTORY + "/delete.exe");
-                    File.Move(Program.CURRENT_DIRECTORY + "/SchoolManager.exe", Program.SETTINGS_DIRECTORY+"/delete.exe");
+                    Console.WriteLine(Program.CURRENT_DIRECTORY + "/SchoolManager.exe");
+                    File.Move(Program.CURRENT_DIRECTORY + "/SchoolManager.exe", Program.CURRENT_DIRECTORY+"/delete.exe");
                     File.Move(Program.SETTINGS_DIRECTORY+"/NewTimetableclock.exe", Program.CURRENT_DIRECTORY+"/SchoolManager.exe");
                     ProcessStartInfo processInfo = new ProcessStartInfo();
                     processInfo.FileName = "SchoolManager.exe";
@@ -691,7 +692,7 @@ namespace SplashScreen
                     Process.Start(processInfo);
                     ProcessStartInfo Info = new ProcessStartInfo();
                     Console.WriteLine(Program.CURRENT_DIRECTORY);
-                    Info.Arguments = "/C timeout /t 3 & Del \"" + Program.SETTINGS_DIRECTORY.Replace("/","\\")+"\"\\delete.exe";
+                    Info.Arguments = "/C timeout /t 3 & Del \"" + Program.CURRENT_DIRECTORY.Replace("/","\\")+"\"\\delete.exe";
                     Info.WindowStyle = ProcessWindowStyle.Hidden;
                     Info.CreateNoWindow = true;
                     Info.FileName = "cmd.exe";
@@ -703,112 +704,6 @@ namespace SplashScreen
             catch
             {
                 return "Failed";
-            }
-        }
-
-        public void Updatetimetable(NetworkCredential networkcred)
-        {
-            try
-            {
-                MyWebClient web = new MyWebClient();
-                web.Credentials = networkcred;
-                String html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/default.asp");
-                Match match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"callType\">",
-                    RegexOptions.IgnoreCase);
-                if (match.Success)
-                    Program.Calltype = match.Groups[1].Value;
-
-                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"curDay\">",
-                    RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    int.TryParse(match.Groups[1].Value, out var tempint);
-                    Program.SettingsData.Referencedayone = Program.CalDayone(tempint);
-                    if (Program.SettingsData.Dayoffset==0)
-                        Program.curDay = tempint;
-                }
-
-                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">",
-                    RegexOptions.IgnoreCase);
-                if (match.Success)
-                    Program.SynID = Convert.ToInt32(match.Groups[1].Value);
-                match = Regex.Match(html, "value=\"(.*?)\" id=\"curTerm\"", RegexOptions.IgnoreCase);
-                if (match.Success)
-                    Program.SettingsData.Curterm = Convert.ToInt32(match.Groups[1].Value);
-                string sqlinject="";
-                if (Program.Calltype == "student")
-                    sqlinject =
-                        "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--";
-                if (Program.SettingsData.Curterm == 0) 
-                {
-                    for (int i = 4; i > 0; i--)
-                    {
-                        html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + i + sqlinject + "&callType=" + Program.Calltype);
-                        if (html.Length > 10)
-                        {
-                            Program.SettingsData.Curterm = i;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.SettingsData.Curterm + sqlinject + "&callType=" + Program.Calltype);
-                }
-                List<period> TimetableList = JsonConvert.DeserializeObject<List<period>>(html);
-                using (StreamWriter file = File.CreateText(Program.SETTINGS_DIRECTORY + "/Timetable.json"))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Formatting = Formatting.Indented;
-                    serializer.Serialize(file, TimetableList);
-                }
-                Int16 colorint = 0;
-                foreach (var v in TimetableList)
-                {
-                    if (Program.TimetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
-                        Program.TimetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
-                    if (!Program.ColorRef.ContainsKey(v.ClassCode))
-                    {
-                        Program.ColorRef.Add(v.ClassCode, Program.ColourTable[colorint]);
-                        colorint++;
-                        if (colorint >= Program.ColourTable.Count)
-                            colorint = 0;
-                    }
-                    Program.TimetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
-                }
-                web.Dispose();
-                TcpClient tcpclnt = new TcpClient();
-                try
-                {
-                    if (tcpclnt.ConnectAsync("timetable.duckdns.org", 80).Wait(1200))
-                    {
-                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.APP_VERSION;
-                        Stream stm = tcpclnt.GetStream();
-                        ASCIIEncoding asen = new ASCIIEncoding();
-                        byte[] ba = asen.GetBytes(str);
-                        stm.Write(ba, 0, ba.Length);
-                        Console.WriteLine("Report successful");
-                    }
-                    else
-                        Console.WriteLine("Failed Report");
-                }
-                catch
-                {
-                    Console.WriteLine("Report Failed");
-                }
-                tcpclnt.Close();
-                return;
-            }
-            catch (WebException e)
-            {
-                if (e.Message.Contains("Unauthorized"))
-                {
-                    Console.WriteLine(@"Authorization failed");
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
             }
         }
 

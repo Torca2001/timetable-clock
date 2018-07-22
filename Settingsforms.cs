@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using SplashScreen;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace SchoolManager
@@ -61,123 +62,27 @@ namespace SchoolManager
 
         private void Loginbutton_Click(object sender, EventArgs e)
         {
-            try
+            Errormsg.Text = "Attempting fetch...";
+            string usertxt = Userbox.Text;
+            string passtxt = Passbox.Text;
+            Task.Run(() =>
             {
-                Errormsg.Text = "Attempting fetch...";
-                Errormsg.Update();
-                MyWebClient web = new MyWebClient();
-                web.Proxy = null;
-                CredentialCache myCache = new CredentialCache();
-                myCache.Add(new Uri("https://intranet.trinity.vic.edu.au/timetable/default.asp"), "NTLM", new NetworkCredential(Userbox.Text, Passbox.Text));
-                web.Credentials = myCache;
-                String html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/default.asp");
-                Match match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"callType\">", RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    Program.Calltype = match.Groups[1].Value;
-                }
-                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"curDay\">", RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    int.TryParse(match.Groups[1].Value, out var tempint);
-                    Program.SettingsData.Referencedayone = Program.CalDayone(tempint);
-                    Program.curDay = tempint;
-                }
-                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">", RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    Program.SynID = Convert.ToInt32(match.Groups[1].Value);
-                }
-                match = Regex.Match(html, "value=\"(.*?)\" id=\"curTerm\"", RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    Program.SettingsData.Curterm = Convert.ToInt32(match.Groups[1].Value);
-                }
-                string sqlquery = "";
-                if (Program.Calltype == "student")
-                    sqlquery =
-                        "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--";
-                if (Program.SettingsData.Curterm == 0)
-                {
-                    for (int i = 4; i > 0; i--)
-                    {
-                        myCache.Add(new Uri("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + i + sqlquery + "&callType=" + Program.Calltype), "NTLM", new NetworkCredential(Userbox.Text, Passbox.Text));
-                        web.Credentials = myCache;
-                        html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + i + sqlquery + "&callType=" + Program.Calltype);
-                        if (html.Length > 10)
-                        {
-                            Program.SettingsData.Curterm = i;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    myCache.Add(new Uri("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.SettingsData.Curterm + sqlquery + "&callType=" + Program.Calltype), "NTLM", new NetworkCredential(Userbox.Text, Passbox.Text));
-                    web.Credentials = myCache;
-                    html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.SettingsData.Curterm + sqlquery + "&callType=" + Program.Calltype);
-                }
-                List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
-                using (StreamWriter file = File.CreateText(Program.CURRENT_DIRECTORY + "/Timetable.json"))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Formatting = Formatting.Indented;
-                    serializer.Serialize(file, timetableList);
-                }
-                Int16 colorint = 0;
-                Program.TimetableList.Clear();
-                foreach (var V in timetableList)
-                { 
-                    if (!Program.ColorRef.ContainsKey(V.ClassCode))
-                    {
-                        Program.ColorRef.Add(V.ClassCode,Program.ColourTable[colorint]);
-                        colorint++;
-                        if (colorint >= Program.ColourTable.Count)
-                            colorint = 0;
-                    }
-                    Program.TimetableList.Add(V.DayNumber.ToString() + V.PeriodNumber, V);
-                }
-                web.Dispose();
-                Errormsg.Text = "Successfully extracted! ";
-                Errormsg.Update();
-                    TcpClient tcpclnt = new TcpClient();
-                try
-                {
-                    if (tcpclnt.ConnectAsync("timetable.duckdns.org", 80).Wait(1200))
-                    {
-                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.APP_VERSION;
-                        Stream stm = tcpclnt.GetStream();
-                        ASCIIEncoding asen = new ASCIIEncoding();
-                        byte[] ba = asen.GetBytes(str);
-                        stm.Write(ba, 0, ba.Length);
-                        Errormsg.Text += "Saved";
-                    }
-                    else
-                        Errormsg.Text += "Filed";
-                }
-                catch
-                {
-                    Errormsg.Text += "Filed";
-                }
+                SetLabel1TextSafe(Timetable.UpdateTimetable(usertxt, passtxt).Item1);
+                usertxt = "";
+                passtxt = "";
+            });
+            Userbox.Clear();
+            Passbox.Clear();
+        }
 
-                tcpclnt.Close();
-            }
-            catch (WebException ee)
+        private void SetLabel1TextSafe(string txt)
+        {
+            if (Errormsg.InvokeRequired)
             {
-                Errormsg.Text = ee.Message;
-                if (ee.Message.Contains("Unauthorized"))
-                {
-                    Errormsg.Text = "Authorization failed";
-                }
+                Errormsg.Invoke(new Action(() => Errormsg.Text = txt));
+                return;
             }
-            catch (Exception ee)
-            {
-                Errormsg.Text = ee.Message;
-                MessageBox.Show(ee.ToString());
-            }
-
-            Userbox.Text = "";
-            Passbox.Text = "";
+            Errormsg.Text = txt;
         }
 
         private void Settingsforms_Shown(object sender, EventArgs e)
