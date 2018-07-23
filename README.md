@@ -28,12 +28,3 @@ Then follow these tips:
 * From the settings window you can switch the week if it's incorrect
     * You can also change the time by using the offset functionality
 * The icon can also exit the program
-
-## Versions
-
-| Version        | Installer           | Source  |
-| ------------- |:-------------:| -----:|
-| [4.3.0](https://github.com/Mrmeguyme/timetable-clock/releases/tag/4.3.0)      | [download](https://github.com/Mrmeguyme/timetable-clock/releases/download/4.3.0/timetable_clock.exe)      |   [download](https://github.com/Mrmeguyme/timetable-clock/archive/4.3.0.zip) |
-| [4.2.0](https://github.com/Mrmeguyme/timetable-clock/releases/tag/4.2.0)      | [download](https://github.com/Mrmeguyme/timetable-clock/releases/download/4.2.0/timetable.clock.exe)      |   [download](https://github.com/Mrmeguyme/timetable-clock/archive/4.2.0.zip) |
-| [4.1.0](https://github.com/Mrmeguyme/timetable-clock/releases/tag/4.1) | [download](https://github.com/Mrmeguyme/timetable-clock/releases/download/4.1/timetable.clock.exe)      |    [download](https://github.com/Mrmeguyme/timetable-clock/archive/4.1.zip) |
-| [4.0](https://github.com/Mrmeguyme/timetable-clock/releases/tag/4.0)      | none | [download](https://github.com/Mrmeguyme/timetable-clock/releases/download/4.0/timetable.zip) |
