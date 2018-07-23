@@ -17,6 +17,18 @@ Then follow these tips:
 
 ---
 
+If it looks like this: 
+![](https://i.imgur.com/B1yIGHn.png)
+
+Then follow these tips:
+
+* in your system tray you can find the timetable icon: ![](https://i.imgur.com/EReoc91.png)
+    * This icon will open a two-week timetable when double clicked.
+    * It will also bring up a menu when right clicked. This menu holds the settings window.
+* From the settings window you can switch the week if it's incorrect
+    * You can also change the time by using the offset functionality
+* The icon can also exit the program
+
 ## Versions
 
 | Version        | Installer           | Source  |
