@@ -44,6 +44,16 @@ namespace SplashScreen
         private DayOfWeek lastDayOfWeek = DayOfWeek.Sunday;
         List<List<string>> timelayout = new List<List<string>>();
 
+        //stuff for moving the window
+        bool mouseDown;
+        Point lastLocation;
+
+        //lets you close the timetable by clicking back on the window
+        bool ttIsOpen;
+
+        //bool for stuff requiring mouse movement
+        bool mouseMoved;
+
         public frmSplash()
         {
             timelayout.Add(new List<string> { "29700", "29700", "29700", "School Start" }); //Dayo = 1 is wednesday, dayo= 2 is Early finish
@@ -159,6 +169,7 @@ namespace SplashScreen
                 }
             }
             InitializeComponent();
+            ttIsOpen = false; //setting the variable for whether the timetable window is opened to be false by default
             if (!Program.SettingsData.Alwaystop)
                 toolStripMenuItem1.Checked = false;
             switch (Program.SettingsData.Hideset)
@@ -452,8 +463,20 @@ namespace SplashScreen
 
         private void mouseClick(object sender, MouseEventArgs e)
         {
-            Expandedform.Show();
-            Expandedform.Activate();
+            if(ttIsOpen == false) //only opens if the window isn't already open
+            {
+                if (mouseMoved == false)
+                {
+                    Expandedform.Show();
+                    Expandedform.Activate();
+                    ttIsOpen = true;
+                }
+            }
+            else //closes the window if it's already open instead of opening a new window
+            {
+                Expandedform.Close();
+                ttIsOpen = false;
+            }
         }
 
         private Timer _timer1;
@@ -480,7 +503,7 @@ namespace SplashScreen
                 UpdateFormDisplay(BackgroundImage);
                 return;
             }
-            if (Left < Cursor.Position.X && Left + Width > System.Windows.Forms.Cursor.Position.X && Top < System.Windows.Forms.Cursor.Position.Y && Top + Height > System.Windows.Forms.Cursor.Position.Y&&dontHideToolStripMenuItem.Checked==false)
+            if (Left < Cursor.Position.X - 12 && Left + Width > System.Windows.Forms.Cursor.Position.X && Top < System.Windows.Forms.Cursor.Position.Y && Top + Height > System.Windows.Forms.Cursor.Position.Y&&dontHideToolStripMenuItem.Checked==false)
             {
                 if (autoToolStripMenuItem.Checked)
                 {
@@ -814,6 +837,30 @@ namespace SplashScreen
         private void frmSplash_Shown(object sender, EventArgs e)
         {
             Left += 1;
+        }
+
+        private void frmSplash_MouseDown(object sender, MouseEventArgs e)
+        {
+            mouseMoved = false;
+            mouseDown = true;
+            lastLocation = e.Location;
+        }
+
+        private void frmSplash_MouseMove(object sender, MouseEventArgs e)
+        {
+            mouseMoved = true;
+            if (mouseDown)
+            {
+                this.Location = new Point(
+                    (this.Location.X - lastLocation.X) + e.X, (this.Location.Y - lastLocation.Y) + e.Y);
+
+                this.Update();
+            }   
+        }
+
+        private void frmSplash_MouseUp(object sender, MouseEventArgs e)
+        {
+            mouseDown = false;
         }
     }
 
