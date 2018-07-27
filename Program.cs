@@ -17,7 +17,7 @@ namespace SplashScreen
         public static string Calltype = "lookup";
         public static int SynID = 000000;
         public static int CurrentYearlevel=0;
-        public static string APP_VERSION = "5.1.1"; // Make sure for example 4.4 becomes 440 just get rid of each dot and make sure its 3 long 
+        public static string APP_VERSION = "5.1.1"; //Update this version number before each release
         public static string CURRENT_DIRECTORY = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
         public static string SETTINGS_DIRECTORY = "C:/Users/" + Environment.UserName + "/Documents/Timetable";
         public static Settingstruct SettingsData = new Settingstruct();

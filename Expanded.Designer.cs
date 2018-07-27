@@ -1,4 +1,5 @@
-﻿namespace SchoolManager
+﻿
+namespace SchoolManager
 {
     partial class Expanded
     {
@@ -103,7 +104,7 @@
             this.MinimumSize = new System.Drawing.Size(1200, 630);
             this.Name = "Expanded";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Expanded";
+            this.Text = "Two-Week Timetable";
             this.Activated += new System.EventHandler(this.Expanded_Activated);
             this.Deactivate += new System.EventHandler(this.Form1_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Expanded_FormClosing);
