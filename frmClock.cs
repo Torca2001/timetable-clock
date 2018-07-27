@@ -83,31 +83,37 @@ namespace SplashScreen
                 Console.WriteLine("Shortcut creation failed");
             }
 
+            try
+            {
+                Program.ColorRef = JsonConvert.DeserializeObject<Dictionary<string, Color>>(
+                    File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Colours.Json"),
+                    new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Populate});
+            }
+            catch
+            {
+
+            }
             if (File.Exists(Program.SETTINGS_DIRECTORY + "/Settings.Json"))
             {
+                try
+                {
+                    Program.SettingsData = JsonConvert.DeserializeObject<Settingstruct>(File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Settings.Json"), new JsonSerializerSettings{ DefaultValueHandling = DefaultValueHandling.Populate });
+                }
+                catch
+                {
+                    //Disregard corrupted settings
+                }
                 if (Program.SettingsData.User != Environment.UserName)
                 {
                     Console.WriteLine("The settings were for the wrong user.");
-                    Program.SettingsData = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false,false,0,true,1,0,0);
+                    Program.SettingsData = new Settingstruct();
                     MessageBox.Show("Welcome " + Environment.UserName + @"!  Thanks for using the program!", "Welcome!");
                     if (timetableexist)
                     {
                         File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.Json");
                         timetableexist = false;
                     }
-                } else
-                {
-                    try
-                    {
-                        Program.SettingsData =
-                            JsonConvert.DeserializeObject<settingstruct>(
-                                File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Settings.Json"));
-                    }
-                    catch
-                    {
-                        //Disregard corrupted settings
-                    }
-                }
+                } 
 
             }
             else
@@ -160,6 +166,15 @@ namespace SplashScreen
                 }
             }
             InitializeComponent();
+            /*
+            WebBrowser mytgs = new WebBrowser();
+            mytgs.Navigate(new Uri("http://mytgs.trinity.vic.edu.au/dashboard#section-id-29"));
+            while (mytgs.ReadyState != WebBrowserReadyState.Complete)
+            {
+                Application.DoEvents();
+            }
+            Console.WriteLine(mytgs.DocumentText);
+            */
             if (!Program.SettingsData.Alwaystop)
                 toolStripMenuItem1.Checked = false;
             switch (Program.SettingsData.Hideset)
@@ -223,7 +238,9 @@ namespace SplashScreen
                 tleft = Int32.Parse(timelayout[i][0 + dayo]) - (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second - offset);
                 if (tleft > 0)
                 {
-                        switch (i)
+                    if (!Program.SettingsData.Doubles)
+                        break;
+                    switch (i)
                         {
                             case 3:
                             case 4:
@@ -611,7 +628,12 @@ namespace SplashScreen
                     serializer.Formatting = Formatting.Indented;
                     serializer.Serialize(file, Program.SettingsData);
                 }
-
+                using (StreamWriter file = File.CreateText(Program.SETTINGS_DIRECTORY + "/Colours.Json"))
+                {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Formatting = Formatting.Indented;
+                serializer.Serialize(file, Program.ColorRef);
+                }
                 settingsForm.Dispose();
                 Expandedform.Dispose();
                 Dispose();
@@ -751,79 +773,5 @@ namespace SplashScreen
 
         [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
         public static extern bool DeleteObject(IntPtr hObject);
-    }
-    public class MyWebClient : WebClient
-    {
-        protected override WebRequest GetWebRequest(Uri address)
-        {
-            WebRequest request = (WebRequest)base.GetWebRequest(address);
-
-            if (request is HttpWebRequest)
-            {
-                var myWebRequest = request as HttpWebRequest;
-                myWebRequest.CookieContainer = new CookieContainer();
-                myWebRequest.AllowAutoRedirect = true;
-                myWebRequest.MaximumAutomaticRedirections = 100;
-                myWebRequest.UnsafeAuthenticatedConnectionSharing = true;
-                myWebRequest.KeepAlive = true;
-            }
-
-            return request;
-        }
-    }
-
-    public struct period
-    {
-        public int DayNumber;
-        public int PeriodNumber;
-        public int PeriodNumberSeq;
-        public int DefinitionPeriodNumber;
-        public string DefinitionTimeFrom;
-        public string DefinitionTimeTo;
-        public string ClassCode;
-        public string ClassDescription;
-        public int StaffID;
-        public string SchoolStaffCode;
-        public string Room;
-        public period(int daynumber, int periodnumber, int periodnumberseq, int definitionperiodnumber, string definitiontimefrom, string definitionTimeTo, string classcode, string classdescription, int staffid,string schoolstaffcode,string room)
-        {
-            DayNumber = daynumber;
-            PeriodNumber = periodnumber;
-            PeriodNumberSeq = periodnumberseq;
-            DefinitionPeriodNumber = definitionperiodnumber;
-            DefinitionTimeFrom = definitiontimefrom;
-            DefinitionTimeTo = definitionTimeTo;
-            ClassCode = classcode;
-            ClassDescription = classdescription;
-            StaffID = staffid;
-            SchoolStaffCode = schoolstaffcode;
-            Room = room;
-        }
-    }
-    public struct settingstruct
-    {
-        public DateTime Referencedayone;
-        public DateTime EarlyDate;
-        public string User;
-        public bool Weekoverride;
-        public bool Dev;
-        public bool Alwaystop;
-        public int Curterm;
-        public int Hideset;
-        public int TimeOffset;
-        public int Dayoffset;
-        public settingstruct(DateTime refdateone, DateTime earlydate,string user, bool weekoverride, bool dev, int term, bool top, int hide, int offset, int offset2)
-        {
-            User = user;
-            Referencedayone = refdateone;
-            EarlyDate = earlydate;
-            Weekoverride = weekoverride;
-            Dev = dev;
-            Curterm = term;
-            Alwaystop = top;
-            Hideset = hide;
-            Dayoffset = offset;
-            TimeOffset = offset2;
-        }
     }
 }

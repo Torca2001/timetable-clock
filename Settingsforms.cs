@@ -87,6 +87,7 @@ namespace SchoolManager
 
         private void Settingsforms_Shown(object sender, EventArgs e)
         {
+            Doublescheckbox.Checked = Program.SettingsData.Doubles;
             numericUpDown1.Value = Program.SettingsData.TimeOffset;
             SendMessage(Userbox.Handle, EM_SETCUEBANNER, 0, "Username");
             SendMessage(Passbox.Handle, EM_SETCUEBANNER, 0, "Password");
@@ -121,6 +122,11 @@ namespace SchoolManager
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             Program.SettingsData.TimeOffset = int.Parse(numericUpDown1.Value.ToString());
+        }
+
+        private void Doublescheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.SettingsData.Doubles = Doublescheckbox.Checked;
         }
     }
 }

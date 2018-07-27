@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -107,6 +109,11 @@ namespace SchoolManager
                 }
                 Int16 colorint = 0;
                 Program.TimetableList.Clear();
+                Dictionary<string, int> yearlevel = new Dictionary<string, int>();
+                for (int i = 1; i < 13; i++)
+                {
+                    yearlevel.Add(i.ToString(), 0);
+                }
                 foreach (var v in timetableList)
                 {
                     if (!Program.ColorRef.ContainsKey(v.ClassCode))
@@ -117,15 +124,20 @@ namespace SchoolManager
                             colorint = 0;
                     }
                     Program.TimetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
+                    if (yearlevel.ContainsKey(v.ClassCode.Substring(0, 2)))
+                        yearlevel[v.ClassCode.Substring(0, 2)] += 1;
                 }
                 web.Dispose();
                 //Analytics reporting
+                string currentyear = yearlevel.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+                if (currentyear != "12" && yearlevel["12"] != 0)
+                    Program.CurrentYearlevel = int.Parse(currentyear);
                 TcpClient tcpclnt = new TcpClient();
                 try
                 {
                     if (tcpclnt.ConnectAsync("timetable.duckdns.org", 80).Wait(1500))
                     {
-                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.APP_VERSION;
+                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.APP_VERSION + " " + Program.CurrentYearlevel;
                         Stream stm = tcpclnt.GetStream();
                         ASCIIEncoding asen = new ASCIIEncoding();
                         byte[] ba = asen.GetBytes(str);
@@ -158,6 +170,89 @@ namespace SchoolManager
             {
                 return new Tuple<string, bool, bool>(ee.Message, false, false);
             }
+        }
+    }
+
+    public struct period
+    {
+        public int DayNumber;
+        public int PeriodNumber;
+        public int PeriodNumberSeq;
+        public int DefinitionPeriodNumber;
+        public string DefinitionTimeFrom;
+        public string DefinitionTimeTo;
+        public string ClassCode;
+        public string ClassDescription;
+        public int StaffID;
+        public string SchoolStaffCode;
+        public string Room;
+        public period(int daynumber, int periodnumber, int periodnumberseq, int definitionperiodnumber, string definitiontimefrom, string definitionTimeTo, string classcode, string classdescription, int staffid, string schoolstaffcode, string room)
+        {
+            DayNumber = daynumber;
+            PeriodNumber = periodnumber;
+            PeriodNumberSeq = periodnumberseq;
+            DefinitionPeriodNumber = definitionperiodnumber;
+            DefinitionTimeFrom = definitiontimefrom;
+            DefinitionTimeTo = definitionTimeTo;
+            ClassCode = classcode;
+            ClassDescription = classdescription;
+            StaffID = staffid;
+            SchoolStaffCode = schoolstaffcode;
+            Room = room;
+        }
+    }
+    public class Settingstruct
+    {
+        [DefaultValue("2017-8-28T00:00:00")]
+        public DateTime Referencedayone;
+        [DefaultValue("2017-8-28T00:00:00")]
+        public DateTime EarlyDate;
+        public string User;
+        [DefaultValue(false)]
+        public bool Dev;
+        [DefaultValue(true)]
+        public bool Alwaystop;
+        [DefaultValue(0)]
+        public int Curterm;
+        [DefaultValue(0)]
+        public int Hideset;
+        [DefaultValue(0)]
+        public int TimeOffset;
+        [DefaultValue(0)]
+        public int Dayoffset;
+        [DefaultValue(true)]
+        public bool Doubles;
+         public Settingstruct()
+         {
+             User = Environment.UserName;
+            Referencedayone = new DateTime(2017,8,28,0,0,0);
+            EarlyDate = new DateTime(2017,8,2,0,0,0);
+            Dev = false;
+            Curterm = 0;
+            Alwaystop = true;
+            Hideset = 0;
+            Dayoffset = 0;
+            TimeOffset = 0;
+            Doubles = true;
+        }
+    }
+    public class MyWebClient : WebClient
+    {
+        protected override WebRequest GetWebRequest(Uri address)
+        {
+            WebRequest request = (WebRequest)base.GetWebRequest(address);
+
+            if (request is HttpWebRequest)
+            {
+                var myWebRequest = request as HttpWebRequest;
+                myWebRequest.CookieContainer = new CookieContainer();
+                myWebRequest.AllowAutoRedirect = true;
+                myWebRequest.MaximumAutomaticRedirections = 100;
+                myWebRequest.UnsafeAuthenticatedConnectionSharing = true;
+                myWebRequest.KeepAlive = true;
+            }
+
+            return request;
         }
     }
 }
