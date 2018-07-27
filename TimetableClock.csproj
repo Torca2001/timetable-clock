@@ -98,6 +98,7 @@
     <Compile Include="Settingsforms.Designer.cs">
       <DependentUpon>Settingsforms.cs</DependentUpon>
     </Compile>
+    <Compile Include="Timetable.cs" />
     <EmbeddedResource Include="Expanded.resx">
       <DependentUpon>Expanded.cs</DependentUpon>
     </EmbeddedResource>

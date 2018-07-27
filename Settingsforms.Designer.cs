@@ -43,6 +43,8 @@ namespace SchoolManager
             this.label1 = new System.Windows.Forms.Label();
             this.Weekoverride = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.Doublescheckbox = new System.Windows.Forms.CheckBox();
             this.progresslabel = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
@@ -125,13 +127,15 @@ namespace SchoolManager
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.Weekoverride, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.Doublescheckbox, 1, 2);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 8;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.36264F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 62.63736F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 122F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 114F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
@@ -191,6 +195,30 @@ namespace SchoolManager
             this.label3.TabIndex = 11;
             this.label3.Text = "Switch Week";
             // 
+            // label4
+            // 
+            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(3, 94);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(90, 13);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Combine Doubles";
+            // 
+            // Doublescheckbox
+            // 
+            this.Doublescheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.Doublescheckbox.AutoSize = true;
+            this.Doublescheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Doublescheckbox.Checked = true;
+            this.Doublescheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Doublescheckbox.Location = new System.Drawing.Point(135, 94);
+            this.Doublescheckbox.Name = "Doublescheckbox";
+            this.Doublescheckbox.Size = new System.Drawing.Size(75, 14);
+            this.Doublescheckbox.TabIndex = 13;
+            this.Doublescheckbox.UseVisualStyleBackColor = true;
+            this.Doublescheckbox.CheckedChanged += new System.EventHandler(this.Doublescheckbox_CheckedChanged);
+            // 
             // progresslabel
             // 
             this.progresslabel.AutoSize = true;
@@ -241,6 +269,7 @@ namespace SchoolManager
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -258,5 +287,7 @@ namespace SchoolManager
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox Doublescheckbox;
     }
 }

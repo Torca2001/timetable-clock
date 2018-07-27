@@ -44,16 +44,6 @@ namespace SplashScreen
         private DayOfWeek lastDayOfWeek = DayOfWeek.Sunday;
         List<List<string>> timelayout = new List<List<string>>();
 
-        //stuff for moving the window
-        bool mouseDown;
-        Point lastLocation;
-
-        //lets you close the timetable by clicking back on the window
-        bool ttIsOpen;
-
-        //bool for stuff requiring mouse movement
-        bool mouseMoved;
-
         public frmSplash()
         {
             timelayout.Add(new List<string> { "29700", "29700", "29700", "School Start" }); //Dayo = 1 is wednesday, dayo= 2 is Early finish
@@ -72,7 +62,18 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51600", "51600", "49500", "Period 5" });
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
-            bool timetableexist = File.Exists(Program.SETTINGS_DIRECTORY + "/Timetable.json");
+            bool timetableexist = File.Exists(Program.SETTINGS_DIRECTORY + "/Timetable.Json");
+            
+            //stuff for moving the window
+            bool mouseDown;
+            Point lastLocation;
+
+           //lets you close the timetable by clicking back on the window
+            bool ttIsOpen;
+
+            //bool for stuff requiring mouse movement
+            bool mouseMoved;
+            
             try
             {
                 using (StreamWriter writer =
@@ -93,30 +94,37 @@ namespace SplashScreen
                 Console.WriteLine("Shortcut creation failed");
             }
 
+            try
+            {
+                Program.ColorRef = JsonConvert.DeserializeObject<Dictionary<string, Color>>(
+                    File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Colours.Json"),
+                    new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Populate});
+            }
+            catch
+            {
+
+            }
             if (File.Exists(Program.SETTINGS_DIRECTORY + "/Settings.Json"))
             {
                 try
                 {
-                    Program.SettingsData =
-                        JsonConvert.DeserializeObject<settingstruct>(
-                            File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Settings.Json"));
+                    Program.SettingsData = JsonConvert.DeserializeObject<Settingstruct>(File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Settings.Json"), new JsonSerializerSettings{ DefaultValueHandling = DefaultValueHandling.Populate });
                 }
                 catch
                 {
                     //Disregard corrupted settings
                 }
-
                 if (Program.SettingsData.User != Environment.UserName)
                 {
                     Console.WriteLine("The settings were for the wrong user.");
-                    Program.SettingsData = new settingstruct(new DateTime(2017, 8, 28, 0, 0, 0), new DateTime(2017, 1, 1, 0, 0, 0), Environment.UserName, false,false,0,true,1,0,0);
+                    Program.SettingsData = new Settingstruct();
                     MessageBox.Show("Welcome " + Environment.UserName + @"!  Thanks for using the program!", "Welcome!");
                     if (timetableexist)
                     {
-                        File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.json");
+                        File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.Json");
                         timetableexist = false;
                     }
-                }
+                } 
 
             }
             else
@@ -124,7 +132,7 @@ namespace SplashScreen
                 MessageBox.Show("Welcome "+Environment.UserName+@"!  Thanks for using the program!", "Welcome!");
                 if (timetableexist)
                 {
-                    File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.json");
+                    File.Delete(Program.SETTINGS_DIRECTORY + "/Timetable.Json");
                     timetableexist = false;
                 }
             }
@@ -170,6 +178,15 @@ namespace SplashScreen
             }
             InitializeComponent();
             ttIsOpen = false; //setting the variable for whether the timetable window is opened to be false by default
+            /*
+            WebBrowser mytgs = new WebBrowser();
+            mytgs.Navigate(new Uri("http://mytgs.trinity.vic.edu.au/dashboard#section-id-29"));
+            while (mytgs.ReadyState != WebBrowserReadyState.Complete)
+            {
+                Application.DoEvents();
+            }
+            Console.WriteLine(mytgs.DocumentText);
+            */
             if (!Program.SettingsData.Alwaystop)
                 toolStripMenuItem1.Checked = false;
             switch (Program.SettingsData.Hideset)
@@ -199,11 +216,11 @@ namespace SplashScreen
             }
             new Task(() =>
             {
-                Updatetimetable(CredentialCache.DefaultNetworkCredentials);
+                Timetable.UpdateTimetable("", "");
                 if (Program.TimetableList.Count == 0)
                 {
                     if (File.Exists(Program.SETTINGS_DIRECTORY + "/Timetable.Json"))
-                        notifyIcon1.Text = "Unable to fetch timetable";
+                        notifyIcon1.BalloonTipText = "Unable to fetch timetable";
                     notifyIcon1.ShowBalloonTip(1000);
                 }
             }).Start();
@@ -233,7 +250,9 @@ namespace SplashScreen
                 tleft = Int32.Parse(timelayout[i][0 + dayo]) - (timenow.Hour * 3600 + timenow.Minute * 60 + timenow.Second - offset);
                 if (tleft > 0)
                 {
-                        switch (i)
+                    if (!Program.SettingsData.Doubles)
+                        break;
+                    switch (i)
                         {
                             case 3:
                             case 4:
@@ -633,7 +652,12 @@ namespace SplashScreen
                     serializer.Formatting = Formatting.Indented;
                     serializer.Serialize(file, Program.SettingsData);
                 }
-
+                using (StreamWriter file = File.CreateText(Program.SETTINGS_DIRECTORY + "/Colours.Json"))
+                {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Formatting = Formatting.Indented;
+                serializer.Serialize(file, Program.ColorRef);
+                }
                 settingsForm.Dispose();
                 Expandedform.Dispose();
                 Dispose();
@@ -689,7 +713,7 @@ namespace SplashScreen
                     latest = release.Result[0];
                 }
 
-                if (latest.TagName == null || Convert.ToInt16(latest.TagName.Replace(".", "")) <= Program.APP_VERSION)
+                if (latest.TagName == null || !Timetable.Compareversions(Program.APP_VERSION, latest.TagName))
                     return "Up to date";
                 WebClient downloader = new WebClient();
                 Console.WriteLine("Downloading update");
@@ -703,8 +727,9 @@ namespace SplashScreen
                 };
                 downloader.DownloadFileCompleted += delegate
                 {
-                    if (File.Exists(Program.CURRENT_DIRECTORY + "/delete.exe"))
-                        File.Delete(Program.CURRENT_DIRECTORY + "/delete.exe");
+                    if (File.Exists(Program.SETTINGS_DIRECTORY + "/delete.exe"))
+                        File.Delete(Program.SETTINGS_DIRECTORY + "/delete.exe");
+                    Console.WriteLine(Program.CURRENT_DIRECTORY + "/SchoolManager.exe");
                     File.Move(Program.CURRENT_DIRECTORY + "/SchoolManager.exe", Program.CURRENT_DIRECTORY+"/delete.exe");
                     File.Move(Program.SETTINGS_DIRECTORY+"/NewTimetableclock.exe", Program.CURRENT_DIRECTORY+"/SchoolManager.exe");
                     ProcessStartInfo processInfo = new ProcessStartInfo();
@@ -725,112 +750,6 @@ namespace SplashScreen
             catch
             {
                 return "Failed";
-            }
-        }
-
-        public void Updatetimetable(NetworkCredential networkcred)
-        {
-            try
-            {
-                MyWebClient web = new MyWebClient();
-                web.Credentials = networkcred;
-                String html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/default.asp");
-                Match match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"callType\">",
-                    RegexOptions.IgnoreCase);
-                if (match.Success)
-                    Program.Calltype = match.Groups[1].Value;
-
-                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"curDay\">",
-                    RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    int.TryParse(match.Groups[1].Value, out var tempint);
-                    Program.SettingsData.Referencedayone = Program.CalDayone(tempint);
-                    if (Program.SettingsData.Dayoffset==0)
-                        Program.curDay = tempint;
-                }
-
-                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">",
-                    RegexOptions.IgnoreCase);
-                if (match.Success)
-                    Program.SynID = Convert.ToInt32(match.Groups[1].Value);
-                match = Regex.Match(html, "value=\"(.*?)\" id=\"curTerm\"", RegexOptions.IgnoreCase);
-                if (match.Success)
-                    Program.SettingsData.Curterm = Convert.ToInt32(match.Groups[1].Value);
-                string sqlinject="";
-                if (Program.Calltype == "student")
-                    sqlinject =
-                        "%20AND%20TD.PeriodNumber%20>=%200%20AND%20TD.PeriodNumberSeq%20=%201AND%20(stopdate%20IS%20NULL%20OR%20stopdate%20>%20getdate())--";
-                if (Program.SettingsData.Curterm == 0) 
-                {
-                    for (int i = 4; i > 0; i--)
-                    {
-                        html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + i + sqlinject + "&callType=" + Program.Calltype);
-                        if (html.Length > 10)
-                        {
-                            Program.SettingsData.Curterm = i;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.SettingsData.Curterm + sqlinject + "&callType=" + Program.Calltype);
-                }
-                List<period> TimetableList = JsonConvert.DeserializeObject<List<period>>(html);
-                using (StreamWriter file = File.CreateText(Program.SETTINGS_DIRECTORY + "/Timetable.json"))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Formatting = Formatting.Indented;
-                    serializer.Serialize(file, TimetableList);
-                }
-                Int16 colorint = 0;
-                foreach (var v in TimetableList)
-                {
-                    if (Program.TimetableList.ContainsKey(v.DayNumber.ToString() + v.PeriodNumber))
-                        Program.TimetableList.Remove(v.DayNumber.ToString() + v.PeriodNumber);
-                    if (!Program.ColorRef.ContainsKey(v.ClassCode))
-                    {
-                        Program.ColorRef.Add(v.ClassCode, Program.ColourTable[colorint]);
-                        colorint++;
-                        if (colorint >= Program.ColourTable.Count)
-                            colorint = 0;
-                    }
-                    Program.TimetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
-                }
-                web.Dispose();
-                TcpClient tcpclnt = new TcpClient();
-                try
-                {
-                    if (tcpclnt.ConnectAsync("timetable.duckdns.org", 80).Wait(1200))
-                    {
-                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.APP_VERSION;
-                        Stream stm = tcpclnt.GetStream();
-                        ASCIIEncoding asen = new ASCIIEncoding();
-                        byte[] ba = asen.GetBytes(str);
-                        stm.Write(ba, 0, ba.Length);
-                        Console.WriteLine("Report successful");
-                    }
-                    else
-                        Console.WriteLine("Failed Report");
-                }
-                catch
-                {
-                    Console.WriteLine("Report Failed");
-                }
-                tcpclnt.Close();
-                return;
-            }
-            catch (WebException e)
-            {
-                if (e.Message.Contains("Unauthorized"))
-                {
-                    Console.WriteLine(@"Authorization failed");
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
             }
         }
 
@@ -861,6 +780,7 @@ namespace SplashScreen
         private void frmSplash_MouseUp(object sender, MouseEventArgs e)
         {
             mouseDown = false;
+        }
         }
     }
 
@@ -902,79 +822,5 @@ namespace SplashScreen
 
         [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
         public static extern bool DeleteObject(IntPtr hObject);
-    }
-    public class MyWebClient : WebClient
-    {
-        protected override WebRequest GetWebRequest(Uri address)
-        {
-            WebRequest request = (WebRequest)base.GetWebRequest(address);
-
-            if (request is HttpWebRequest)
-            {
-                var myWebRequest = request as HttpWebRequest;
-                myWebRequest.CookieContainer = new CookieContainer();
-                myWebRequest.AllowAutoRedirect = true;
-                myWebRequest.MaximumAutomaticRedirections = 100;
-                myWebRequest.UnsafeAuthenticatedConnectionSharing = true;
-                myWebRequest.KeepAlive = true;
-            }
-
-            return request;
-        }
-    }
-
-    public struct period
-    {
-        public int DayNumber;
-        public int PeriodNumber;
-        public int PeriodNumberSeq;
-        public int DefinitionPeriodNumber;
-        public string DefinitionTimeFrom;
-        public string DefinitionTimeTo;
-        public string ClassCode;
-        public string ClassDescription;
-        public int StaffID;
-        public string SchoolStaffCode;
-        public string Room;
-        public period(int daynumber, int periodnumber, int periodnumberseq, int definitionperiodnumber, string definitiontimefrom, string definitionTimeTo, string classcode, string classdescription, int staffid,string schoolstaffcode,string room)
-        {
-            DayNumber = daynumber;
-            PeriodNumber = periodnumber;
-            PeriodNumberSeq = periodnumberseq;
-            DefinitionPeriodNumber = definitionperiodnumber;
-            DefinitionTimeFrom = definitiontimefrom;
-            DefinitionTimeTo = definitionTimeTo;
-            ClassCode = classcode;
-            ClassDescription = classdescription;
-            StaffID = staffid;
-            SchoolStaffCode = schoolstaffcode;
-            Room = room;
-        }
-    }
-    public struct settingstruct
-    {
-        public DateTime Referencedayone;
-        public DateTime EarlyDate;
-        public string User;
-        public bool Weekoverride;
-        public bool Dev;
-        public bool Alwaystop;
-        public int Curterm;
-        public int Hideset;
-        public int TimeOffset;
-        public int Dayoffset;
-        public settingstruct(DateTime refdateone, DateTime earlydate,string user, bool weekoverride, bool dev, int term, bool top, int hide, int offset, int offset2)
-        {
-            User = user;
-            Referencedayone = refdateone;
-            EarlyDate = earlydate;
-            Weekoverride = weekoverride;
-            Dev = dev;
-            Curterm = term;
-            Alwaystop = top;
-            Hideset = hide;
-            Dayoffset = offset;
-            TimeOffset = offset2;
-        }
     }
 }

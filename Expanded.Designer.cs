@@ -1,4 +1,5 @@
-﻿namespace SchoolManager
+﻿
+namespace SchoolManager
 {
     partial class Expanded
     {
@@ -33,6 +34,7 @@
             this.Termlabel = new System.Windows.Forms.Label();
             this.Curdayhigh = new System.Windows.Forms.Panel();
             this.Earlybutt = new System.Windows.Forms.Label();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.SuspendLayout();
             // 
             // MissingLabel
@@ -83,6 +85,10 @@
             this.Earlybutt.MouseLeave += new System.EventHandler(this.Earlybutt_MouseLeave);
             this.Earlybutt.MouseHover += new System.EventHandler(this.Earlybutt_MouseHover);
             // 
+            // colorDialog1
+            // 
+            this.colorDialog1.FullOpen = true;
+            // 
             // Expanded
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -113,5 +119,6 @@
         private System.Windows.Forms.Label Termlabel;
         private System.Windows.Forms.Panel Curdayhigh;
         private System.Windows.Forms.Label Earlybutt;
+        private System.Windows.Forms.ColorDialog colorDialog1;
     }
 }
