@@ -44,6 +44,16 @@ namespace SplashScreen
         private DayOfWeek lastDayOfWeek = DayOfWeek.Sunday;
         List<List<string>> timelayout = new List<List<string>>();
 
+        //stuff for moving the window
+        bool mouseDown;
+        Point lastLocation;
+
+        //lets you close the timetable by clicking back on the window
+        bool ttIsOpen;
+
+        //bool for stuff requiring mouse movement
+        bool mouseMoved;
+
         public frmSplash()
         {
             timelayout.Add(new List<string> { "29700", "29700", "29700", "School Start" }); //Dayo = 1 is wednesday, dayo= 2 is Early finish
@@ -63,16 +73,6 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
             bool timetableexist = File.Exists(Program.SETTINGS_DIRECTORY + "/Timetable.Json");
-            
-            //stuff for moving the window
-            bool mouseDown;
-            Point lastLocation;
-
-           //lets you close the timetable by clicking back on the window
-            bool ttIsOpen;
-
-            //bool for stuff requiring mouse movement
-            bool mouseMoved;
             
             try
             {
@@ -823,4 +823,3 @@ namespace SplashScreen
         [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
         public static extern bool DeleteObject(IntPtr hObject);
     }
-}
