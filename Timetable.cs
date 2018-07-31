@@ -132,7 +132,8 @@ namespace SchoolManager
                 Dictionary<string, int> yearlevel = new Dictionary<string, int>();
                 for (int i = 1; i < 13; i++)
                 {
-                    yearlevel.Add(i.ToString(), 0);
+                    string p = i < 10 ? "0" : "";
+                    yearlevel.Add(p+i, 0);
                 }
 
                 foreach (var v in timetableList)
