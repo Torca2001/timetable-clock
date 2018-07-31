@@ -153,7 +153,11 @@ namespace SchoolManager
                 web.Dispose();
                 //Analytics reporting
                 string currentyear = yearlevel.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-                if (currentyear != "12" && yearlevel["12"] != 0)
+                if (currentyear == "12"&& yearlevel["12"] == 0)
+                { 
+                    //do nothing
+                }
+                else
                     Program.CurrentYearlevel = int.Parse(currentyear);
                 TcpClient tcpclnt = new TcpClient();
                 try

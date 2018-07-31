@@ -472,7 +472,7 @@ namespace SplashScreen
         private void Form1_Load(object sender, EventArgs e)
         {
             UpdateFormDisplay(BackgroundImage);
-            SetDesktopLocation(Screen.PrimaryScreen.Bounds.Width - 208, Screen.PrimaryScreen.WorkingArea.Height-66);
+            SetDesktopLocation(Screen.PrimaryScreen.Bounds.Width - BackgroundImage.Width+4, Screen.PrimaryScreen.WorkingArea.Height-BackgroundImage.Height+2);
         }
 
 
@@ -758,7 +758,7 @@ namespace SplashScreen
 
         private void frmSplash_Shown(object sender, EventArgs e)
         {
-            Left += 1;
+            
         }
 
         private void frmSplash_MouseDown(object sender, MouseEventArgs e)
