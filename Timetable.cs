@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 using SplashScreen;
 
@@ -22,25 +24,28 @@ namespace SchoolManager
             int i;
             for (i = 0; i < v1.Length; i++)
             {
-                    int v1Int = int.Parse(v1[i]);
+                int v1Int = int.Parse(v1[i]);
                 if (v2.Length == i)
                 {
                     return false;
                 }
+
                 if (int.Parse(v2[i]) > v1Int)
                 {
                     return true;
                 }
             }
-            for (i=v1.Length; i < v2.Length; i++)
+
+            for (i = v1.Length; i < v2.Length; i++)
             {
-                if (int.Parse(v2[i])>0)
+                if (int.Parse(v2[i]) > 0)
                     return true;
             }
+
             return false;
         }
 
-        public static Tuple<string, bool,bool> UpdateTimetable(string user,string pass)
+        public static Tuple<string, bool, bool> UpdateTimetable(string user, string pass)
         {
             try
             {
@@ -57,29 +62,37 @@ namespace SchoolManager
                 {
                     web.Credentials = CredentialCache.DefaultNetworkCredentials;
                 }
+
                 String html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/default.asp");
-                Match match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"callType\">", RegexOptions.IgnoreCase);
+                Match match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"callType\">",
+                    RegexOptions.IgnoreCase);
                 if (match.Success)
                 {
                     Program.Calltype = match.Groups[1].Value;
                 }
-                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"curDay\">", RegexOptions.IgnoreCase);
+
+                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"curDay\">",
+                    RegexOptions.IgnoreCase);
                 if (match.Success)
                 {
                     int.TryParse(match.Groups[1].Value, out var tempint);
                     Program.SettingsData.Referencedayone = Program.CalDayone(tempint);
                     Program.curDay = tempint;
                 }
-                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">", RegexOptions.IgnoreCase);
+
+                match = Regex.Match(html, "<input type=\"hidden\" value=\"(.*?)\" id=\"synID\">",
+                    RegexOptions.IgnoreCase);
                 if (match.Success)
                 {
                     Program.SynID = Convert.ToInt32(match.Groups[1].Value);
                 }
+
                 match = Regex.Match(html, "value=\"(.*?)\" id=\"curTerm\"", RegexOptions.IgnoreCase);
                 if (match.Success)
                 {
                     Program.SettingsData.Curterm = Convert.ToInt32(match.Groups[1].Value);
                 }
+
                 string sqlquery = "";
                 if (Program.Calltype == "student")
                     sqlquery =
@@ -88,7 +101,9 @@ namespace SchoolManager
                 {
                     for (int i = 4; i > 0; i--)
                     {
-                        html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + i + sqlquery + "&callType=" + Program.Calltype);
+                        html = web.DownloadString(
+                            "https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID +
+                            "&year=" + DateTime.Now.Year + "&term=" + i + sqlquery + "&callType=" + Program.Calltype);
                         if (html.Length > 10)
                         {
                             Program.SettingsData.Curterm = i;
@@ -98,8 +113,12 @@ namespace SchoolManager
                 }
                 else
                 {
-                    html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" + Program.SynID + "&year=" + DateTime.Now.Year + "&term=" + Program.SettingsData.Curterm + sqlquery + "&callType=" + Program.Calltype);
+                    html = web.DownloadString("https://intranet.trinity.vic.edu.au/timetable/getTimetable1.asp?synID=" +
+                                              Program.SynID + "&year=" + DateTime.Now.Year + "&term=" +
+                                              Program.SettingsData.Curterm + sqlquery + "&callType=" +
+                                              Program.Calltype);
                 }
+
                 List<period> timetableList = JsonConvert.DeserializeObject<List<period>>(html);
                 using (StreamWriter file = File.CreateText(Program.SETTINGS_DIRECTORY + "/Timetable.Json"))
                 {
@@ -107,6 +126,7 @@ namespace SchoolManager
                     serializer.Formatting = Formatting.Indented;
                     serializer.Serialize(file, timetableList);
                 }
+
                 Int16 colorint = 0;
                 Program.TimetableList.Clear();
                 Dictionary<string, int> yearlevel = new Dictionary<string, int>();
@@ -114,6 +134,7 @@ namespace SchoolManager
                 {
                     yearlevel.Add(i.ToString(), 0);
                 }
+
                 foreach (var v in timetableList)
                 {
                     if (!Program.ColorRef.ContainsKey(v.ClassCode))
@@ -123,10 +144,12 @@ namespace SchoolManager
                         if (colorint >= Program.ColourTable.Count)
                             colorint = 0;
                     }
+
                     Program.TimetableList.Add(v.DayNumber.ToString() + v.PeriodNumber, v);
                     if (yearlevel.ContainsKey(v.ClassCode.Substring(0, 2)))
                         yearlevel[v.ClassCode.Substring(0, 2)] += 1;
                 }
+
                 web.Dispose();
                 //Analytics reporting
                 string currentyear = yearlevel.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
@@ -137,7 +160,8 @@ namespace SchoolManager
                 {
                     if (tcpclnt.ConnectAsync("timetable.duckdns.org", 80).Wait(1500))
                     {
-                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.APP_VERSION + " " + Program.CurrentYearlevel;
+                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.APP_VERSION + " " +
+                                     Program.CurrentYearlevel;
                         Stream stm = tcpclnt.GetStream();
                         ASCIIEncoding asen = new ASCIIEncoding();
                         byte[] ba = asen.GetBytes(str);
@@ -162,9 +186,10 @@ namespace SchoolManager
             {
                 if (ee.Message.Contains("Unauthorized"))
                 {
-                    return new Tuple<string, bool,bool>("Unauthorised", false,false);
+                    return new Tuple<string, bool, bool>("Unauthorised", false, false);
                 }
-                return new Tuple<string, bool,bool>(ee.Message, false,false);
+
+                return new Tuple<string, bool, bool>(ee.Message, false, false);
             }
             catch (Exception ee)
             {
@@ -186,7 +211,10 @@ namespace SchoolManager
         public int StaffID;
         public string SchoolStaffCode;
         public string Room;
-        public period(int daynumber, int periodnumber, int periodnumberseq, int definitionperiodnumber, string definitiontimefrom, string definitionTimeTo, string classcode, string classdescription, int staffid, string schoolstaffcode, string room)
+
+        public period(int daynumber, int periodnumber, int periodnumberseq, int definitionperiodnumber,
+            string definitiontimefrom, string definitionTimeTo, string classcode, string classdescription, int staffid,
+            string schoolstaffcode, string room)
         {
             DayNumber = daynumber;
             PeriodNumber = periodnumber;
@@ -201,32 +229,27 @@ namespace SchoolManager
             Room = room;
         }
     }
+
     public class Settingstruct
     {
-        [DefaultValue("2017-8-28T00:00:00")]
-        public DateTime Referencedayone;
-        [DefaultValue("2017-8-28T00:00:00")]
-        public DateTime EarlyDate;
+        [DefaultValue("2017-8-28T00:00:00")] public DateTime Referencedayone;
+        [DefaultValue("2017-8-28T00:00:00")] public DateTime EarlyDate;
         public string User;
-        [DefaultValue(false)]
-        public bool Dev;
-        [DefaultValue(true)]
-        public bool Alwaystop;
-        [DefaultValue(0)]
-        public int Curterm;
-        [DefaultValue(0)]
-        public int Hideset;
-        [DefaultValue(0)]
-        public int TimeOffset;
-        [DefaultValue(0)]
-        public int Dayoffset;
-        [DefaultValue(true)]
-        public bool Doubles;
-         public Settingstruct()
-         {
-             User = Environment.UserName;
-            Referencedayone = new DateTime(2017,8,28,0,0,0);
-            EarlyDate = new DateTime(2017,8,2,0,0,0);
+        [DefaultValue(false)] public bool Dev;
+        [DefaultValue(true)] public bool Alwaystop;
+        [DefaultValue(0)] public int Curterm;
+        [DefaultValue(0)] public int Hideset;
+        [DefaultValue(0)] public int TimeOffset;
+        [DefaultValue(0)] public int Dayoffset;
+        [DefaultValue(true)] public bool Doubles;
+        [DefaultValue(true)] public bool Hideonend;
+        [DefaultValue(60)] public int Transparency;
+
+        public Settingstruct()
+        {
+            User = Environment.UserName;
+            Referencedayone = new DateTime(2017, 8, 28, 0, 0, 0);
+            EarlyDate = new DateTime(2017, 8, 2, 0, 0, 0);
             Dev = false;
             Curterm = 0;
             Alwaystop = true;
@@ -234,13 +257,16 @@ namespace SchoolManager
             Dayoffset = 0;
             TimeOffset = 0;
             Doubles = true;
+            Hideonend = true;
+            Transparency = 60;
         }
     }
+
     public class MyWebClient : WebClient
     {
         protected override WebRequest GetWebRequest(Uri address)
         {
-            WebRequest request = (WebRequest)base.GetWebRequest(address);
+            WebRequest request = (WebRequest) base.GetWebRequest(address);
 
             if (request is HttpWebRequest)
             {
@@ -253,6 +279,50 @@ namespace SchoolManager
             }
 
             return request;
+        }
+    }
+
+    public class GrowLabel : Label
+    {
+        private bool mGrowing;
+
+        public GrowLabel()
+        {
+            this.AutoSize = false;
+        }
+
+        private void resizeLabel()
+        {
+            if (mGrowing) return;
+            try
+            {
+                mGrowing = true;
+                Size sz = new Size(this.Width, Int32.MaxValue);
+                sz = TextRenderer.MeasureText(this.Text, this.Font, sz, TextFormatFlags.WordBreak);
+                this.Height = sz.Height;
+            }
+            finally
+            {
+                mGrowing = false;
+            }
+        }
+
+        protected override void OnTextChanged(EventArgs e)
+        {
+            base.OnTextChanged(e);
+            resizeLabel();
+        }
+
+        protected override void OnFontChanged(EventArgs e)
+        {
+            base.OnFontChanged(e);
+            resizeLabel();
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            resizeLabel();
         }
     }
 }

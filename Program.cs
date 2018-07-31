@@ -16,6 +16,7 @@ namespace SplashScreen
         public static int curDay = 0;
         public static string Calltype = "lookup";
         public static int SynID = 000000;
+        public static Image BackImage = null;
         public static int CurrentYearlevel=0;
         public static string APP_VERSION = "5.1.1"; //Update this version number before each release
         public static string CURRENT_DIRECTORY = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);

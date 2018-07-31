@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -20,6 +22,7 @@ namespace SchoolManager
 {
     public partial class Settingsforms : Form
     {
+        private bool Savebox = false;
         public int Download
         {
             get { return _Download; }
@@ -57,7 +60,8 @@ namespace SchoolManager
 
         private void Settingsforms_Deactivate(object sender, EventArgs e)
         {
-            Hide();
+            if (!Savebox)
+                Hide();
         }
 
         private void Loginbutton_Click(object sender, EventArgs e)
@@ -89,6 +93,7 @@ namespace SchoolManager
         {
             Doublescheckbox.Checked = Program.SettingsData.Doubles;
             numericUpDown1.Value = Program.SettingsData.TimeOffset;
+            Transparencyupdown.Value = Program.SettingsData.Transparency;
             SendMessage(Userbox.Handle, EM_SETCUEBANNER, 0, "Username");
             SendMessage(Passbox.Handle, EM_SETCUEBANNER, 0, "Password");
         }
@@ -128,5 +133,80 @@ namespace SchoolManager
         {
             Program.SettingsData.Doubles = Doublescheckbox.Checked;
         }
+
+        private void Hideonend_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.SettingsData.Hideonend = Hideonend.Checked;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Savebox = true;
+            DialogResult results = openFileDialog1.ShowDialog();
+            if (results == DialogResult.OK)
+            {
+                if (Program.BackImage != null)
+                {
+                    Program.BackImage.Dispose();
+                    Program.BackImage = null;
+                }
+                if (File.Exists(Program.SETTINGS_DIRECTORY+"/Backimage.png"))
+                    File.Delete(Program.SETTINGS_DIRECTORY+"/Backimage.png");
+                File.Copy(openFileDialog1.FileName,Program.SETTINGS_DIRECTORY+"/Backimage.png");
+                try
+                {
+                    Program.BackImage = ResizeImage(Image.FromFile(Program.SETTINGS_DIRECTORY + "/Backimage.png"), 1180,
+                        590);
+
+                }
+                catch
+                {
+                    MessageBox.Show("Unable to read image file!");
+                }
+            }
+
+            Savebox = false;
+        }
+
+        private void Transparencyupdown_ValueChanged(object sender, EventArgs e)
+        {
+            Program.SettingsData.Transparency = (int)Transparencyupdown.Value;
+        }
+
+        public static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("dispose!");
+            if (Program.BackImage != null)
+                Program.BackImage.Dispose();
+                Program.BackImage = null;
+            if (File.Exists(Program.SETTINGS_DIRECTORY + "/Backimage.png"))
+                File.Delete(Program.SETTINGS_DIRECTORY + "/Backimage.png");
+        }
     }
+
 }

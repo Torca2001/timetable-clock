@@ -39,19 +39,30 @@ namespace SchoolManager
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.Weekoverride = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.Doublescheckbox = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.Hideonend = new System.Windows.Forms.CheckBox();
+            this.Transparencyupdown = new System.Windows.Forms.NumericUpDown();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.progresslabel = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Transparencyupdown)).BeginInit();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // Userbox
@@ -123,25 +134,51 @@ namespace SchoolManager
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 62.01923F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.98077F));
+            this.tableLayoutPanel1.Controls.Add(this.label7, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.numericUpDown1, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.Weekoverride, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.Doublescheckbox, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.Hideonend, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.Transparencyupdown, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.panel2, 1, 5);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 8;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.36264F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 62.63736F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 114F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 63F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 59F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(213, 310);
             this.tableLayoutPanel1.TabIndex = 12;
+            // 
+            // label7
+            // 
+            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(3, 185);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(94, 26);
+            this.label7.TabIndex = 19;
+            this.label7.Text = "2 week Timetable background";
+            // 
+            // label6
+            // 
+            this.label6.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(3, 145);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(122, 13);
+            this.label6.TabIndex = 17;
+            this.label6.Text = "Transparency of 2 week";
             // 
             // numericUpDown1
             // 
@@ -219,6 +256,78 @@ namespace SchoolManager
             this.Doublescheckbox.UseVisualStyleBackColor = true;
             this.Doublescheckbox.CheckedChanged += new System.EventHandler(this.Doublescheckbox_CheckedChanged);
             // 
+            // label5
+            // 
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(3, 119);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(79, 13);
+            this.label5.TabIndex = 14;
+            this.label5.Text = "Hide when end";
+            // 
+            // Hideonend
+            // 
+            this.Hideonend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.Hideonend.AutoSize = true;
+            this.Hideonend.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Hideonend.Checked = true;
+            this.Hideonend.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Hideonend.Location = new System.Drawing.Point(135, 119);
+            this.Hideonend.Name = "Hideonend";
+            this.Hideonend.Size = new System.Drawing.Size(75, 14);
+            this.Hideonend.TabIndex = 15;
+            this.Hideonend.UseVisualStyleBackColor = true;
+            this.Hideonend.CheckedChanged += new System.EventHandler(this.Hideonend_CheckedChanged);
+            // 
+            // Transparencyupdown
+            // 
+            this.Transparencyupdown.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.Transparencyupdown.Location = new System.Drawing.Point(135, 142);
+            this.Transparencyupdown.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.Transparencyupdown.Name = "Transparencyupdown";
+            this.Transparencyupdown.Size = new System.Drawing.Size(75, 20);
+            this.Transparencyupdown.TabIndex = 16;
+            this.Transparencyupdown.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.Transparencyupdown.ValueChanged += new System.EventHandler(this.Transparencyupdown_ValueChanged);
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.button2);
+            this.panel2.Controls.Add(this.button1);
+            this.panel2.Location = new System.Drawing.Point(135, 170);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(75, 57);
+            this.panel2.TabIndex = 21;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(0, 30);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(72, 24);
+            this.button2.TabIndex = 19;
+            this.button2.Text = "Reset";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(0, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(72, 24);
+            this.button1.TabIndex = 18;
+            this.button1.Text = "Import";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // progresslabel
             // 
             this.progresslabel.AutoSize = true;
@@ -246,6 +355,13 @@ namespace SchoolManager
             this.label2.Text = "About\r\nTimetable Clock made by\r\nWilliam C\r\nDistributed by\r\nJosh Harper\r\nVersion: " +
     "";
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.DefaultExt = "png";
+            this.openFileDialog1.FileName = "image.png";
+            this.openFileDialog1.InitialDirectory = "pictures";
+            this.openFileDialog1.Title = "Background image import";
+            // 
             // Settingsforms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -267,6 +383,8 @@ namespace SchoolManager
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Transparencyupdown)).EndInit();
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -289,5 +407,14 @@ namespace SchoolManager
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox Doublescheckbox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox Hideonend;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.NumericUpDown Transparencyupdown;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Button button2;
     }
 }

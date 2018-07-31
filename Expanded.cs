@@ -3,34 +3,36 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using SplashScreen;
+using System.Diagnostics;
+using System.Drawing.Drawing2D;
 
 namespace SchoolManager
 {
     public partial class Expanded : Form
     {
         private bool colorbox = false;
-        private bool started=false;
+        private Timer Timer1 = new Timer();
+        private PointF mouseclick;
+        private bool drag;
+        private int offsetdrag0;
         public Expanded()
         {
             InitializeComponent();
-            for (int k = 0; k < 10; k++)
-            {
-                for (int i = 0; i <= 6; i++)
-                {
-                    Panel Pperiod = new Panel();
-                    Pperiod.Name = (k+1)+""+i;
-                    Pperiod.Width = 100;
-                    Pperiod.Height = 80;
-                    Pperiod.BackColor = Color.Aqua;
-                    Pperiod.BorderStyle = BorderStyle.FixedSingle;
-                    Pperiod.Location = new Point(110*k+10, 82 * i + 10);
-                    Controls.Add(Pperiod);
-                }
-            }     
-            Curdayhigh.SendToBack();
+            MissingLabel.Visible = false;
+            Timer1.Enabled = true;
+            Timer1.Interval = 30;
+            Timer1.Tick += Timer1tick;
+            Timer1.Start();
+        }
+
+        private void Timer1tick(object sender, EventArgs e)
+        {
+            if(Visible)
+                UpdateFormDisplay(Program.BackImage==null?BackgroundImage:Program.BackImage);
         }
 
         private void Form1_Deactivate(object sender, EventArgs e)
@@ -38,69 +40,6 @@ namespace SchoolManager
             if (colorbox)
                 return;
             Hide();
-            Termlabel.Text = "Term " + Program.SettingsData.Curterm;
-            for (int k = 0; k < 10; k++)
-            {
-                for (int i = 0; i <= 6; i++)
-                {
-                    period tPeriod;
-                    if (Program.TimetableList.ContainsKey((k + 1) + "" + i))
-                        tPeriod = Program.TimetableList[(k + 1) + "" + i];
-                    else
-                    {
-                        tPeriod = new period();
-                        tPeriod.ClassCode = "";
-                        tPeriod.DayNumber = -1;
-                        tPeriod.PeriodNumber = -1;
-                    }
-                    TextBox textLabel = new TextBox();
-                    Label classroom = new Label();
-                    Label classcod = new Label();
-                    classroom.Text = tPeriod.Room;
-                    classroom.Location = new Point(62, 65);
-                    classcod.Text = tPeriod.SchoolStaffCode+Environment.NewLine+tPeriod.ClassCode;
-                    classcod.Location = new Point(0, 52);
-                    classcod.AutoSize = true;
-                    textLabel.ReadOnly = true;
-                    textLabel.WordWrap = true;
-                    textLabel.BorderStyle = BorderStyle.None;
-                    textLabel.Width = 98;
-                    textLabel.Height = 45;
-                    textLabel.Multiline = true;
-                    textLabel.Location = new Point(1, 3);
-                    Panel eriod = (Panel)(Controls.Find((k + 1) + i.ToString(), false))[0];
-                    textLabel.Click += (s, p) =>
-                    {
-                        colorbox = true;
-                        colorDialog1.Color = eriod.BackColor;
-                        DialogResult result = colorDialog1.ShowDialog();
-                        if (result == DialogResult.OK&&Program.TimetableList.ContainsKey(eriod.Name))
-                        {
-                            Program.ColorRef[Program.TimetableList[eriod.Name].ClassCode] = colorDialog1.Color;
-                            updatecolors();
-                        }
-                        colorbox = false;
-                    };
-                    textLabel.Text = tPeriod.ClassDescription;
-                    eriod.BackColor = Program.ColorRef.ContainsKey(tPeriod.ClassCode) ? Program.ColorRef[tPeriod.ClassCode] : Color.White;
-                    textLabel.BackColor = eriod.BackColor;
-                    eriod.Controls.Clear();
-                    eriod.Controls.Add(classcod);
-                    eriod.Controls.Add(classroom);
-                    eriod.Controls.Add(textLabel);
-                }
-            }
-
-            if (Program.curDay == 0)
-            {
-                Curdayhigh.Visible = false;
-            }
-            else
-            {
-                Panel deriod = (Panel) (Controls.Find(Program.curDay + "0", false))[0];
-                Curdayhigh.Visible = true;
-                Curdayhigh.Location = new Point(deriod.Location.X-10, 0);
-            }
         }
 
         private void Expanded_Activated(object sender, EventArgs e)
@@ -113,75 +52,7 @@ namespace SchoolManager
             else
             {
                 MissingLabel.Hide();
-            }
-            if (!started)
-            {
-                Termlabel.Text = "Term " + Program.SettingsData.Curterm;
-                started = true;
-                for (int k = 0; k < 10; k++)
-                {
-                    for (int i = 0; i <= 6; i++)
-                    {
-                        period tPeriod;
-                        if (Program.TimetableList.ContainsKey((k + 1) + "" + i))
-                            tPeriod = Program.TimetableList[(k + 1) + "" + i];
-                        else
-                        {
-                            tPeriod = new period();
-                            tPeriod.ClassCode = "";
-                            tPeriod.DayNumber = -1;
-                            tPeriod.PeriodNumber = -1;
-                        }
-                        TextBox textLabel = new TextBox();
-                        Label classroom = new Label();
-                        Label classcod = new Label();
-                        classroom.Text = tPeriod.Room;
-                        classroom.Location = new Point(62, 65);
-                        classcod.Text = tPeriod.SchoolStaffCode + Environment.NewLine + tPeriod.ClassCode;
-                        classcod.Location = new Point(0, 52);
-                        classcod.AutoSize = true;
-                        textLabel.ReadOnly = true;
-                        textLabel.WordWrap = true;
-                        textLabel.BorderStyle = BorderStyle.None;
-                        textLabel.Width = 98;
-                        textLabel.Height = 45;
-                        textLabel.Multiline = true;
-                        textLabel.Location = new Point(1, 3);
-                        Panel eriod = (Panel)(Controls.Find((k + 1) + i.ToString(), false))[0];
-                        textLabel.Click += (s, p) =>
-                        {
-                            colorbox = true;
-                            colorDialog1.Color = eriod.BackColor;
-                            DialogResult result = colorDialog1.ShowDialog();
-                            if (result == DialogResult.OK && Program.TimetableList.ContainsKey(eriod.Name))
-                            {
-                                Program.ColorRef[Program.TimetableList[eriod.Name].ClassCode] = colorDialog1.Color;
-                                updatecolors();
-                            }
-                            colorbox = false;
-                        };
-                        textLabel.Text = tPeriod.ClassDescription;
-                        eriod.BackColor = Program.ColorRef.ContainsKey(tPeriod.ClassCode) ? Program.ColorRef[tPeriod.ClassCode] : Color.White;
-                        textLabel.BackColor = eriod.BackColor;
-                        eriod.Controls.Clear();
-                        eriod.Controls.Add(classcod);
-                        eriod.Controls.Add(classroom);
-                        eriod.Controls.Add(textLabel);
-                    }
-                }
-            }
-
-            if (Program.curDay == 0)
-            {
-                Curdayhigh.Visible = false;
-            }
-            else
-            {
-                Panel deriod = (Panel)(Controls.Find(Program.curDay + "0", false))[0];
-                Curdayhigh.Visible = true;
-                Curdayhigh.Location = new Point(deriod.Location.X-10, 0);
-            }
-            if (Program.SettingsData.EarlyDate.Date==DateTime.Now.Date)
+            }if (Program.SettingsData.EarlyDate.Date==DateTime.Now.Date)
                 Earlybutt.BackColor = Color.GreenYellow;
         }
 
@@ -199,7 +70,7 @@ namespace SchoolManager
         private void Earlybutt_MouseLeave(object sender, EventArgs e)
         {
             if (Program.SettingsData.EarlyDate.Date != DateTime.Now.Date)
-                Earlybutt.BackColor = Color.DarkRed;
+                Earlybutt.BackColor = Color.Brown;
             else
                 Earlybutt.BackColor = Color.GreenYellow;
         }
@@ -214,26 +85,161 @@ namespace SchoolManager
             else
             {
                 Program.SettingsData.EarlyDate = new DateTime(2017,1,1);
-                Earlybutt.BackColor = Color.DarkRed;
+                Earlybutt.BackColor = Color.Brown;
             }
         }
 
-        private void updatecolors()
+        #region CUSTOM PAINT METHODS ----------------------------------------------
+
+        protected override CreateParams CreateParams
         {
-            for (int k = 0; k < 10; k++)
+            get
             {
-                for (int i = 0; i <= 6; i++)
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x00080000; // Required: set WS_EX_LAYERED extended style
+                return cp;
+            }
+        }
+
+        public void UpdateFormDisplay(Image backgroundImage)
+        {
+            IntPtr screenDc = API.GetDC(IntPtr.Zero);
+            IntPtr memDc = API.CreateCompatibleDC(screenDc);
+            IntPtr hBitmap;
+            IntPtr oldBitmap;
+
+            try
+            {
+                //Display-image
+                Bitmap bmp = new Bitmap(backgroundImage);
+                Graphics g = Graphics.FromImage(bmp);
+
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                for (int i = 0; i < Controls.Count; i++)
                 {
-                    period tPeriod = new period();
-                    if (Program.TimetableList.ContainsKey((k + 1) + "" + i))
-                        tPeriod = Program.TimetableList[(k + 1) + "" + i];
-                    else
+                    if (!Controls[i].Visible)
                         continue;
-                    Panel eriod = (Panel)(Controls.Find((k + 1) + i.ToString(), false))[0];
-                    eriod.BackColor = Program.ColorRef[tPeriod.ClassCode];
-                    eriod.Controls[2].BackColor = Program.ColorRef[tPeriod.ClassCode];
+                    Bitmap bmmp = new Bitmap(Controls[i].Width,Controls[i].Height);
+                    Controls[i].DrawToBitmap(bmmp,Controls[i].ClientRectangle);
+                    g.DrawImage(bmmp,Controls[i].Location);
                 }
+
+                PointF mousepos = new PointF(MousePosition.X-Left,MousePosition.Y-Top);
+                for (int i = 0; i < 10; i++)
+                {
+                    for (int j = 0; j < 7; j++)
+                    {
+                        Brush pencolour = Brushes.Aqua;
+                        PointF curloc = new PointF(110 * i + 10, 82 * j + 10);
+                        RectangleF containerF = new RectangleF(curloc.X,curloc.Y,100,80);
+                        int alpha = containerF.Contains(mousepos) ? 255 : Program.SettingsData.Transparency;
+                        if ((i + 1) == Program.curDay||Program.curDay==0)
+                            alpha = 255;
+                        if (Program.TimetableList.ContainsKey((i + 1) + j.ToString()))
+                        {
+                            period curp = Program.TimetableList[(i + 1) + j.ToString()];
+                            pencolour = new SolidBrush(Color.FromArgb(alpha,Program.ColorRef[curp.ClassCode]));
+                            Brush textbrush = new SolidBrush(Color.FromArgb(alpha, Color.Black));
+                            g.FillRectangle(pencolour, containerF);
+                            g.DrawString(curp.Room,SystemFonts.DefaultFont,textbrush,curloc.X+60,curloc.Y+65);
+                            g.DrawString(curp.ClassCode, SystemFonts.DefaultFont, textbrush, curloc.X, curloc.Y+65);
+                            g.DrawString(curp.SchoolStaffCode, SystemFonts.DefaultFont, textbrush, curloc.X, curloc.Y+55);
+                            g.DrawString(curp.ClassDescription, SystemFonts.DefaultFont, textbrush, new RectangleF(curloc.X, curloc.Y+1, 98, 50));
+                            textbrush.Dispose();
+                        }
+                        else
+                        g.FillRectangle(pencolour, containerF);
+                        if (mouseclick.X!=-10000 && containerF.Contains(mouseclick)&& Program.TimetableList.ContainsKey((i + 1) + j.ToString()))
+                        {
+                            mouseclick = new PointF(-10000, 0);
+                            colorbox = true;
+                            colorDialog1.Color = Program.ColorRef[Program.TimetableList[(i + 1) + j.ToString()].ClassCode];
+                            var results = colorDialog1.ShowDialog();
+                            if (results == DialogResult.OK)
+                            {
+                                Program.ColorRef[Program.TimetableList[(i + 1) + j.ToString()].ClassCode] = colorDialog1.Color;
+                            }
+                            colorbox = false;
+                        }
+                        pencolour.Dispose();
+                    }
+                }
+
+                using (Font bigfont2 = new Font(FontFamily.GenericSerif, g.DpiY * 15 / 72))
+                {
+                    g.DrawString("Term " + Program.SettingsData.Curterm, bigfont2, Brushes.Black, 1096, 5);
+                    g.DrawString("Term " + Program.SettingsData.Curterm, bigfont2, Brushes.Black, 1100, 5);
+                    g.DrawString("Term " + Program.SettingsData.Curterm, bigfont2, Brushes.Black, 1098, 7);
+                    g.DrawString("Term " + Program.SettingsData.Curterm, bigfont2, Brushes.Black, 1098, 3);
+                    using (Font bigfont = new Font(FontFamily.GenericSerif, g.DpiY * 15 / 72))
+                    {
+                        g.DrawString("Term " + Program.SettingsData.Curterm, bigfont, Brushes.White, 1098, 5);
+                    }
+                }
+
+                mouseclick = new PointF(-10000, 0);
+                hBitmap = bmp.GetHbitmap(Color.FromArgb(0));  //Set the fact that background is transparent
+                oldBitmap = API.SelectObject(memDc, hBitmap);
+
+                //Display-rectangle
+                Size size = bmp.Size;
+                Point pointSource = new Point(0, 0);
+                Point topPos = new Point(Left, Top);
+
+                //Set up blending options
+                API.BLENDFUNCTION blend = new API.BLENDFUNCTION();
+                blend.BlendOp = API.AC_SRC_OVER;
+                blend.BlendFlags = 0;
+                blend.SourceConstantAlpha = Convert.ToByte(255);
+                blend.AlphaFormat = API.AC_SRC_ALPHA;
+
+                API.UpdateLayeredWindow(Handle, screenDc, ref topPos, ref size, memDc, ref pointSource, 0, ref blend, API.ULW_ALPHA);
+
+                //Clean-up
+                g.Dispose();
+                bmp.Dispose();
+                API.ReleaseDC(IntPtr.Zero, screenDc);
+                if (hBitmap != IntPtr.Zero)
+                {
+                    API.SelectObject(memDc, oldBitmap);
+                    API.DeleteObject(hBitmap);
+                }
+                API.DeleteDC(memDc);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+        #endregion
+
+        private void Expanded_MouseClick(object sender, MouseEventArgs e)
+        {
+            mouseclick = e.Location;
+        }
+
+        private void Expanded_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Y < 10 && e.Y > 0)
+            {
+                drag = true;
+            }
+        }
+
+        private void Expanded_MouseUp(object sender, MouseEventArgs e)
+        {
+            drag = false;
+        }
+
+        private void Expanded_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (drag)
+            {
+                Left += e.X;
+                Top += e.Y;
             }
         }
     }
+
 }
+

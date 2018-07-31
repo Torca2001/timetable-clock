@@ -96,6 +96,17 @@ namespace SplashScreen
 
             try
             {
+                Program.BackImage = Settingsforms.ResizeImage(Image.FromFile(Program.SETTINGS_DIRECTORY + "/Backimage.png"), 1180,
+                    590);
+
+            }
+            catch
+            {
+                //failed
+            }
+
+            try
+            {
                 Program.ColorRef = JsonConvert.DeserializeObject<Dictionary<string, Color>>(
                     File.ReadAllText(Program.SETTINGS_DIRECTORY + "/Colours.Json"),
                     new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Populate});
@@ -310,14 +321,6 @@ namespace SplashScreen
 
 
         }
-        /*
-        struct ppands
-        {
-            public int p;
-            public int pp;
-            public string s;
-        }
-        */
 
         #region CUSTOM PAINT METHODS ----------------------------------------------
         protected override CreateParams CreateParams
@@ -350,7 +353,7 @@ namespace SplashScreen
                 {
                     List<string> temp = Currentcountdown();
                     double timeleft = Int32.Parse(temp[0]);
-                    if (temp[2] == "End")
+                    if (temp[2] == "End"&&Program.SettingsData.Hideonend)
                         counter = 0;
 
                     string hours;
@@ -484,7 +487,7 @@ namespace SplashScreen
         {
             if(ttIsOpen == false) //only opens if the window isn't already open
             {
-                if (mouseMoved == false)
+                if (mouseMoved == false||sender is NotifyIcon)
                 {
                     Expandedform.Show();
                     Expandedform.Activate();
@@ -727,8 +730,8 @@ namespace SplashScreen
                 };
                 downloader.DownloadFileCompleted += delegate
                 {
-                    if (File.Exists(Program.SETTINGS_DIRECTORY + "/delete.exe"))
-                        File.Delete(Program.SETTINGS_DIRECTORY + "/delete.exe");
+                    if (File.Exists(Program.CURRENT_DIRECTORY + "/delete.exe"))
+                        File.Delete(Program.CURRENT_DIRECTORY + "/delete.exe");
                     Console.WriteLine(Program.CURRENT_DIRECTORY + "/SchoolManager.exe");
                     File.Move(Program.CURRENT_DIRECTORY + "/SchoolManager.exe", Program.CURRENT_DIRECTORY+"/delete.exe");
                     File.Move(Program.SETTINGS_DIRECTORY+"/NewTimetableclock.exe", Program.CURRENT_DIRECTORY+"/SchoolManager.exe");
