@@ -164,8 +164,7 @@ namespace SchoolManager
                 {
                     if (tcpclnt.ConnectAsync("timetable.duckdns.org", 80).Wait(1500))
                     {
-                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.APP_VERSION + " " +
-                                     Program.CurrentYearlevel;
+                        String str = "T" + Program.SynID + " " + Program.Calltype + " " + Program.APP_VERSION+ " " +Program.CurrentYearlevel;
                         Stream stm = tcpclnt.GetStream();
                         ASCIIEncoding asen = new ASCIIEncoding();
                         byte[] ba = asen.GetBytes(str);
