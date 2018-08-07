@@ -234,6 +234,75 @@ namespace SchoolManager
         }
     }
 
+    public class Themedata
+    {
+        [DefaultValue("Theme")]
+        public string Name;
+        [DefaultValue("1.0")]
+        public string Version;
+        [DefaultValue("Unknown")]
+        public string Author;
+        public Image Timetableimage;
+        public Image Clockimage;
+        public Image Preview;
+        public List<Drawstrings> Drawlist;
+
+        public void IDisposable()
+        {
+            //safe disposale
+            if (Timetableimage!=null)
+                Timetableimage.Dispose();
+            if (Clockimage!=null)
+                Clockimage.Dispose();
+            if (Preview!=null)
+                Preview.Dispose();
+            Drawlist = null;
+        }
+        public Themedata(Image timetableimage,Image clockimage)
+        {
+            Name = "Default";
+            Version = "1";
+            Author = "WilliamC";
+            Timetableimage = timetableimage;
+            Clockimage = clockimage;
+            Drawlist = new List<Drawstrings>{new Drawstrings("Day <CurDay>",2,65,8,-90,255,255,255,255), new Drawstrings("<GoTo><ClassA>", 10, 2, 14, 0, 255, 255, 255, 255), new Drawstrings("<Hours>:<Minutes>:<Seconds>", 10, 40, 18, 0, 255, 255, 255, 255), new Drawstrings("<Room>", 140, 40, 18, 0, 255, 255, 255, 255) };
+        }
+    }
+
+    public class Drawstrings
+    {
+        [DefaultValue("Text")]
+        public string Text;
+        public Point Position;
+        [DefaultValue(8)]
+        public int Size;
+        [DefaultValue(0)]
+        public float Rotation;
+        [DefaultValue("255,255,255,255")]
+        public Color Colour;
+
+        public Drawstrings()
+        {
+            //no generation
+        }
+        public Drawstrings(string text,Point pos,int size,float rotation,Color colour)
+        {
+            Text = text;
+            Position = pos;
+            Size = size;
+            Rotation = rotation;
+            Colour = colour;
+        }
+        public Drawstrings(string text, int x,int y, int size, float rotation, int A, int R, int G,int B)
+        {
+            Text = text;
+            Position = new Point(x,y);
+            Size = size;
+            Rotation = rotation;
+            Colour = Color.FromArgb(A, R, G, B);
+        }
+    }
+
     public class Settingstruct
     {
         [DefaultValue("2017-8-28T00:00:00")] public DateTime Referencedayone;
@@ -247,7 +316,7 @@ namespace SchoolManager
         [DefaultValue(0)] public int Dayoffset;
         [DefaultValue(true)] public bool Doubles;
         [DefaultValue(true)] public bool Hideonend;
-        [DefaultValue(60)] public int Transparency;
+        [DefaultValue("Default")] public string Theme;
 
         public Settingstruct()
         {
@@ -262,7 +331,7 @@ namespace SchoolManager
             TimeOffset = 0;
             Doubles = true;
             Hideonend = true;
-            Transparency = 60;
+            Theme = "Default";
         }
     }
 
@@ -283,50 +352,6 @@ namespace SchoolManager
             }
 
             return request;
-        }
-    }
-
-    public class GrowLabel : Label
-    {
-        private bool mGrowing;
-
-        public GrowLabel()
-        {
-            this.AutoSize = false;
-        }
-
-        private void resizeLabel()
-        {
-            if (mGrowing) return;
-            try
-            {
-                mGrowing = true;
-                Size sz = new Size(this.Width, Int32.MaxValue);
-                sz = TextRenderer.MeasureText(this.Text, this.Font, sz, TextFormatFlags.WordBreak);
-                this.Height = sz.Height;
-            }
-            finally
-            {
-                mGrowing = false;
-            }
-        }
-
-        protected override void OnTextChanged(EventArgs e)
-        {
-            base.OnTextChanged(e);
-            resizeLabel();
-        }
-
-        protected override void OnFontChanged(EventArgs e)
-        {
-            base.OnFontChanged(e);
-            resizeLabel();
-        }
-
-        protected override void OnSizeChanged(EventArgs e)
-        {
-            base.OnSizeChanged(e);
-            resizeLabel();
         }
     }
 }

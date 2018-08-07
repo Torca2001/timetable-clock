@@ -30,7 +30,6 @@ namespace SchoolManager
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Expanded));
             this.MissingLabel = new System.Windows.Forms.Label();
-            this.Earlybutt = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.SuspendLayout();
             // 
@@ -47,22 +46,6 @@ namespace SchoolManager
             this.MissingLabel.TabIndex = 0;
             this.MissingLabel.Text = "No Timetable";
             // 
-            // Earlybutt
-            // 
-            this.Earlybutt.AutoSize = true;
-            this.Earlybutt.BackColor = System.Drawing.Color.DarkRed;
-            this.Earlybutt.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.Earlybutt.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Earlybutt.Location = new System.Drawing.Point(1118, 33);
-            this.Earlybutt.Name = "Earlybutt";
-            this.Earlybutt.Size = new System.Drawing.Size(53, 42);
-            this.Earlybutt.TabIndex = 4;
-            this.Earlybutt.Text = "Early\r\nFinish";
-            this.Earlybutt.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.Earlybutt.Click += new System.EventHandler(this.Earlybutt_Click);
-            this.Earlybutt.MouseLeave += new System.EventHandler(this.Earlybutt_MouseLeave);
-            this.Earlybutt.MouseHover += new System.EventHandler(this.Earlybutt_MouseHover);
-            // 
             // colorDialog1
             // 
             this.colorDialog1.AnyColor = true;
@@ -76,7 +59,6 @@ namespace SchoolManager
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1200, 630);
             this.ControlBox = false;
-            this.Controls.Add(this.Earlybutt);
             this.Controls.Add(this.MissingLabel);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -101,7 +83,6 @@ namespace SchoolManager
         #endregion
 
         private System.Windows.Forms.Label MissingLabel;
-        private System.Windows.Forms.Label Earlybutt;
         private System.Windows.Forms.ColorDialog colorDialog1;
     }
 }

@@ -1,6 +1,6 @@
 namespace SplashScreen
 {
-    partial class frmSplash
+    sealed partial class frmSplash
     {
         /// <summary>
         /// Required designer variable.
@@ -39,6 +39,7 @@ namespace SplashScreen
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.mHomepage = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.themesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mExit = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenu1.SuspendLayout();
@@ -50,9 +51,10 @@ namespace SplashScreen
             this.mMove,
             this.mHomepage,
             this.settingsToolStripMenuItem,
+            this.themesToolStripMenuItem,
             this.mExit});
             this.contextMenu1.Name = "contextMenu1";
-            this.contextMenu1.Size = new System.Drawing.Size(117, 92);
+            this.contextMenu1.Size = new System.Drawing.Size(117, 114);
             // 
             // mMove
             // 
@@ -122,6 +124,13 @@ namespace SplashScreen
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
+            // themesToolStripMenuItem
+            // 
+            this.themesToolStripMenuItem.Name = "themesToolStripMenuItem";
+            this.themesToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.themesToolStripMenuItem.Text = "Themes";
+            this.themesToolStripMenuItem.Click += new System.EventHandler(this.themesToolStripMenuItem_Click);
+            // 
             // mExit
             // 
             this.mExit.Name = "mExit";
@@ -177,6 +186,7 @@ namespace SplashScreen
         private System.Windows.Forms.ToolStripMenuItem hideToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem themesToolStripMenuItem;
     }
 }
 

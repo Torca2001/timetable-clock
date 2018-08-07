@@ -39,7 +39,6 @@ namespace SchoolManager
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
@@ -49,10 +48,7 @@ namespace SchoolManager
             this.Doublescheckbox = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.Hideonend = new System.Windows.Forms.CheckBox();
-            this.Transparencyupdown = new System.Windows.Forms.NumericUpDown();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.EarlyBox = new System.Windows.Forms.CheckBox();
             this.progresslabel = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
@@ -61,8 +57,6 @@ namespace SchoolManager
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Transparencyupdown)).BeginInit();
-            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // Userbox
@@ -134,7 +128,6 @@ namespace SchoolManager
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 62.01923F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.98077F));
-            this.tableLayoutPanel1.Controls.Add(this.label7, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.label6, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.numericUpDown1, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
@@ -144,8 +137,7 @@ namespace SchoolManager
             this.tableLayoutPanel1.Controls.Add(this.Doublescheckbox, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.label5, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.Hideonend, 1, 3);
-            this.tableLayoutPanel1.Controls.Add(this.Transparencyupdown, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.panel2, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.EarlyBox, 1, 4);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 8;
@@ -160,25 +152,15 @@ namespace SchoolManager
             this.tableLayoutPanel1.Size = new System.Drawing.Size(213, 310);
             this.tableLayoutPanel1.TabIndex = 12;
             // 
-            // label7
-            // 
-            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 185);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(94, 26);
-            this.label7.TabIndex = 19;
-            this.label7.Text = "2 week Timetable background";
-            // 
             // label6
             // 
             this.label6.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(3, 145);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(122, 13);
+            this.label6.Size = new System.Drawing.Size(60, 13);
             this.label6.TabIndex = 17;
-            this.label6.Text = "Transparency of 2 week";
+            this.label6.Text = "Early Finish";
             // 
             // numericUpDown1
             // 
@@ -280,53 +262,17 @@ namespace SchoolManager
             this.Hideonend.UseVisualStyleBackColor = true;
             this.Hideonend.CheckedChanged += new System.EventHandler(this.Hideonend_CheckedChanged);
             // 
-            // Transparencyupdown
+            // EarlyBox
             // 
-            this.Transparencyupdown.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.Transparencyupdown.Location = new System.Drawing.Point(135, 142);
-            this.Transparencyupdown.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.Transparencyupdown.Name = "Transparencyupdown";
-            this.Transparencyupdown.Size = new System.Drawing.Size(75, 20);
-            this.Transparencyupdown.TabIndex = 16;
-            this.Transparencyupdown.Value = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            this.Transparencyupdown.ValueChanged += new System.EventHandler(this.Transparencyupdown_ValueChanged);
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.button2);
-            this.panel2.Controls.Add(this.button1);
-            this.panel2.Location = new System.Drawing.Point(135, 170);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(75, 57);
-            this.panel2.TabIndex = 21;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(0, 30);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(72, 24);
-            this.button2.TabIndex = 19;
-            this.button2.Text = "Reset";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(0, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(72, 24);
-            this.button1.TabIndex = 18;
-            this.button1.Text = "Import";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.EarlyBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.EarlyBox.AutoSize = true;
+            this.EarlyBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.EarlyBox.Location = new System.Drawing.Point(135, 145);
+            this.EarlyBox.Name = "EarlyBox";
+            this.EarlyBox.Size = new System.Drawing.Size(75, 14);
+            this.EarlyBox.TabIndex = 16;
+            this.EarlyBox.UseVisualStyleBackColor = true;
+            this.EarlyBox.Click += new System.EventHandler(this.EarlyBox_Click);
             // 
             // progresslabel
             // 
@@ -383,8 +329,6 @@ namespace SchoolManager
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Transparencyupdown)).EndInit();
-            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -409,12 +353,8 @@ namespace SchoolManager
         private System.Windows.Forms.CheckBox Doublescheckbox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox Hideonend;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.NumericUpDown Transparencyupdown;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.CheckBox EarlyBox;
+        private System.Windows.Forms.Label label6;
     }
 }

@@ -58,6 +58,10 @@
     <ApplicationIcon>Clock.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICalVCard, Version=1.0.0.4, Culture=neutral, PublicKeyToken=cd85b70fb26f9fc1, processorArchitecture=MSIL">
+      <HintPath>packages\ICalVCard.1.0.0\lib\ICalVCard.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -74,6 +78,7 @@
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -98,6 +103,12 @@
     <Compile Include="Settingsforms.Designer.cs">
       <DependentUpon>Settingsforms.cs</DependentUpon>
     </Compile>
+    <Compile Include="Themefrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Themefrm.Designer.cs">
+      <DependentUpon>Themefrm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Timetable.cs" />
     <EmbeddedResource Include="Expanded.resx">
       <DependentUpon>Expanded.cs</DependentUpon>
@@ -118,6 +129,9 @@
     </Compile>
     <EmbeddedResource Include="Settingsforms.resx">
       <DependentUpon>Settingsforms.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Themefrm.resx">
+      <DependentUpon>Themefrm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
@@ -142,6 +156,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ICalVCard.dll" />
+    <None Include="packages\ICalVCard.1.0.0\lib\ICalVCard.dll" />
     <None Include="bin\Debug\Newtonsoft.Json.xml" />
     <EmbeddedResource Include="Newtonsoft.Json.dll" />
     <EmbeddedResource Include="Octokit.dll" />
