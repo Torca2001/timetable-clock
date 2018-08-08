@@ -18,7 +18,8 @@ namespace SchoolManager
         private Timer Timer1 = new Timer();
         private PointF mouseclick;
         private bool drag;
-        private int offsetdrag;
+        private int offsetDragX, offsetDragY;
+
         public Expanded()
         {
             InitializeComponent();
@@ -187,10 +188,11 @@ namespace SchoolManager
 
         private void Expanded_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Y < 10 && e.Y > 0)
+            if (e.Y < 10 && e.Y > 0 || e.X > 1100 && e.X < 1200)
             {
                 drag = true;
-                offsetdrag = e.X;
+                offsetDragX = e.X;
+                offsetDragY = e.Y;
             }
         }
 
@@ -203,8 +205,8 @@ namespace SchoolManager
         {
             if (drag)
             {
-                Left += e.X-offsetdrag;
-                Top += e.Y;
+                Left += e.X-offsetDragX;
+                Top += e.Y-offsetDragY;
             }
         }
     }
