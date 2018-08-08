@@ -32,7 +32,7 @@ namespace SchoolManager
         private void Timer1tick(object sender, EventArgs e)
         {
             if(Visible)
-                UpdateFormDisplay(Program.BackImage==null?BackgroundImage:Program.BackImage);
+                UpdateFormDisplay(Program.Themedata.Timetableimage);
         }
 
         private void Form1_Deactivate(object sender, EventArgs e)
@@ -52,8 +52,7 @@ namespace SchoolManager
             else
             {
                 MissingLabel.Hide();
-            }if (Program.SettingsData.EarlyDate.Date==DateTime.Now.Date)
-                Earlybutt.BackColor = Color.GreenYellow;
+            }
         }
 
         private void Expanded_FormClosing(object sender, FormClosingEventArgs e)
@@ -62,32 +61,6 @@ namespace SchoolManager
             e.Cancel = (e.CloseReason == CloseReason.UserClosing);  // this cancels the close event.
         }
 
-        private void Earlybutt_MouseHover(object sender, EventArgs e)
-        {
-            Earlybutt.BackColor = Color.Red;
-        }
-
-        private void Earlybutt_MouseLeave(object sender, EventArgs e)
-        {
-            if (Program.SettingsData.EarlyDate.Date != DateTime.Now.Date)
-                Earlybutt.BackColor = Color.Brown;
-            else
-                Earlybutt.BackColor = Color.GreenYellow;
-        }
-
-        private void Earlybutt_Click(object sender, EventArgs e)
-        {
-            if (Program.SettingsData.EarlyDate.Date != DateTime.Now.Date)
-            {
-                Program.SettingsData.EarlyDate = DateTime.Now;
-                Earlybutt.BackColor = Color.GreenYellow;
-            }
-            else
-            {
-                Program.SettingsData.EarlyDate = new DateTime(2017,1,1);
-                Earlybutt.BackColor = Color.Brown;
-            }
-        }
 
         #region CUSTOM PAINT METHODS ----------------------------------------------
 
@@ -127,14 +100,16 @@ namespace SchoolManager
                 PointF mousepos = new PointF(MousePosition.X-Left,MousePosition.Y-Top);
                 for (int i = 0; i < 10; i++)
                 {
+                    if (i + 1 == Program.curDay)
+                    {
+                        g.FillRectangle(new SolidBrush(Color.FromArgb(150,120,120,120)), 110 * i, 0,120,590);
+                    }
                     for (int j = 0; j < 7; j++)
                     {
                         Brush pencolour = Brushes.Aqua;
                         PointF curloc = new PointF(110 * i + 10, 82 * j + 10);
                         RectangleF containerF = new RectangleF(curloc.X,curloc.Y,100,80);
-                        int alpha = containerF.Contains(mousepos) ? 255 : Program.SettingsData.Transparency;
-                        if ((i + 1) == Program.curDay||Program.curDay==0)
-                            alpha = 255;
+                        int alpha = 255;
                         if (Program.TimetableList.ContainsKey((i + 1) + j.ToString()))
                         {
                             period curp = Program.TimetableList[(i + 1) + j.ToString()];
@@ -164,18 +139,10 @@ namespace SchoolManager
                         pencolour.Dispose();
                     }
                 }
-
-                using (Font bigfont2 = new Font(FontFamily.GenericSerif, g.DpiY * 15 / 72))
-                {
-                    g.DrawString("Term " + Program.SettingsData.Curterm, bigfont2, Brushes.Black, 1096, 5);
-                    g.DrawString("Term " + Program.SettingsData.Curterm, bigfont2, Brushes.Black, 1100, 5);
-                    g.DrawString("Term " + Program.SettingsData.Curterm, bigfont2, Brushes.Black, 1098, 7);
-                    g.DrawString("Term " + Program.SettingsData.Curterm, bigfont2, Brushes.Black, 1098, 3);
-                    using (Font bigfont = new Font(FontFamily.GenericSerif, g.DpiY * 15 / 72))
+                    using (Font bigfont = new Font("Trebuchet MS", g.DpiX * 12 / 72))
                     {
                         g.DrawString("Term " + Program.SettingsData.Curterm, bigfont, Brushes.White, 1098, 5);
                     }
-                }
 
                 mouseclick = new PointF(-10000, 0);
                 hBitmap = bmp.GetHbitmap(Color.FromArgb(0));  //Set the fact that background is transparent

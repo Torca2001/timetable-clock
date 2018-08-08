@@ -91,11 +91,17 @@ namespace SchoolManager
 
         private void Settingsforms_Shown(object sender, EventArgs e)
         {
-            Doublescheckbox.Checked = Program.SettingsData.Doubles;
-            numericUpDown1.Value = Program.SettingsData.TimeOffset;
-            Transparencyupdown.Value = Program.SettingsData.Transparency;
+            Checksettings();
             SendMessage(Userbox.Handle, EM_SETCUEBANNER, 0, "Username");
             SendMessage(Passbox.Handle, EM_SETCUEBANNER, 0, "Password");
+        }
+
+        public void Checksettings()
+        {
+            Doublescheckbox.Checked = Program.SettingsData.Doubles;
+            Hideonend.Checked = Program.SettingsData.Hideonend;
+            numericUpDown1.Value = Program.SettingsData.TimeOffset;
+            EarlyBox.Checked = Program.SettingsData.EarlyDate.Date == DateTime.Now.Date;
         }
 
         private void Passbox_KeyDown(object sender, KeyEventArgs e)
@@ -139,74 +145,21 @@ namespace SchoolManager
             Program.SettingsData.Hideonend = Hideonend.Checked;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void EarlyBox_Click(object sender, EventArgs e)
         {
-            Savebox = true;
-            DialogResult results = openFileDialog1.ShowDialog();
-            if (results == DialogResult.OK)
+            if (Program.SettingsData.EarlyDate.Date != DateTime.Now.Date)
             {
-                if (Program.BackImage != null)
-                {
-                    Program.BackImage.Dispose();
-                    Program.BackImage = null;
-                }
-                if (File.Exists(Program.SETTINGS_DIRECTORY+"/Backimage.png"))
-                    File.Delete(Program.SETTINGS_DIRECTORY+"/Backimage.png");
-                File.Copy(openFileDialog1.FileName,Program.SETTINGS_DIRECTORY+"/Backimage.png");
-                try
-                {
-                    Program.BackImage = ResizeImage(Image.FromFile(Program.SETTINGS_DIRECTORY + "/Backimage.png"), 1180,
-                        590);
-
-                }
-                catch
-                {
-                    MessageBox.Show("Unable to read image file!");
-                }
+                Program.SettingsData.EarlyDate = DateTime.Now;
+                EarlyBox.Checked = true;
             }
-
-            Savebox = false;
-        }
-
-        private void Transparencyupdown_ValueChanged(object sender, EventArgs e)
-        {
-            Program.SettingsData.Transparency = (int)Transparencyupdown.Value;
-        }
-
-        public static Bitmap ResizeImage(Image image, int width, int height)
-        {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
-
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using (var graphics = Graphics.FromImage(destImage))
+            else
             {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
+                Program.SettingsData.EarlyDate = new DateTime(2017, 1, 1);
+                EarlyBox.Checked = false;
             }
-
-            return destImage;
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            Console.WriteLine("dispose!");
-            if (Program.BackImage != null)
-                Program.BackImage.Dispose();
-                Program.BackImage = null;
-            if (File.Exists(Program.SETTINGS_DIRECTORY + "/Backimage.png"))
-                File.Delete(Program.SETTINGS_DIRECTORY + "/Backimage.png");
-        }
+        //Program.BackImage = ResizeImage(Image.FromFile(Program.SETTINGS_DIRECTORY + "/Backimage.png"), 1180,590);
     }
 
 }

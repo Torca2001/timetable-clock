@@ -6,18 +6,21 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using SchoolManager;
 
 namespace SplashScreen
 {
-
     static class Program
     {
         public static int curDay = 0;
         public static string Calltype = "lookup";
         public static int SynID = 000000;
-        public static Image BackImage = null;
         public static int CurrentYearlevel=0;
+        private static Themedata _themedata = null;
+        public static Dictionary<string, Themedata> Themes = new Dictionary<string, Themedata>();
+        public static event System.EventHandler Themechanged;
+        public static Themedata Defaulttheme;
         public static string APP_VERSION = "5.1.1"; //Update this version number before each release
         public static string CURRENT_DIRECTORY = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
         public static string SETTINGS_DIRECTORY = "C:/Users/" + Environment.UserName + "/Documents/Timetable";
@@ -25,6 +28,29 @@ namespace SplashScreen
         public static List<Color> ColourTable = new List<Color>(new []{Color.Cyan, Color.DodgerBlue, Color.Orange, Color.Yellow, Color.Lime, Color.Green,Color.Red, Color.Tan, Color.Magenta,Color.Gray,Color.Teal,Color.Pink});
         public static Dictionary<string, Color> ColorRef = new Dictionary<string, Color>();
         public static Dictionary<string,period> TimetableList = new Dictionary<string, period>();
+        public static Themedata Themedata
+        {
+            get
+            {
+                if (_themedata == null)
+                {
+                    return Defaulttheme;
+                }
+                return _themedata;
+            }
+            set
+            {
+                _themedata = value;
+
+                OnThemeChanged();
+            }
+        }
+
+        public static void OnThemeChanged()
+        {
+            Themechanged?.Invoke(typeof(Form), e: EventArgs.Empty);
+        }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

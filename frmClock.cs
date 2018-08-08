@@ -1,32 +1,22 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq.Expressions;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Messaging;
-using System.Security.Authentication;
-using System.Windows.Forms.VisualStyles;
 using SchoolManager;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Octokit;
-using Application = System.Windows.Forms.Application;
+using iCal;
 using Timer = System.Windows.Forms.Timer;
 
 namespace SplashScreen
 {
-    public partial class frmSplash : Form
+    public sealed partial class frmSplash : Form
     {
         [DllImport("user32.dll")]
         static extern IntPtr GetForegroundWindow();
@@ -38,6 +28,7 @@ namespace SplashScreen
         public static extern int GetWindowText(HandleRef hWnd, StringBuilder lpString, int nMaxCount);
         Settingsforms settingsForm = new Settingsforms();
         Expanded Expandedform = new Expanded();
+        Themefrm Themesform = new Themefrm();
         public int counter = 255;
         public int dayo = 0;
         float dx;
@@ -55,7 +46,9 @@ namespace SplashScreen
         bool mouseMoved;
 
         public frmSplash()
-        {
+        { 
+            Program.Defaulttheme = new Themedata(Expandedform.BackgroundImage, BackgroundImage);
+            Program.Themechanged += Reposition;
             timelayout.Add(new List<string> { "29700", "29700", "29700", "School Start" }); //Dayo = 1 is wednesday, dayo= 2 is Early finish
             timelayout.Add(new List<string> { "31500", "30300", "31500", "Form                                                                     0" });
             timelayout.Add(new List<string> { "31800", "30600", "31800", "Go to Period 1" });
@@ -73,7 +66,6 @@ namespace SplashScreen
             timelayout.Add(new List<string> { "51900", "51900", "49800", "Go to Period 6" });
             timelayout.Add(new List<string> { "54900", "54900", "52500", "Period 6" });
             bool timetableexist = File.Exists(Program.SETTINGS_DIRECTORY + "/Timetable.Json");
-            
             try
             {
                 using (StreamWriter writer =
@@ -92,17 +84,6 @@ namespace SplashScreen
             catch
             {
                 Console.WriteLine("Shortcut creation failed");
-            }
-
-            try
-            {
-                Program.BackImage = Settingsforms.ResizeImage(Image.FromFile(Program.SETTINGS_DIRECTORY + "/Backimage.png"), 1180,
-                    590);
-
-            }
-            catch
-            {
-                //failed
             }
 
             try
@@ -187,7 +168,13 @@ namespace SplashScreen
                     //do nothing
                 }
             }
+            Directory.CreateDirectory(Program.SETTINGS_DIRECTORY + "/Themes");
             InitializeComponent();
+            Themesform.Loadthemes();
+            Program.Defaulttheme = new Themedata(Expandedform.BackgroundImage, BackgroundImage);
+            Program.Themedata = Program.Themes.ContainsKey(Program.SettingsData.Theme)
+                ? Program.Themes[Program.SettingsData.Theme]
+                : null;
             ttIsOpen = false; //setting the variable for whether the timetable window is opened to be false by default
             /*
             WebBrowser mytgs = new WebBrowser();
@@ -238,6 +225,8 @@ namespace SplashScreen
             Githubupdate("Mrmeguyme", "timetable-clock", false);
         }
 
+        #region Clock Calculation ----------------------------
+
         public List<string> Currentcountdown()
         {
             int offset = Program.SettingsData.TimeOffset;
@@ -248,6 +237,7 @@ namespace SplashScreen
             if (lastDayOfWeek != timenow.DayOfWeek)
             {
                 lastDayOfWeek = timenow.DayOfWeek;
+                Calenderfetch();
                 Program.curDay = Program.Fetchday();
             }
             if (Program.SettingsData.EarlyDate.Date == timenow.Date)
@@ -321,6 +311,7 @@ namespace SplashScreen
 
 
         }
+        #endregion
 
         #region CUSTOM PAINT METHODS ----------------------------------------------
         protected override CreateParams CreateParams
@@ -348,7 +339,7 @@ namespace SplashScreen
                 Graphics g = Graphics.FromImage(bmp);
                 
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-                var brushc = new System.Drawing.SolidBrush(Color.FromArgb(255, 255, 255, 255));
+                //var brushc = new System.Drawing.SolidBrush(Color.FromArgb(255, 255, 255, 255));
                 if (counter != 0)
                 {
                     List<string> temp = Currentcountdown();
@@ -388,35 +379,65 @@ namespace SplashScreen
                         seconds = (timeleft % 60).ToString();
                     }
 
-                    g.DrawString(hours + ":" + minutes + ":" + seconds, new Font("Trebuchet MS", 18 * dx), brushc, 10,
-                        40);
-                    g.DrawString(
-                        Program.TimetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1))
-                            ? Program.TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)].Room
-                            : "", new Font("Trebuchet MS", 18 * dx), brushc, 140, 40);
+                    period Curperiod = new period();
                     string label = temp[2];
-                    if ((temp[2].StartsWith("Period") || temp[2].StartsWith("Form")) &&
-                        Program.TimetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
-                        label =
-                            Program.TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
-                                .ClassDescription.Length > 12
-                                ? Program.TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
-                                    .ClassCode
-                                : Program.TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
-                                    .ClassDescription;
-                    if (temp[2].StartsWith("Go to") &&
-                        Program.TimetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
-                        label = "Go to " + Program
-                                    .TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)]
-                                    .ClassCode;
+                    string gotolab = "";
+                    if (temp[2].StartsWith("Go to"))
+                    {
+                        label = label.Replace("Go to ", "");
+                        gotolab = "Go to ";
+                    }
+                if (Program.TimetableList.ContainsKey(Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)))
+                    {
+                        Curperiod = Program.TimetableList[Program.curDay + "" + temp[2].Substring(temp[2].Length - 1)];
+                        if (temp[2].StartsWith("Period") || temp[2].StartsWith("Form")||temp[2].StartsWith("Go to"))
+                        {
+                            label = Curperiod.ClassDescription.Length > 12 ? Curperiod.ClassCode : Curperiod.ClassDescription;
+                        }
+                    }
+                    else
+                    {
+                        Curperiod.ClassCode = temp[2];
+                        Curperiod.ClassDescription = temp[2];
+                    }
+                    for (int i = 0; i < Program.Themedata.Drawlist.Count; i++) //Draw all items in the theme
+                    {
+                        Drawstrings drawme = Program.Themedata.Drawlist[i];
+                        string textstring = drawme.Text.Replace("<CurDay>", Program.curDay.ToString());
+                        textstring = textstring.Replace("<Hours>", hours);
+                        textstring = textstring.Replace("<Minutes>", minutes);
+                        textstring = textstring.Replace("<Seconds>", seconds);
+                        textstring = textstring.Replace("<ClassA>", label);
+                        textstring = textstring.Replace("<ClassD>", Curperiod.ClassDescription);
+                        textstring = textstring.Replace("<ClassC>", Curperiod.ClassCode);
+                        textstring = textstring.Replace("<Room>", Curperiod.Room);
+                        textstring = textstring.Replace("<TeacherC>", Curperiod.SchoolStaffCode);
+                        textstring = textstring.Replace("<User>", Environment.UserName);
+                        textstring = textstring.Replace("<ID>", Program.SynID.ToString());
+                        textstring = textstring.Replace("<GoTo>", gotolab);
+                        SolidBrush tmpBrush = new SolidBrush(drawme.Colour);
+                    if (drawme.Rotation==0)
+                            g.DrawString(textstring,new Font("Trebuchet MS",drawme.Size*dx),tmpBrush,drawme.Position);
+                        else
+                        {
+                            g.TranslateTransform(drawme.Position.X,drawme.Position.Y);
+                            g.RotateTransform(drawme.Rotation);
+                            g.DrawString(textstring, new Font("Trebuchet MS", drawme.Size * dx), tmpBrush, 0,0);
+                            g.RotateTransform(-drawme.Rotation);
+                            g.TranslateTransform(-drawme.Position.X, -drawme.Position.Y);
+                    }
+                    tmpBrush.Dispose();
+                    }
+                    /* //Traditional set drawing
+                    g.DrawString(hours + ":" + minutes + ":" + seconds, new Font("Trebuchet MS", 18 * dx), brushc, 10,40);
+                    g.DrawString(Curperiod.Room, new Font("Trebuchet MS", 18 * dx), brushc, 140, 40);
                     g.DrawString(label, new Font("Trebuchet MS", 14 * dx), brushc, 10, 2);
-                    StringFormat stringFormat = new StringFormat();
-                    stringFormat.FormatFlags = StringFormatFlags.DirectionVertical;
+                    g.TranslateTransform(2,65);
                     g.RotateTransform(-90);
-                    string k = "Day " + Program.curDay;
-                    g.DrawString(k, new Font("Trebuchet MS", 8 * dx), brushc, -63, 2);
-                    stringFormat.Dispose();
-                    
+                    g.DrawString("Day "+Program.curDay, new Font("Trebuchet MS", 8 * dx), brushc, 0, 0);
+                    g.RotateTransform(90);
+                    g.TranslateTransform(-2,-65); 
+                    */
                 }
 
                 hBitmap = bmp.GetHbitmap(Color.FromArgb(0));  //Set the fact that background is transparent
@@ -437,7 +458,7 @@ namespace SplashScreen
                 API.UpdateLayeredWindow(Handle, screenDc, ref topPos, ref size, memDc, ref pointSource, 0, ref blend, API.ULW_ALPHA);
 
                 //Clean-up
-                brushc.Dispose();
+                //brushc.Dispose();
                 g.Dispose();
                 bmp.Dispose();
                 API.ReleaseDC(IntPtr.Zero, screenDc);
@@ -471,7 +492,7 @@ namespace SplashScreen
         #region FORM EVENTS -------------------------------------------------------
         private void Form1_Load(object sender, EventArgs e)
         {
-            UpdateFormDisplay(BackgroundImage);
+            UpdateFormDisplay(Program.Themedata.Clockimage);
             SetDesktopLocation(Screen.PrimaryScreen.Bounds.Width - BackgroundImage.Width+4, Screen.PrimaryScreen.WorkingArea.Height-BackgroundImage.Height+2);
         }
 
@@ -479,9 +500,14 @@ namespace SplashScreen
         protected override void OnPaint(PaintEventArgs e)
         {
             //Call our drawing function
-            UpdateFormDisplay(BackgroundImage);
+            UpdateFormDisplay(Program.Themedata.Clockimage);
         }
         #endregion
+
+        private void Reposition(object sender, EventArgs e)
+        {
+            //SetDesktopLocation(Screen.PrimaryScreen.Bounds.Width - Program.Themedata.Clockimage.Width, Screen.PrimaryScreen.WorkingArea.Height - Program.Themedata.Clockimage.Height);
+        }
 
         private void mouseClick(object sender, MouseEventArgs e)
         {
@@ -522,7 +548,7 @@ namespace SplashScreen
             if (Program.curDay == 0)
             {
                 counter = 0;
-                UpdateFormDisplay(BackgroundImage);
+                UpdateFormDisplay(Program.Themedata.Clockimage);
                 return;
             }
             if (Left < Cursor.Position.X - 12 && Left + Width > System.Windows.Forms.Cursor.Position.X && Top < System.Windows.Forms.Cursor.Position.Y && Top + Height > System.Windows.Forms.Cursor.Position.Y&&dontHideToolStripMenuItem.Checked==false)
@@ -584,17 +610,17 @@ namespace SplashScreen
             GetWindowText(new HandleRef(this, GetForegroundWindow()), stringBuilder, stringBuilder.Capacity);
             Rectangle rect;
             GetWindowRect(GetForegroundWindow(), out rect);
-            if (toolStripMenuItem1.Checked&&!settingsForm.Visible && !Expandedform.Visible&&!contextMenu1.Visible&&(((rect.Height - rect.Y - Screen.FromHandle(Handle).Bounds.Height) !=0&& (rect.Width - rect.X- Screen.FromHandle(Handle).Bounds.Width) != 0)||Screen.FromHandle(GetForegroundWindow()).DeviceName!=Screen.FromHandle(Handle).DeviceName||stringBuilder.Length==0))
+            if (!Themesform.Visible&&toolStripMenuItem1.Checked&&!settingsForm.Visible && !Expandedform.Visible&&!contextMenu1.Visible&&(((rect.Height - rect.Y - Screen.FromHandle(Handle).Bounds.Height) !=0&& (rect.Width - rect.X- Screen.FromHandle(Handle).Bounds.Width) != 0)||Screen.FromHandle(GetForegroundWindow()).DeviceName!=Screen.FromHandle(Handle).DeviceName||stringBuilder.Length==0))
                 TopMost = true;
             else
             {
-                if (!settingsForm.Visible && !Expandedform.Visible && !contextMenu1.Visible&&stringBuilder.Length!=0&&TopMost)
+                if (!Themesform.Visible && !settingsForm.Visible && !Expandedform.Visible && !contextMenu1.Visible&&stringBuilder.Length!=0&&TopMost)
                 {
                     TopMost = false;
                     SendToBack();
                 }
             }
-            UpdateFormDisplay(BackgroundImage);
+            UpdateFormDisplay(Program.Themedata.Clockimage);
             //this.SetDesktopLocation(System.Windows.Forms.Cursor.Position.X-100, System.Windows.Forms.Cursor.Position.Y-30);
   
         }
@@ -663,6 +689,7 @@ namespace SplashScreen
                 }
                 settingsForm.Dispose();
                 Expandedform.Dispose();
+                Themesform.Dispose();
                 Dispose();
         }
 
@@ -692,6 +719,7 @@ namespace SplashScreen
             settingsForm.Activate();
         }
 
+        #region Github Updater ---------------------------
         public string Githubupdate(string owner, string name,bool check)
         {
             try
@@ -756,6 +784,8 @@ namespace SplashScreen
             }
         }
 
+        #endregion
+
         private void frmSplash_Shown(object sender, EventArgs e)
         {
             
@@ -784,7 +814,35 @@ namespace SplashScreen
         {
             mouseDown = false;
         }
+
+        private void themesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Themesform.Show();
+            Themesform.Activate();
         }
+
+        private void Calenderfetch()
+        {
+            try
+            {
+                IICalendarCollection iCal = iCalendar.LoadFromUri(new Uri("https://outlook.office365.com/owa/calendar/2565f03a392b4aa7ae08559caf271bc8@trinity.vic.edu.au/7df612fa5cb549e993a058753de347464943400756469956671/calendar.ics"));
+                for (int i = 0; i < iCal[0].Events.Count; i++)
+                {
+                    if (iCal[0].Events[i].Summary.ToLower().StartsWith("early finish") &&
+                        iCal[0].Events[i].Start.Date >= DateTime.Now.Date)
+                    {
+                        Program.SettingsData.EarlyDate = iCal[0].Events[i].Start.Date;
+                        settingsForm.Checksettings();
+                        return;
+                    }
+                }
+            }
+            catch
+            {
+                //failed
+            }
+        }
+    }
     }
 
 
