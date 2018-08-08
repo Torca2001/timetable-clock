@@ -506,7 +506,7 @@ namespace SplashScreen
 
         private void Reposition(object sender, EventArgs e)
         {
-            //SetDesktopLocation(Screen.PrimaryScreen.Bounds.Width - Program.Themedata.Clockimage.Width, Screen.PrimaryScreen.WorkingArea.Height - Program.Themedata.Clockimage.Height);
+            SetDesktopLocation(Screen.PrimaryScreen.Bounds.Width - Program.Themedata.Clockimage.Width, Screen.PrimaryScreen.WorkingArea.Height - Program.Themedata.Clockimage.Height);
         }
 
         private void mouseClick(object sender, MouseEventArgs e)
