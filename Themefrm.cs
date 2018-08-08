@@ -32,6 +32,7 @@ namespace SchoolManager
                 listView1.Items.Clear();
                 foreach (Themedata Dtheme in Program.Themes.Values)
                 {
+                    if (Dtheme!= Program.Themedata)
                     Dtheme.IDisposable();
                 }
                 Program.Themes.Clear();
