@@ -100,6 +100,10 @@ namespace SchoolManager
                 PointF mousepos = new PointF(MousePosition.X-Left,MousePosition.Y-Top);
                 for (int i = 0; i < 10; i++)
                 {
+                    if (i + 1 == Program.curDay)
+                    {
+                        g.FillRectangle(new SolidBrush(Color.FromArgb(150,120,120,120)), 110 * i, 0,120,590);
+                    }
                     for (int j = 0; j < 7; j++)
                     {
                         Brush pencolour = Brushes.Aqua;
