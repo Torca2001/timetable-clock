@@ -32,7 +32,7 @@ namespace SchoolManager
 
         private void Timer1tick(object sender, EventArgs e)
         {
-            if(Visible)
+            if(Visible && !drag)
                 UpdateFormDisplay(Program.Themedata.Timetableimage);
         }
 
