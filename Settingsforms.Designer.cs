@@ -319,7 +319,7 @@ namespace SchoolManager
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Settingsforms";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Settingsforms";
+            this.Text = "Settings";
             this.Deactivate += new System.EventHandler(this.Settingsforms_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Settingsforms_FormClosing);
             this.Shown += new System.EventHandler(this.Settingsforms_Shown);
