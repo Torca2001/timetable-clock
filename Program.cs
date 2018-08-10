@@ -21,7 +21,7 @@ namespace SplashScreen
         public static Dictionary<string, Themedata> Themes = new Dictionary<string, Themedata>();
         public static event System.EventHandler Themechanged;
         public static Themedata Defaulttheme;
-        public static string APP_VERSION = "5.1.1"; //Update this version number before each release
+        public static string APP_VERSION = "5.2.0"; //Update this version number before each release
         public static string CURRENT_DIRECTORY = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
         public static string SETTINGS_DIRECTORY = "C:/Users/" + Environment.UserName + "/Documents/Timetable";
         public static Settingstruct SettingsData = new Settingstruct();
