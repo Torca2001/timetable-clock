@@ -74,7 +74,7 @@ namespace SplashScreen
             new List<string> { "39300", "37500", "38700", "Go to Period 3" },
             new List<string> { "42300", "40500", "41400", "Period 3" },
             new List<string> { "42600", "40800", "41700", "Go to Period 4" },
-            new List<string> { "45600", "43500", "44400", "Period 4" },
+            new List<string> { "45600", "43800", "44400", "Period 4" },
             new List<string> { "48300", "48300", "46500", "Lunch" },
             new List<string> { "48600", "48600", "46800", "Go to Period 5" }, 
             new List<string> { "51600", "51600", "49500", "Period 5" },
@@ -841,7 +841,7 @@ namespace SplashScreen
                     try
                     {
                         //Throws error when Authentication failed
-                        sslStream.AuthenticateAsClient("Timetable.duckdns.org");
+                        sslStream.AuthenticateAsClient(connectip);
                     }
                     catch(Exception e)
                     {
